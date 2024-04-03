@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+
+
+<html theme="dark" showBanner="true" hasBanner="true" > 
+<link href="https://cdn.staticfile.org/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet">
+<link href="https://cdn.staticfile.org/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet">
+<link href="https://cdn.staticfile.org/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet">
+<script src="/js/color.global.min.js" ></script>
+<script src="/js/load-settings.js" ></script>
+<head>
+  <meta charset="utf-8">
+  
+  
+  
+
+  
+  <title>NJU PA2 | Catizard&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="preload" href="/css/fonts/Roboto-Regular.ttf" as="font" type="font/ttf" crossorigin="anonymous">
+  <link rel="preload" href="/css/fonts/Roboto-Bold.ttf" as="font" type="font/ttf" crossorigin="anonymous">
+
+  <meta name="description" content="不停计算的机器最简单的计算机TRM的运行方式: 12345while (1) &#123;  从PC指示的存储器位置取出指令;  执行指令;  更新PC;&#125;  具体地，cpu执行指令的方式是：  取指：从内存空间中读取出一条指令，具体位置由pc寄存器给出。 译码：读取出来的是一个字长的01串，cpu会查表翻译指令。 执行：根据译码的结果来执行具体的行为。 更新pc，指向下一条指令  回顾">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NJU PA2">
+<meta property="og:url" content="https://catizard.github.io/2024/04/04/NJU-PA2/index.html">
+<meta property="og:site_name" content="Catizard&#39;s blog">
+<meta property="og:description" content="不停计算的机器最简单的计算机TRM的运行方式: 12345while (1) &#123;  从PC指示的存储器位置取出指令;  执行指令;  更新PC;&#125;  具体地，cpu执行指令的方式是：  取指：从内存空间中读取出一条指令，具体位置由pc寄存器给出。 译码：读取出来的是一个字长的01串，cpu会查表翻译指令。 执行：根据译码的结果来执行具体的行为。 更新pc，指向下一条指令  回顾">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-04-03T19:27:38.000Z">
+<meta property="article:modified_time" content="2024-04-03T11:30:10.816Z">
+<meta property="article:author" content="Catizard">
+<meta property="article:tag" content="NJU PA">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Catizard's blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-32.png" sizes="32x32">
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-128.png" sizes="128x128">
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-180.png" sizes="180x180">
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-192.png" sizes="192x192">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-32.png" sizes="32x32">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-128.png" sizes="128x128">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-180.png" sizes="180x180">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-192.png" sizes="192x192">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+<body>
+  
+  
+    
+<div id="banner" class="">
+  <img src="/banner.jpg" itemprop="image">
+  <div id="banner-dim"></div>
+</div>
+ 
+   
+  <div id="main-grid" class="  ">
+    <div id="nav" class=""  >
+      <navbar id="navbar">
+  <nav id="title-nav">
+    <a href="/">
+      <div id="vivia-logo">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+      <div>Catizard's blog </div>
+    </a>
+  </nav>
+  <nav id="main-nav">
+    
+      <a class="main-nav-link" href="/">Home</a>
+    
+      <a class="main-nav-link" href="/archives">Archives</a>
+    
+      <a class="main-nav-link" href="/about">About</a>
+    
+  </nav>
+  <nav id="sub-nav">
+    <a id="theme-btn" class="nav-icon">
+      <span class="light-mode-icon"><svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M438.5-829.913v-48q0-17.452 11.963-29.476 11.964-12.024 29.326-12.024 17.363 0 29.537 12.024t12.174 29.476v48q0 17.452-11.963 29.476-11.964 12.024-29.326 12.024-17.363 0-29.537-12.024T438.5-829.913Zm0 747.826v-48q0-17.452 11.963-29.476 11.964-12.024 29.326-12.024 17.363 0 29.537 12.024t12.174 29.476v48q0 17.452-11.963 29.476-11.964 12.024-29.326 12.024-17.363 0-29.537-12.024T438.5-82.087ZM877.913-438.5h-48q-17.452 0-29.476-11.963-12.024-11.964-12.024-29.326 0-17.363 12.024-29.537t29.476-12.174h48q17.452 0 29.476 11.963 12.024 11.964 12.024 29.326 0 17.363-12.024 29.537T877.913-438.5Zm-747.826 0h-48q-17.452 0-29.476-11.963-12.024-11.964-12.024-29.326 0-17.363 12.024-29.537T82.087-521.5h48q17.452 0 29.476 11.963 12.024 11.964 12.024 29.326 0 17.363-12.024 29.537T130.087-438.5Zm660.174-290.87-34.239 32q-12.913 12.674-29.565 12.174-16.653-.5-29.327-13.174-12.674-12.673-12.554-28.826.12-16.152 12.794-28.826l33-35q12.913-12.674 30.454-12.674t30.163 12.847q12.709 12.846 12.328 30.826-.38 17.98-13.054 30.653ZM262.63-203.978l-32 34q-12.913 12.674-30.454 12.674t-30.163-12.847q-12.709-12.846-12.328-30.826.38-17.98 13.054-30.653l33.239-31q12.913-12.674 29.565-12.174 16.653.5 29.327 13.174 12.674 12.673 12.554 28.826-.12 16.152-12.794 28.826Zm466.74 33.239-32-33.239q-12.674-12.913-12.174-29.565.5-16.653 13.174-29.327 12.673-12.674 28.826-13.054 16.152-.38 28.826 12.294l35 33q12.674 12.913 12.674 30.454t-12.847 30.163q-12.846 12.709-30.826 12.328-17.98-.38-30.653-13.054ZM203.978-697.37l-34-33q-12.674-12.913-13.174-29.945-.5-17.033 12.174-29.707t31.326-13.293q18.653-.62 31.326 13.054l32 34.239q11.674 12.913 11.174 29.565-.5 16.653-13.174 29.327-12.673 12.674-28.826 12.554-16.152-.12-28.826-12.794ZM480-240q-100 0-170-70t-70-170q0-100 70-170t170-70q100 0 170 70t70 170q0 100-70 170t-170 70Zm-.247-82q65.703 0 111.475-46.272Q637-414.544 637-480.247t-45.525-111.228Q545.95-637 480.247-637t-111.475 45.525Q323-545.95 323-480.247t45.525 111.975Q414.05-322 479.753-322ZM481-481Z"/></svg></span>
+      <span class="dark-mode-icon"><svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M480.239-116.413q-152.63 0-258.228-105.478Q116.413-327.37 116.413-480q0-130.935 77.739-227.435t206.304-125.043q43.022-9.631 63.87 10.869t3.478 62.805q-8.891 22.043-14.315 44.463-5.424 22.42-5.424 46.689 0 91.694 64.326 155.879 64.325 64.186 156.218 64.186 24.369 0 46.978-4.946 22.609-4.945 44.413-14.076 42.826-17.369 62.967 1.142 20.142 18.511 10.511 61.054Q807.174-280 712.63-198.206q-94.543 81.793-232.391 81.793Zm0-95q79.783 0 143.337-40.217 63.554-40.218 95.793-108.283-15.608 4.044-31.097 5.326-15.49 1.283-31.859.805-123.706-4.066-210.777-90.539-87.071-86.473-91.614-212.092-.24-16.369.923-31.978 1.164-15.609 5.446-30.978-67.826 32.478-108.282 96.152Q211.652-559.543 211.652-480q0 111.929 78.329 190.258 78.329 78.329 190.258 78.329ZM466.13-465.891Z"/></svg></span>
+    </a>
+    
+      <a id="nav-rss-link" class="nav-icon mobile-hide" href="/atom.xml" title="RSS 订阅">
+        <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M198-120q-25.846 0-44.23-18.384-18.384-18.385-18.384-44.23 0-25.846 18.384-44.23 18.384-18.385 44.23-18.385 25.846 0 44.23 18.385 18.384 18.384 18.384 44.23 0 25.845-18.384 44.23Q223.846-120 198-120Zm538.385 0q-18.846 0-32.923-13.769-14.076-13.769-15.922-33.23-8.692-100.616-51.077-188.654-42.385-88.039-109.885-155.539-67.5-67.501-155.539-109.885Q283-663.462 182.385-672.154q-19.461-1.846-33.23-16.23-13.769-14.385-13.769-33.846t14.076-32.922q14.077-13.461 32.923-12.23 120.076 8.692 226.038 58.768 105.961 50.077 185.73 129.846 79.769 79.769 129.846 185.731 50.077 105.961 58.769 226.038 1.231 18.846-12.538 32.922Q756.461-120 736.385-120Zm-252 0q-18.231 0-32.423-13.461t-18.653-33.538Q418.155-264.23 348.886-333.5q-69.27-69.27-166.501-84.423-20.077-4.462-33.538-18.961-13.461-14.5-13.461-33.346 0-19.076 13.884-33.23 13.884-14.153 33.115-10.922 136.769 15.384 234.384 112.999 97.615 97.615 112.999 234.384 3.231 19.23-10.538 33.115Q505.461-120 484.385-120Z"/></svg>
+      </a>
+    
+    <div id="nav-menu-btn" class="nav-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M177.37-252.282q-17.453 0-29.477-11.964-12.024-11.963-12.024-29.326t12.024-29.537q12.024-12.174 29.477-12.174h605.26q17.453 0 29.477 11.964 12.024 11.963 12.024 29.326t-12.024 29.537q-12.024 12.174-29.477 12.174H177.37Zm0-186.218q-17.453 0-29.477-11.963-12.024-11.964-12.024-29.326 0-17.363 12.024-29.537T177.37-521.5h605.26q17.453 0 29.477 11.963 12.024 11.964 12.024 29.326 0 17.363-12.024 29.537T782.63-438.5H177.37Zm0-186.217q-17.453 0-29.477-11.964-12.024-11.963-12.024-29.326t12.024-29.537q12.024-12.174 29.477-12.174h605.26q17.453 0 29.477 11.964 12.024 11.963 12.024 29.326t-12.024 29.537q-12.024 12.174-29.477 12.174H177.37Z"/></svg>
+    </div>
+  </nav>
+</navbar>
+<div id="nav-dropdown" class="hidden">
+  <div id="dropdown-link-list">
+    
+      <a class="nav-dropdown-link" href="/">Home</a>
+    
+      <a class="nav-dropdown-link" href="/archives">Archives</a>
+    
+      <a class="nav-dropdown-link" href="/about">About</a>
+    
+    
+      <a class="nav-dropdown-link" href="/atom.xml" title="RSS 订阅">RSS</a>
+     
+    </div>
+</div>
+<script>
+  let dropdownBtn = document.getElementById("nav-menu-btn");
+  let dropdownEle = document.getElementById("nav-dropdown");
+  dropdownBtn.onclick = function() {
+    dropdownEle.classList.toggle("hidden");
+  }
+</script>
+    </div>
+    <div id="sidebar-wrapper">
+      <sidebar id="sidebar">
+  
+    <div class="widget-wrap">
+  <div class="info-card">
+    <div class="avatar">
+      
+      <div class="img-dim"></div>
+    </div>
+    <div class="info">
+      <div class="username">Catizard </div>
+      <div class="dot"></div>
+      <div class="subtitle"> </div>
+      <div class="link-list">
+        
+          <a class="link-btn" target="_blank" rel="noopener" href="https://github.com/Catizard" title="GitHub"><i class="fa-brands fa-github"></i></a>
+         
+      </div>  
+    </div>
+  </div>
+</div>
+
+  
+  <div class="sticky">
+    
+      
+
+
+
+    
+      
+  <div class="widget-wrap">
+    <div class="widget">
+      <h3 class="widget-title">标签</h3>
+      <ul class="widget-tag-list" itemprop="keywords"><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/NJU-PA/" rel="tag">NJU PA</a></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</sidebar>
+    </div>
+    <div id="content-body">
+       
+
+
+<article id="post-NJU-PA2" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  
+    
+   
+  <div class="article-inner">
+    <div class="article-main">
+      <header class="article-header">
+        
+<div class="main-title-bar">
+  <div class="main-title-dot"></div>
+  
+    
+      <h1 class="p-name article-title" itemprop="headline name">
+        NJU PA2
+      </h1>
+    
+  
+</div>
+
+        <div class='meta-info-bar'>
+          <div class="meta-info">
+  <time class="dt-published" datetime="2024-04-03T19:27:38.000Z" itemprop="datePublished">2024-04-03</time>
+</div>
+          <div class="need-seperator meta-info">
+            <div class="meta-cate-flex">
+  
+    未分类 
+   
+</div>
+  
+          </div>
+          <div class="wordcount need-seperator meta-info">
+            7.9k 词 
+          </div>
+        </div>
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NJU-PA/" rel="tag">NJU PA</a></li></ul>
+
+      </header>
+      <div class="e-content article-entry" itemprop="articleBody">
+        
+          <h2 id="不停计算的机器"><a href="#不停计算的机器" class="headerlink" title="不停计算的机器"></a>不停计算的机器</h2><p>最简单的计算机TRM的运行方式:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">while (1) &#123;</span><br><span class="line">  从PC指示的存储器位置取出指令;</span><br><span class="line">  执行指令;</span><br><span class="line">  更新PC;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>具体地，cpu执行指令的方式是：</p>
+<ul>
+<li>取指：从内存空间中读取出一条指令，具体位置由pc寄存器给出。</li>
+<li>译码：读取出来的是一个字长的01串，cpu会查表翻译指令。</li>
+<li>执行：根据译码的结果来执行具体的行为。</li>
+<li>更新pc，指向下一条指令</li>
+</ul>
+<p>回顾一下，用户程序是运行在模拟的硬件之上的，所以这里的任务是模拟一个cpu的执行，来支撑用户程序的执行。</p>
+<blockquote>
+<p>:question: cpu一次只能执行一条指令吗</p>
+<p>在这个模型里，如果细化到下去，在一个时刻cpu应该只能同时执行一条指令，这是一个重要的假设，当然这个假设不是谁规定的，他实际上从一开始编程就成了一种习惯：代码是一行一行执行，指令也应该是这样的。</p>
+<ul>
+<li><input disabled="" type="checkbox"> 但是现代的cpu似乎对这个事情有所打破，可能是一个叫微指令的概念</li>
+</ul>
+</blockquote>
+<blockquote>
+<h4 id="理解YEMU如何执行程序"><a href="#理解YEMU如何执行程序" class="headerlink" title="理解YEMU如何执行程序"></a>理解YEMU如何执行程序</h4><p>加法状态的状态机：把内存和寄存器的值作为状态。</p>
+<p>两者的联系？cpu执行一条指令就是一次状态转移。</p>
+</blockquote>
+<p>这个例子可以说明，只要有加法器和跳转功能，理论上可以做出任何计算机程序(@brainfuck)。只是这样效率太低了。</p>
+<h2 id="RTFSC-2"><a href="#RTFSC-2" class="headerlink" title="RTFSC(2)"></a>RTFSC(2)</h2><h3 id="RTFM"><a href="#RTFM" class="headerlink" title="RTFM"></a>RTFM</h3><p>在PA中，riscv32的客户程序只有RV32I和RV32M组成。</p>
+<ul>
+<li>RV32I: Base Integer Instruction Set</li>
+<li>RV32M: Extension for Integer Multiplication and Division</li>
+</ul>
+<p>通过目录就可以轻松定位到位置，但是找opcode table的时候我发现我现在看的手册版本里位置有变化，确实有点难发现。还有一点是The RISC-V Reader里的opcode有错误，建议还是看官方手册，虽然reader有中文可以看但是确实有问题。</p>
+<h3 id="RTFSC-2-1"><a href="#RTFSC-2-1" class="headerlink" title="RTFSC(2)"></a>RTFSC(2)</h3><blockquote>
+<h4 id="立即数背后的故事"><a href="#立即数背后的故事" class="headerlink" title="立即数背后的故事"></a>立即数背后的故事</h4><p>这个事情应该是和isa相关的，如果要移植大端序的isa，具体的读取应该要转换字节序列？</p>
+</blockquote>
+<blockquote>
+<h4 id="立即数背后的故事-2"><a href="#立即数背后的故事-2" class="headerlink" title="立即数背后的故事(2)"></a>立即数背后的故事(2)</h4><p>目前我的认知是他可以分开读取+某些指令不关心末尾的0（比如地址的末尾位）。</p>
+</blockquote>
+<p>之前的代码中出现过两种pc:</p>
+<ul>
+<li>snpc: 静态pc，总是&#x3D;pc+4，即顺序执行的pc位置</li>
+<li>dnpc:动态pc，对于跳转指令下一个pc的位置就不一定是+4</li>
+</ul>
+<p>所以实际是用s-&gt;dnpc来更新cpu的pc位置。</p>
+<h3 id="结构化程序设计"><a href="#结构化程序设计" class="headerlink" title="结构化程序设计"></a>结构化程序设计</h3><blockquote>
+<h4 id="来体会一下"><a href="#来体会一下" class="headerlink" title="来体会一下"></a>来体会一下</h4><p>写一个正确的函数然后两个函数对拍？既然都有了’正确的’程序还要他干什么，直接去掉。</p>
+</blockquote>
+<blockquote>
+<h4 id="RTFSC理解指令执行的过程"><a href="#RTFSC理解指令执行的过程" class="headerlink" title="RTFSC理解指令执行的过程"></a>RTFSC理解指令执行的过程</h4></blockquote>
+<h3 id="运行第一个C程序"><a href="#运行第一个C程序" class="headerlink" title="运行第一个C程序"></a>运行第一个C程序</h3><blockquote>
+<h4 id="为什么执行了未实现指令会出现上述报错信息"><a href="#为什么执行了未实现指令会出现上述报错信息" class="headerlink" title="为什么执行了未实现指令会出现上述报错信息"></a>为什么执行了未实现指令会出现上述报错信息</h4><p>兜底命令</p>
+</blockquote>
+<blockquote>
+<p>:question: li命令是什么</p>
+<p>首先li是一个伪指令，上面的一个蓝框题里有提问到这个问题：因为riscv32的指令一共就32位长，而I型指令又只有12位的立即数，你是不可能通过一条指令就加载32位的立即数的。</p>
+<p>但是我发现一个问题，现在我下载到的spec里没有关于伪指令的说明，google一下发现似乎是拆到了别的manual里，简直坑死人。列表见asm manual里<a target="_blank" rel="noopener" href="https://github.com/riscv-non-isa/riscv-asm-manual/blob/master/riscv-asm.md#pseudoinstructions">这个位置</a>。</p>
+<p>一个备用选择是看riscv reader。</p>
+</blockquote>
+<p>先解决一个问题：当调用make的时候发生了什么？执行一下make -nB可以拿到</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">/bin/echo -e <span class="string">&quot;NAME = dummy\nSRCS = tests/dummy.c\ninclude <span class="variable">$&#123;AM_HOME&#125;</span>/Makefile&quot;</span> &gt; Makefile.dummy</span><br><span class="line"><span class="keyword">if</span> make -s -f Makefile.dummy ARCH=riscv32-nemu run; <span class="keyword">then</span> \</span><br><span class="line">	<span class="built_in">printf</span> <span class="string">&quot;[%14s] \033[1;32mPASS!\033[0m\n&quot;</span> dummy &gt;&gt; .result; \</span><br><span class="line"><span class="keyword">else</span> \</span><br><span class="line">	<span class="built_in">printf</span> <span class="string">&quot;[%14s] \033[1;31mFAIL!\033[0m\n&quot;</span> dummy &gt;&gt; .result; \</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="built_in">rm</span> -f Makefile.dummy</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;&quot;</span> dummy</span><br><span class="line"><span class="built_in">cat</span> .result</span><br><span class="line"><span class="built_in">rm</span> .result</span><br></pre></td></tr></table></figure>
+
+<p>所以他应该是先生成了一个简单的makefile,然后立即执行他，执行完了之后就移除了。</p>
+<blockquote>
+<p>:question: 为什么他要创建一个临时的结果文件result？</p>
+<p>将结果导出到.result然后cat .result，之后就立即删除了。为什么要绕一道？</p>
+<p>可能是为了先打印程序名称然后再打印结果。</p>
+</blockquote>
+<p>然后是这个makefile里的内容，比较简单就是</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">NAME=dummy</span><br><span class="line">SRCS = tests/dummy.c</span><br><span class="line"><span class="keyword">include</span> $&#123;AM_HOME&#125;/Makefile</span><br></pre></td></tr></table></figure>
+
+<p>就是定义了一下变量然后引用了AM的makefile，看来剩下的还要去AM里面找结果。在现阶段看来，因为AM是一个抽象层，dummy程序是运行在AM这个抽象层之上的，所以在AM的makefile里可能需要将这个<code>dummy.c</code>编译成一个可执行文件，然后将指令数据带给NEMU。后者比较好做，可能就是之前提过的NEMU加载指定用户程序的方式，前者目前还有些迷雾，一个比较明显的问题是不可能直接链接GNU&#x2F;LINUX的库，这里需要交叉编译。</p>
+<h3 id="运行更多的程序"><a href="#运行更多的程序" class="headerlink" title="运行更多的程序"></a>运行更多的程序</h3><blockquote>
+<p>:exclamation: 未测试的代码永远是错的！</p>
+</blockquote>
+<p>只有两个需要klib的测试需要提供更多内容才可以做。</p>
+<p>这里有几个高位相关的指令需要补齐。</p>
+<h2 id="程序-运行时环境与AM"><a href="#程序-运行时环境与AM" class="headerlink" title="程序, 运行时环境与AM"></a>程序, 运行时环境与AM</h2><h3 id="运行时环境"><a href="#运行时环境" class="headerlink" title="运行时环境"></a>运行时环境</h3><h3 id="将运行时环境封装成库函数"><a href="#将运行时环境封装成库函数" class="headerlink" title="将运行时环境封装成库函数"></a>将运行时环境封装成库函数</h3><blockquote>
+<h4 id="这又能怎么样呢"><a href="#这又能怎么样呢" class="headerlink" title="这又能怎么样呢"></a>这又能怎么样呢</h4><p>在am上运行的程序不需要关心具体平台的具体细节，可移植。</p>
+</blockquote>
+<h3 id="AM-裸机-bare-metal-运行时环境"><a href="#AM-裸机-bare-metal-运行时环境" class="headerlink" title="AM - 裸机(bare-metal)运行时环境"></a>AM - 裸机(bare-metal)运行时环境</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AM = TRM + IOE + CTE + VME + MPE</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<h4 id="为什么要有AM-建议二周目思考"><a href="#为什么要有AM-建议二周目思考" class="headerlink" title="为什么要有AM? (建议二周目思考)"></a>为什么要有AM? (建议二周目思考)</h4><p>OS提供的运行时环境和AM提供的有什么区别？</p>
+</blockquote>
+<h3 id="RTFSC-3"><a href="#RTFSC-3" class="headerlink" title="RTFSC(3)"></a>RTFSC(3)</h3><p>这里提到了上面的问题，需要在GNU&#x2F;Linux的环境里编译出在riscv32-nemu里运行的可执行文件。</p>
+<ul>
+<li>gcc将AM实现源文件编译到目标文件，然后通过ar打包</li>
+<li>将要运行的用户程序编译到目标文件</li>
+<li>gcc和ar把klib也编译打包起来</li>
+<li>根据makefile里定义的规则让ld将上述文件链接起来</li>
+</ul>
+<p>以及makefile里定义的规则还会规定entry point到<code>0x80000000</code>，经过一些设置之后起始点从start.S开始，设置好栈顶之后跳到<code>_trm_init</code>去执行。</p>
+<blockquote>
+<p>:question:Hey,程序的起点不是main吗</p>
+<p>是的，开始的那个问题又出现了，但是目前还没有足够的能力解决它。至少现在可以说的是，在AM上启动的起点是需要各种设置之后的start.S这个汇编文件里的指令。</p>
+</blockquote>
+<p>注意到AM的makefile第一个目标是<code>make html</code>，可以输出更好看的形式，似乎具体只是因为文本文件就是一个markdown格式写出的，然后生成到html。</p>
+<p>交叉编译的工具链是通过变量控制的，例如gcc是<code>$(CROSS_COMPILE)gcc</code>，具体地这个变量是在inlclude makefile的时候带出来的，比如riscv32就会写出<code>CROSS_COMPILE := riscv64-linux-gnu-</code>，显然这个事情是和isa相关的。</p>
+<p>这里可以注意到isa相关的makefile和平台相关的makefile也是拆开的。</p>
+<p>后面AM的makefile就是一些编译规则了，用于指向最后生成的文件位置，具体的目标定义在平台的makefile里，在NEMU的makefile找到运行的目标之后就可以知道是在什么位置启动NEMU以及给NEMU传递参数的了。目前他只设置了<code>-l $(shell dirname $(IMAGE).elf)/nemu-log.txt</code>用于控制log文件生成的位置。</p>
+<blockquote>
+<h4 id="通过批处理模式运行NEMU"><a href="#通过批处理模式运行NEMU" class="headerlink" title="通过批处理模式运行NEMU"></a>通过批处理模式运行NEMU</h4><p>通过AM的Makefile默认启动批处理模式的NEMU，知道NEMU传入参数的地方之后就可以写了。这个东西一个好处是可以直接运行所有测试然后打印对应的结果。</p>
+</blockquote>
+<p>因为这里并不是直接在AM启动的make,所以bear得到的结果实际上是对am-kernel这边才能用。因此要想一个办法在AM那里启动bear然后生成结果让我的clangd正常工作。但是并不是很成功，如果直接将内容放到AM下面会找不到elf文件。</p>
+<h3 id="实现常用的库函数"><a href="#实现常用的库函数" class="headerlink" title="实现常用的库函数"></a>实现常用的库函数</h3><blockquote>
+<h4 id="实现字符串处理函数"><a href="#实现字符串处理函数" class="headerlink" title="实现字符串处理函数"></a>实现字符串处理函数</h4></blockquote>
+<h3 id="重新认识计算机：计算机是个抽象层"><a href="#重新认识计算机：计算机是个抽象层" class="headerlink" title="重新认识计算机：计算机是个抽象层"></a>重新认识计算机：计算机是个抽象层</h3><h2 id="基础设施-2"><a href="#基础设施-2" class="headerlink" title="基础设施(2)"></a>基础设施(2)</h2><p>跳过了，没什么用</p>
+<h2 id="输入输出"><a href="#输入输出" class="headerlink" title="输入输出"></a>输入输出</h2><h3 id="设备与cpu"><a href="#设备与cpu" class="headerlink" title="设备与cpu"></a>设备与cpu</h3><p>访问设备 &#x3D; 读出数据 + 写入数据 + 控制状态</p>
+<ul>
+<li><p>端口IO：使用专门的IO指令对设备进行访问，端口即设备的地址。</p>
+</li>
+<li><p>内存映射IO：端口IO的问题是如果已经确定了端口号，就不能再做修改，即只能加不能减或者改。而且这件事是直接写到指令集里的。</p>
+</li>
+</ul>
+<p>内存映射的想法是将一段内存空间拿出来专门给设备用，当cpu访问这段内存空间的时候，通过一个中间层映射到设备的位置上。这样的想法提供的编程模型和普通的内存访问并没有什么不同，唯一的缺点只是这段内存空间不再可用，不过它比起总量来说差距太大了，可以忽略不计。</p>
+<blockquote>
+<h4 id="理解volatile关键字"><a href="#理解volatile关键字" class="headerlink" title="理解volatile关键字"></a>理解volatile关键字</h4><p>我的机器上全部是死循环</p>
+</blockquote>
+<p>端口IO和内存映射IO都是映射，这里设计成了共用一个IOMap结构体来管理。具体这个IOMap保存了名称，映射的起始地址和结束地址，映射的目标空间以及一个回调函数。这里保存的<code>映射的起始地址和结束地址</code>是当cpu访问的到的地址，映射的目标空间是实际的地址（设备在的地址？）。</p>
+<p>访问设备的读写api如下，用于将地址addr映射到map所指示的目标空间。对于端口IO,上游接口是<code>pio_read/pio_write</code>，最终调用<code>map_read/map_write</code>来实现访问；内存映射IO类似，在<code>paddr_read/padd_r_write</code>时会判断addr落在实际的物理内存空间还是落在了设备空间，如果是后者就调用api访问设备。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">word_t</span> <span class="title function_">map_read</span><span class="params">(<span class="type">paddr_t</span> addr, <span class="type">int</span> len, IOMap *<span class="built_in">map</span>)</span>;</span><br><span class="line"><span class="type">void</span> <span class="title function_">map_write</span><span class="params">(<span class="type">paddr_t</span> addr, <span class="type">int</span> len, <span class="type">word_t</span> data, IOMap *<span class="built_in">map</span>)</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="NEMU中的输入输出"><a href="#NEMU中的输入输出" class="headerlink" title="NEMU中的输入输出"></a>NEMU中的输入输出</h3><p>在menuconfig里打开devices，然后运行NEMU就可以看到一个空窗口（但是实际上并不是空窗口，他会把当前屏幕上的内容带上去，为什么？）。</p>
+<p>NEMU是一个单线程程序，因此他是通过串行的方式模拟设备的执行的：在每次<code>cpu_exec</code>执行指令之后会查看距离上次设备执行的时间，如果已经超过了一定时间(tick)就尝试刷新屏幕，然后检查是否有按键按下释放以及窗口的x事件。</p>
+<blockquote>
+<p>:question:为什么我的x按钮不起作用？</p>
+<p>是单纯的tick太高了还是有什么bug存在？</p>
+</blockquote>
+<h3 id="将输入输出抽象成IOE"><a href="#将输入输出抽象成IOE" class="headerlink" title="将输入输出抽象成IOE"></a>将输入输出抽象成IOE</h3><p>首先设备访问的具体实现肯定是和具体架构相关的，其次设备访问是给计算机提供输入输出的能力的，应该归类为IOE。具体地抽象了下面三个api:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">bool</span> <span class="title function_">ioe_init</span><span class="params">()</span>;</span><br><span class="line"><span class="type">void</span> <span class="title function_">ioe_read</span><span class="params">(<span class="type">int</span> reg, <span class="type">void</span> *buf)</span>;</span><br><span class="line"><span class="type">void</span> <span class="title function_">ioe_write</span><span class="params">(<span class="type">int</span> reg, <span class="type">void</span> *buf)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这里的reg并不是具体的设备寄存器而是一个抽象的寄存器概念，显然不同架构的设备寄存器不可能一样。read是从寄存器中读写到缓冲区buf,write是把缓冲区buf的内容写到寄存器里。约定在不同的系统架构里也是用同样的抽象寄存器编号。</p>
+<p>amdev.h里定义了常见设备的抽象寄存器编号和相应的结构，具体地，他里面是一个宏:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> AM_DEVREG(id, reg, perm, ...) \</span></span><br><span class="line"><span class="meta">  enum &#123; AM_##reg = (id) &#125;; \</span></span><br><span class="line"><span class="meta">  typedef struct &#123; __VA_ARGS__; &#125; AM_##reg##_T;</span></span><br></pre></td></tr></table></figure>
+
+<p>对于下面这个调用，他会展开成类似这样的:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">AM_DEVREG( <span class="number">1</span>, UART_CONFIG,  RD, <span class="type">bool</span> present);</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">enum</span> &#123;</span> AM_UART_CONFIG = (<span class="number">1</span>) &#125;;</span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span> <span class="type">bool</span> present &#125; AM_UART_CONFIG_T;</span><br></pre></td></tr></table></figure>
+
+<p>其中的Perm参数作为描述权限的字段似乎没有使用？</p>
+<h3 id="将输入输出抽象成IOE-1"><a href="#将输入输出抽象成IOE-1" class="headerlink" title="将输入输出抽象成IOE"></a>将输入输出抽象成IOE</h3><p>首先是串口，串口初始化时会分别注册<code>0x3F8</code>处长度为8个字节的端口（对于使用端口IO使用的ISA来说）以及<code>0xa00003F8</code>处8字节的MMIO空间，具体地，他的调用是:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">add_mmio_map(<span class="string">&quot;serial&quot;</span>, CONFIG_SERIAL_MMIO, serial_base, <span class="number">8</span>, serial_io_handler);</span><br></pre></td></tr></table></figure>
+
+<p>当cpu访问MMIO这个物理内存地址时就会被映射到串口？具体的逻辑是怎样的，目标空间space是什么意思？为什么这里的space是一个申请内存调用？</p>
+<p>trm.c会调用putch将数据发送到串口，具体的他只是调用了一个<code>outb(SERIAL_PORT, ch)</code>，这里前者就是之前提到的<code>0xa00003F8</code>，所以确实应该是cpu访问这个地址的时候被映射。这里outb的实现就是直接向对应的地址写数据，会被翻译成一条write指令？这里添加的volatile可能是为了防止被优化，保证是一条对应长度的write指令。</p>
+<blockquote>
+<p>:question: 怎么证明这个volatile是必须的</p>
+</blockquote>
+<blockquote>
+<h4 id="运行Hello-World"><a href="#运行Hello-World" class="headerlink" title="运行Hello World"></a>运行Hello World</h4><p>riscv32可以直接运行，因为MMIO已经被实现了。</p>
+<p>运行后可以看到一条Hello World1和mainargs&#x3D;’’</p>
+</blockquote>
+<p>但是到这里还没有解决serial_base是干什么用的。map_write的具体实现是这样的:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">map_write</span><span class="params">(<span class="type">paddr_t</span> addr, <span class="type">int</span> len, <span class="type">word_t</span> data, IOMap *<span class="built_in">map</span>)</span> &#123;</span><br><span class="line">  assert(len &gt;= <span class="number">1</span> &amp;&amp; len &lt;= <span class="number">8</span>);</span><br><span class="line">  check_bound(<span class="built_in">map</span>, addr);</span><br><span class="line">  <span class="type">paddr_t</span> offset = addr - <span class="built_in">map</span>-&gt;low;</span><br><span class="line">  host_write(<span class="built_in">map</span>-&gt;space + offset, len, data);</span><br><span class="line">  invoke_callback(<span class="built_in">map</span>-&gt;callback, offset, len, <span class="literal">true</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中调用了host_write的时候用到了map-&gt;space，而host_write就是直接的内存写了。然后找一下谁调用过他，发现：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">pmem_write</span><span class="params">(<span class="type">paddr_t</span> addr, <span class="type">int</span> len, <span class="type">word_t</span> data)</span> &#123;</span><br><span class="line">  host_write(guest_to_host(addr), len, data);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>而 pmem_write的调用只有paddr_write，具体地，paddr_write会先检查目标位置是否落在物理空间里，如果不是则调用mmio_write，否则调用pmem_write。在pmem_write里他会先将目标地址通过guest_to_host转换，其最终的目标就是NEMU中模拟的内存pmem数组。</p>
+<p>所以一开始new_space实际上是找NEMU模拟的内存空间里分配了8字节的空间，然后具体写的时候是通过host_write直接向NEMU模拟的硬件上写数据的。所以这里理一下：<code>0xa00003F8</code>这个地址确实是约定的，他是在一开始就在内存中划分好的一个特定区域，<code>new_space</code>是运行时动态分配的。当putch准备向<code>0xa00003F8</code>这个物理地址写数据的时候，他会被转换到写一个运行时动态分配的内存地址。</p>
+<blockquote>
+<p>:question: 哦等等，谁来规定<code>0xa00003F8</code>这个地址是串口的？</p>
+<p>事实上我们并没有<strong>规定</strong>这个值，回想一下串口的定义，其中有一个宏参数<code>#define CONFIG_SERIAL_MMIO 0xa00003f8</code>，这个定义是在执行了make menuconfig打开了设备的时候才出现的，事实上当我们知道了系统中有哪些设备的时候，每个设备需要映射的空间大小和映射的起始地址的时候就可以算出每个设备的地址了。</p>
+</blockquote>
+<p>这里有提到，现在这样在AM上的输出是裸机编程：直接操作设备。这是一个很危险的设计，当引入操作系统的时候，设备就不是一个直接能访问的东西了，需要经过操作系统调用。</p>
+<blockquote>
+<h4 id="理解mainargs"><a href="#理解mainargs" class="headerlink" title="理解mainargs"></a>理解mainargs</h4><ul>
+<li><input disabled="" type="checkbox"> isa-nemu和native存在不同的传递方式</li>
+</ul>
+</blockquote>
+<blockquote>
+<h4 id="实现printf"><a href="#实现printf" class="headerlink" title="实现printf"></a>实现printf</h4><p><del>这个任务不是之前就完成了吗</del></p>
+</blockquote>
+<p>第二个设备是时钟，这里有一个让我一开始有一些误解的地方：文档中提到定义了两个抽象寄存器，但是实际的设备寄存器有两个，都是32位的寄存器。这里的实际情况是RTC抽象寄存器没有实现，然后两个实际存在的寄存器实际上一起组成了一个抽象寄存器UPTIME。</p>
+<blockquote>
+<h4 id="实现IOE"><a href="#实现IOE" class="headerlink" title="实现IOE"></a>实现IOE</h4><p>在timer.c中实现<code>AM_TIMER_UPDATE</code>的功能，框架中提供了将当前时间写入设备寄存器的部分。然后在<code>ioe/timer.c</code>里补齐读取的部分就可以了。</p>
+<p>在rtc.c中的io_read是一个宏，对其展开可以获得:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(&#123;</span><br><span class="line">AM_TIMER_UPTIME_T __io_param;</span><br><span class="line">ioe_read(AM_TIMER_UPTIME, &amp;__io_param);</span><br><span class="line">__io_param;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>调用<code>ioe_read</code>，将结果写到一段连续数据里，然后把这段连续数据当作一个struct解读再直接移出去，非常有意思的写法。</p>
+<p>这个必做题把如何运行测试的方法作为了题目的一部分，只要去看对应目录的文件内容就可以了。</p>
+</blockquote>
+<blockquote>
+<h4 id="看看NEMU跑多快"><a href="#看看NEMU跑多快" class="headerlink" title="看看NEMU跑多快"></a>看看NEMU跑多快</h4><p><del>我怎么跑挂了，返回的结果是<code>Dhrystone FAIL</code>。而且microbench的速度异常的慢，换了之后也还是慢的异常</del>。</p>
+<p>发现是klib里的实现有问题，修正之后就PASS了。<del>为什么等到我做性能测试才爆出来</del>。慢的离谱的原因是因为没有关掉trace。我的跑分结果是ref的microbench 1000分。</p>
+</blockquote>
+<blockquote>
+<h4 id="设备访问的踪迹-dtrace"><a href="#设备访问的踪迹-dtrace" class="headerlink" title="设备访问的踪迹-dtrace"></a>设备访问的踪迹-dtrace</h4><p>感觉没啥用，跳过了</p>
+</blockquote>
+<blockquote>
+<h4 id="实现IOE-2"><a href="#实现IOE-2" class="headerlink" title="实现IOE(2)"></a>实现IOE(2)</h4><p>和前面两个一样。</p>
+</blockquote>
+<blockquote>
+<h4 id="如何检测多个键同时被按下"><a href="#如何检测多个键同时被按下" class="headerlink" title="如何检测多个键同时被按下?"></a>如何检测多个键同时被按下?</h4><p>有可能是按二进制写状态，具体还不清楚。</p>
+</blockquote>
+<p>最后一个是实现VGA图像，初始化时在<code>0xa1000000</code>开始注册了一段内存映射，具体的大小是屏幕的大小乘每个像素的信息大小：<code>400x300x32</code>，不带透明度信息。</p>
+<p>GPU设备这边的文案感觉有点割裂，不知道是因为什么原因。</p>
+<p>一共定义了五个设备寄存器:<code>GPU_CONFIG</code>, <code>GPU_STATUS</code>, <code>GPU_FBREDRAW</code>, <code>GPU_MEMCPY</code>, <code>GPU_RENDER</code>。然后说NEMU中只会用到<code>GPU_CONFIG</code>：读出屏幕大小和<code>GPU_FBDRAW</code>：帧缓冲，向(x,y)坐标绘制w*h的矩形，然后有一个像素数据数组和一个是否同步。</p>
+<blockquote>
+<h4 id="实现IOE-3"><a href="#实现IOE-3" class="headerlink" title="实现IOE(3)"></a>实现IOE(3)</h4><p>文案开头的话可能是没删干净，实际上已经介绍了。这部分实现之后就可以看到全屏的颜色信息。</p>
+</blockquote>
+<blockquote>
+<h4 id="实现IOE-4"><a href="#实现IOE-4" class="headerlink" title="实现IOE(4)"></a>实现IOE(4)</h4><p>fbdraw寄存器还有一个绘制图形的功能没有实现，现在只是实现了sync效果。实现完之后可以看到动画效果。</p>
+<p><del>但是为什么会有黑边？是我实现的不对吗</del>。应该是N&#x3D;32不是整数倍的原因。</p>
+</blockquote>
+<p>声卡部分暂时跳过了。后面可能会补齐。</p>
+<h3 id="冯诺依曼计算机系统"><a href="#冯诺依曼计算机系统" class="headerlink" title="冯诺依曼计算机系统"></a>冯诺依曼计算机系统</h3><blockquote>
+<h4 id="展示你的计算机系统"><a href="#展示你的计算机系统" class="headerlink" title="展示你的计算机系统"></a>展示你的计算机系统</h4><p><del>为什么这个bad-apple是纯字符版本的</del></p>
+</blockquote>
+<blockquote>
+<h4 id="游戏是怎样运行的"><a href="#游戏是怎样运行的" class="headerlink" title="游戏是怎样运行的"></a>游戏是怎样运行的</h4><p>暂时搁置</p>
+</blockquote>
+<blockquote>
+<h4 id="在NEMU上运行NEMU"><a href="#在NEMU上运行NEMU" class="headerlink" title="在NEMU上运行NEMU"></a>在NEMU上运行NEMU</h4><p>听起来很疯狂，但是之后再补齐。</p>
+</blockquote>
+<blockquote>
+<h4 id="必答题"><a href="#必答题" class="headerlink" title="必答题"></a>必答题</h4><p>之后补齐</p>
+</blockquote>
+<blockquote>
+<p>:sunny: 温馨提示: pa2到此结束</p>
+</blockquote>
+
+        
+      </div>
+
+         
+    </div>
+    
+     
+  </div>
+  
+    
+<nav id="article-nav">
+  <a class="article-nav-btn left "
+    
+      href="/2024/04/04/NJU-PA3/"
+      title="NJU PA3"
+     >
+    <i class="fa-solid fa-angle-left"></i>
+    <p class="title-text">
+      
+        NJU PA3
+        
+    </p>
+  </a>
+  <a class="article-nav-btn right "
+    
+      href="/2024/04/04/NJU-PA1/"
+      title="NJU PA1"
+     >
+
+    <p class="title-text">
+      
+        NJU PA1
+        
+    </p>
+    <i class="fa-solid fa-angle-right"></i>
+  </a>
+</nav>
+
+
+  
+</article>
+
+
+
+
+
+    </div>
+    <div id="footer-wrapper">
+      <footer id="footer">
+  
+  <div id="footer-info" class="inner">
+    
+    &copy; 2024 Catizard<br>
+    Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & Theme <a target="_blank" rel="noopener" href="https://github.com/saicaca/hexo-theme-vivia">Vivia</a>
+  </div>
+</footer>
+
+    </div>
+    <div class="back-to-top-wrapper">
+    <button id="back-to-top-btn" class="back-to-top-btn hide" onclick="topFunction()">
+        <i class="fa-solid fa-angle-up"></i>
+    </button>
+</div>
+
+<script>
+    function topFunction() {
+        window.scroll({ top: 0, behavior: 'smooth' });
+    }
+    let btn = document.getElementById('back-to-top-btn');
+    function scrollFunction() {
+        if (document.body.scrollTop > 600 || document.documentElement.scrollTop > 600) {
+            btn.classList.remove('hide')
+        } else {
+            btn.classList.add('hide')
+        }
+    }
+    window.onscroll = function() {
+        scrollFunction();
+    }
+</script>
+
+  </div>
+  <script src="/js/light-dark-switch.js"></script>
+</body>
+</html>

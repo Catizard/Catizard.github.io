@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+
+
+<html theme="dark" showBanner="true" hasBanner="true" > 
+<link href="https://cdn.staticfile.org/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet">
+<link href="https://cdn.staticfile.org/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet">
+<link href="https://cdn.staticfile.org/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet">
+<script src="/js/color.global.min.js" ></script>
+<script src="/js/load-settings.js" ></script>
+<head>
+  <meta charset="utf-8">
+  
+  
+  
+
+  
+  <title>NJU PA4 | Catizard&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="preload" href="/css/fonts/Roboto-Regular.ttf" as="font" type="font/ttf" crossorigin="anonymous">
+  <link rel="preload" href="/css/fonts/Roboto-Bold.ttf" as="font" type="font/ttf" crossorigin="anonymous">
+
+  <meta name="description" content="多道程序批处理系统目前的缺陷是同一时刻只能执行一个程序。在一些场景下cpu会浪费，比如等待硬件的数据读取的时间里cpu要一直空转等待。所以很自然的一个新的需求就是：在操作系统上期望能“同时”运行多个程序。 接下来需要实现两个目标：  在内存中可以同时存在多个进程 在满足某些条件的情况下, 可以让执行流在这些进程之间切换  前者是之前在加载阶段做过的，程序就是一截指令序列，通过上下文赋予其意义。既然">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NJU PA4">
+<meta property="og:url" content="https://catizard.github.io/2024/04/04/NJU-PA4/index.html">
+<meta property="og:site_name" content="Catizard&#39;s blog">
+<meta property="og:description" content="多道程序批处理系统目前的缺陷是同一时刻只能执行一个程序。在一些场景下cpu会浪费，比如等待硬件的数据读取的时间里cpu要一直空转等待。所以很自然的一个新的需求就是：在操作系统上期望能“同时”运行多个程序。 接下来需要实现两个目标：  在内存中可以同时存在多个进程 在满足某些条件的情况下, 可以让执行流在这些进程之间切换  前者是之前在加载阶段做过的，程序就是一截指令序列，通过上下文赋予其意义。既然">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-04-03T19:30:41.000Z">
+<meta property="article:modified_time" content="2024-04-03T11:30:51.529Z">
+<meta property="article:author" content="Catizard">
+<meta property="article:tag" content="NJU PA">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Catizard's blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-32.png" sizes="32x32">
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-128.png" sizes="128x128">
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-180.png" sizes="180x180">
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-192.png" sizes="192x192">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-32.png" sizes="32x32">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-128.png" sizes="128x128">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-180.png" sizes="180x180">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-192.png" sizes="192x192">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+<body>
+  
+  
+    
+<div id="banner" class="">
+  <img src="/banner.jpg" itemprop="image">
+  <div id="banner-dim"></div>
+</div>
+ 
+   
+  <div id="main-grid" class="  ">
+    <div id="nav" class=""  >
+      <navbar id="navbar">
+  <nav id="title-nav">
+    <a href="/">
+      <div id="vivia-logo">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+      <div>Catizard's blog </div>
+    </a>
+  </nav>
+  <nav id="main-nav">
+    
+      <a class="main-nav-link" href="/">Home</a>
+    
+      <a class="main-nav-link" href="/archives">Archives</a>
+    
+      <a class="main-nav-link" href="/about">About</a>
+    
+  </nav>
+  <nav id="sub-nav">
+    <a id="theme-btn" class="nav-icon">
+      <span class="light-mode-icon"><svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M438.5-829.913v-48q0-17.452 11.963-29.476 11.964-12.024 29.326-12.024 17.363 0 29.537 12.024t12.174 29.476v48q0 17.452-11.963 29.476-11.964 12.024-29.326 12.024-17.363 0-29.537-12.024T438.5-829.913Zm0 747.826v-48q0-17.452 11.963-29.476 11.964-12.024 29.326-12.024 17.363 0 29.537 12.024t12.174 29.476v48q0 17.452-11.963 29.476-11.964 12.024-29.326 12.024-17.363 0-29.537-12.024T438.5-82.087ZM877.913-438.5h-48q-17.452 0-29.476-11.963-12.024-11.964-12.024-29.326 0-17.363 12.024-29.537t29.476-12.174h48q17.452 0 29.476 11.963 12.024 11.964 12.024 29.326 0 17.363-12.024 29.537T877.913-438.5Zm-747.826 0h-48q-17.452 0-29.476-11.963-12.024-11.964-12.024-29.326 0-17.363 12.024-29.537T82.087-521.5h48q17.452 0 29.476 11.963 12.024 11.964 12.024 29.326 0 17.363-12.024 29.537T130.087-438.5Zm660.174-290.87-34.239 32q-12.913 12.674-29.565 12.174-16.653-.5-29.327-13.174-12.674-12.673-12.554-28.826.12-16.152 12.794-28.826l33-35q12.913-12.674 30.454-12.674t30.163 12.847q12.709 12.846 12.328 30.826-.38 17.98-13.054 30.653ZM262.63-203.978l-32 34q-12.913 12.674-30.454 12.674t-30.163-12.847q-12.709-12.846-12.328-30.826.38-17.98 13.054-30.653l33.239-31q12.913-12.674 29.565-12.174 16.653.5 29.327 13.174 12.674 12.673 12.554 28.826-.12 16.152-12.794 28.826Zm466.74 33.239-32-33.239q-12.674-12.913-12.174-29.565.5-16.653 13.174-29.327 12.673-12.674 28.826-13.054 16.152-.38 28.826 12.294l35 33q12.674 12.913 12.674 30.454t-12.847 30.163q-12.846 12.709-30.826 12.328-17.98-.38-30.653-13.054ZM203.978-697.37l-34-33q-12.674-12.913-13.174-29.945-.5-17.033 12.174-29.707t31.326-13.293q18.653-.62 31.326 13.054l32 34.239q11.674 12.913 11.174 29.565-.5 16.653-13.174 29.327-12.673 12.674-28.826 12.554-16.152-.12-28.826-12.794ZM480-240q-100 0-170-70t-70-170q0-100 70-170t170-70q100 0 170 70t70 170q0 100-70 170t-170 70Zm-.247-82q65.703 0 111.475-46.272Q637-414.544 637-480.247t-45.525-111.228Q545.95-637 480.247-637t-111.475 45.525Q323-545.95 323-480.247t45.525 111.975Q414.05-322 479.753-322ZM481-481Z"/></svg></span>
+      <span class="dark-mode-icon"><svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M480.239-116.413q-152.63 0-258.228-105.478Q116.413-327.37 116.413-480q0-130.935 77.739-227.435t206.304-125.043q43.022-9.631 63.87 10.869t3.478 62.805q-8.891 22.043-14.315 44.463-5.424 22.42-5.424 46.689 0 91.694 64.326 155.879 64.325 64.186 156.218 64.186 24.369 0 46.978-4.946 22.609-4.945 44.413-14.076 42.826-17.369 62.967 1.142 20.142 18.511 10.511 61.054Q807.174-280 712.63-198.206q-94.543 81.793-232.391 81.793Zm0-95q79.783 0 143.337-40.217 63.554-40.218 95.793-108.283-15.608 4.044-31.097 5.326-15.49 1.283-31.859.805-123.706-4.066-210.777-90.539-87.071-86.473-91.614-212.092-.24-16.369.923-31.978 1.164-15.609 5.446-30.978-67.826 32.478-108.282 96.152Q211.652-559.543 211.652-480q0 111.929 78.329 190.258 78.329 78.329 190.258 78.329ZM466.13-465.891Z"/></svg></span>
+    </a>
+    
+      <a id="nav-rss-link" class="nav-icon mobile-hide" href="/atom.xml" title="RSS 订阅">
+        <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M198-120q-25.846 0-44.23-18.384-18.384-18.385-18.384-44.23 0-25.846 18.384-44.23 18.384-18.385 44.23-18.385 25.846 0 44.23 18.385 18.384 18.384 18.384 44.23 0 25.845-18.384 44.23Q223.846-120 198-120Zm538.385 0q-18.846 0-32.923-13.769-14.076-13.769-15.922-33.23-8.692-100.616-51.077-188.654-42.385-88.039-109.885-155.539-67.5-67.501-155.539-109.885Q283-663.462 182.385-672.154q-19.461-1.846-33.23-16.23-13.769-14.385-13.769-33.846t14.076-32.922q14.077-13.461 32.923-12.23 120.076 8.692 226.038 58.768 105.961 50.077 185.73 129.846 79.769 79.769 129.846 185.731 50.077 105.961 58.769 226.038 1.231 18.846-12.538 32.922Q756.461-120 736.385-120Zm-252 0q-18.231 0-32.423-13.461t-18.653-33.538Q418.155-264.23 348.886-333.5q-69.27-69.27-166.501-84.423-20.077-4.462-33.538-18.961-13.461-14.5-13.461-33.346 0-19.076 13.884-33.23 13.884-14.153 33.115-10.922 136.769 15.384 234.384 112.999 97.615 97.615 112.999 234.384 3.231 19.23-10.538 33.115Q505.461-120 484.385-120Z"/></svg>
+      </a>
+    
+    <div id="nav-menu-btn" class="nav-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M177.37-252.282q-17.453 0-29.477-11.964-12.024-11.963-12.024-29.326t12.024-29.537q12.024-12.174 29.477-12.174h605.26q17.453 0 29.477 11.964 12.024 11.963 12.024 29.326t-12.024 29.537q-12.024 12.174-29.477 12.174H177.37Zm0-186.218q-17.453 0-29.477-11.963-12.024-11.964-12.024-29.326 0-17.363 12.024-29.537T177.37-521.5h605.26q17.453 0 29.477 11.963 12.024 11.964 12.024 29.326 0 17.363-12.024 29.537T782.63-438.5H177.37Zm0-186.217q-17.453 0-29.477-11.964-12.024-11.963-12.024-29.326t12.024-29.537q12.024-12.174 29.477-12.174h605.26q17.453 0 29.477 11.964 12.024 11.963 12.024 29.326t-12.024 29.537q-12.024 12.174-29.477 12.174H177.37Z"/></svg>
+    </div>
+  </nav>
+</navbar>
+<div id="nav-dropdown" class="hidden">
+  <div id="dropdown-link-list">
+    
+      <a class="nav-dropdown-link" href="/">Home</a>
+    
+      <a class="nav-dropdown-link" href="/archives">Archives</a>
+    
+      <a class="nav-dropdown-link" href="/about">About</a>
+    
+    
+      <a class="nav-dropdown-link" href="/atom.xml" title="RSS 订阅">RSS</a>
+     
+    </div>
+</div>
+<script>
+  let dropdownBtn = document.getElementById("nav-menu-btn");
+  let dropdownEle = document.getElementById("nav-dropdown");
+  dropdownBtn.onclick = function() {
+    dropdownEle.classList.toggle("hidden");
+  }
+</script>
+    </div>
+    <div id="sidebar-wrapper">
+      <sidebar id="sidebar">
+  
+    <div class="widget-wrap">
+  <div class="info-card">
+    <div class="avatar">
+      
+      <div class="img-dim"></div>
+    </div>
+    <div class="info">
+      <div class="username">Catizard </div>
+      <div class="dot"></div>
+      <div class="subtitle"> </div>
+      <div class="link-list">
+        
+          <a class="link-btn" target="_blank" rel="noopener" href="https://github.com/Catizard" title="GitHub"><i class="fa-brands fa-github"></i></a>
+         
+      </div>  
+    </div>
+  </div>
+</div>
+
+  
+  <div class="sticky">
+    
+      
+
+
+
+    
+      
+  <div class="widget-wrap">
+    <div class="widget">
+      <h3 class="widget-title">标签</h3>
+      <ul class="widget-tag-list" itemprop="keywords"><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/NJU-PA/" rel="tag">NJU PA</a></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</sidebar>
+    </div>
+    <div id="content-body">
+       
+
+
+<article id="post-NJU-PA4" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  
+    
+   
+  <div class="article-inner">
+    <div class="article-main">
+      <header class="article-header">
+        
+<div class="main-title-bar">
+  <div class="main-title-dot"></div>
+  
+    
+      <h1 class="p-name article-title" itemprop="headline name">
+        NJU PA4
+      </h1>
+    
+  
+</div>
+
+        <div class='meta-info-bar'>
+          <div class="meta-info">
+  <time class="dt-published" datetime="2024-04-03T19:30:41.000Z" itemprop="datePublished">2024-04-03</time>
+</div>
+          <div class="need-seperator meta-info">
+            <div class="meta-cate-flex">
+  
+    未分类 
+   
+</div>
+  
+          </div>
+          <div class="wordcount need-seperator meta-info">
+            3k 词 
+          </div>
+        </div>
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NJU-PA/" rel="tag">NJU PA</a></li></ul>
+
+      </header>
+      <div class="e-content article-entry" itemprop="articleBody">
+        
+          <h2 id="多道程序"><a href="#多道程序" class="headerlink" title="多道程序"></a>多道程序</h2><p>批处理系统目前的缺陷是同一时刻只能执行一个程序。在一些场景下cpu会浪费，比如等待硬件的数据读取的时间里cpu要一直空转等待。所以很自然的一个新的需求就是：在操作系统上期望能“同时”运行多个程序。</p>
+<p>接下来需要实现两个目标：</p>
+<ul>
+<li>在内存中可以同时存在多个进程</li>
+<li>在满足某些条件的情况下, 可以让执行流在这些进程之间切换</li>
+</ul>
+<p>前者是之前在加载阶段做过的，程序就是一截指令序列，通过上下文赋予其意义。既然要运行多个自然就要有能加载多个的能力。</p>
+<blockquote>
+<h5 id="为什么需要使用不同的栈空间"><a href="#为什么需要使用不同的栈空间" class="headerlink" title="为什么需要使用不同的栈空间?"></a>为什么需要使用不同的栈空间?</h5><p>思考一下目前阶段程序所使用的栈空间，是在<code>am</code>的链接脚本中定义的，他直接划分了硬件提供的内存空间：将前面一部分分配为栈区，后面全部为堆区。这个堆栈是<code>am</code>这个运行环境提供给在上面运行的<code>nanos-lite</code>使用的，而目前<code>nanos-lite</code>加载应用程序是直接的内存拷贝，运行应用程序是简单的函数调用，让pc指针走到内存中特定的位置然后加载指令</p>
+</blockquote>
+<h3 id="上下文切换"><a href="#上下文切换" class="headerlink" title="上下文切换"></a>上下文切换</h3><p>之前在<code>CTE</code>里是通过栈指针恢复数据的：将当前的数据保存到栈上，恢复时让函数参数的寄存器指向这里，就能获取到当时保存的数据了。</p>
+<p>对于多个进程的切换，在这里可以偷梁换柱：A进程的数据留在那里，将栈指针切换到B进程保留数据的位置，这样还原的上下文就是B进程的了。在之后可以用类似的方式回到A进程的执行。</p>
+<p>如果把栈空间看作是一个很大的连续的内存空间，在<code>nanos-lite</code>层从A进程切换到B进程的时候，其实不太好知道B进程的数据此时在哪里：因为当前的栈里保存的数据是A的数据在最顶上，并不知道B进程的数据在哪里；一个更麻烦的事情是，如果B进程已经加载过了，那么他理论上在栈空间里确实会有一个位置保存了当时的数据，但是如果他还没有运行过呢？数据在哪里。这里涉及到一个初始状态的问题。</p>
+<p>在<code>nanos-lite</code>层引入对进程的抽象：进程控制块<code>PCB</code>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">  <span class="type">uint8_t</span> <span class="built_in">stack</span>[STACK_SIZE] PG_ALIGN;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    Context *cp;</span><br><span class="line">    AddrSpace as;</span><br><span class="line">    <span class="comment">// we do not free memory, so use `max_brk&#x27; to determine when to call _map()</span></span><br><span class="line">    <span class="type">uintptr_t</span> max_brk;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125; PCB;</span><br></pre></td></tr></table></figure>
+
+<p>每个进程有自己的栈空间，通过union的特性将一个cp指针写到栈底。</p>
+<p>在<code>nanos-lite</code>层管理进程，当需要切换到B进程的时候，通过B进程对应的<code>PCB</code>中记录的cp指针信息即可还原。</p>
+<p>接下来解决刚刚提到的初始状态的问题：当我们加载了一个进程之后，如何切换到进行运行？</p>
+<h3 id="内核线程"><a href="#内核线程" class="headerlink" title="内核线程"></a>内核线程</h3><p>只需要对刚刚创建的进程的内存空间里手动放置一个合适的上下文即可。</p>
+<blockquote>
+<h5 id="为什么不叫”内核进程”"><a href="#为什么不叫”内核进程”" class="headerlink" title="为什么不叫”内核进程”?"></a>为什么不叫”内核进程”?</h5><p>其实我觉得这个问题有点钓鱼，他可以谈很多的东西。之后补吧</p>
+</blockquote>
+<blockquote>
+<h5 id="实现上下文切换"><a href="#实现上下文切换" class="headerlink" title="实现上下文切换"></a>实现上下文切换</h5><ul>
+<li><p>CTE的<code>kcontext</code>函数：内存操作，将mepc写进去就可以了。</p>
+</li>
+<li><p>Nanos-lite的<code>context_kload</code>函数：将kstack提供的栈空间传给<code>kcontext</code>，然后将上下文的位置写到pcb里即可。</p>
+</li>
+<li><p>Nanos-lite的<code>schedule</code>函数：按文档里写，目前只会切换到进程块0。</p>
+</li>
+<li><p>在Nanos-lite收到<code>EVENT_YIELD</code>事件后, 调用<code>schedule</code>并返回新的上下文：直接<code>c=schedule(c)</code>即可，然后返回出c即可。</p>
+</li>
+<li><p>修改CTE中<code>__am_asm_trap()</code>的实现, 使得从<code>__am_irq_handle()</code>返回后, 先将栈顶指针切换到新进程的上下文结构, 然后才恢复上下文, 从而完成上下文切换的本质操作：将a0寄存器的值写到sp指针即可。</p>
+</li>
+</ul>
+</blockquote>
+<p>梳理一下整个过程：</p>
+<ul>
+<li><code>Nanos-lite</code>层，声明<code>static PCB pcb[MAX_NR_PROC]</code>数组，用来存放在操作系统层的进程信息，最多<code>MAX_NR_PROC</code>个进程。每个进程块此时已经分配了一段内存空间作内核线程栈，在这段连续的内存上最开始的位置有一些额外的信息。栈是从高地址走到低地址的，在实验中假设不会发生栈溢出。（等等，如果溢出了我们怎么知道？）</li>
+<li><code>Nanos-lite</code>层，调用<code>init_proc</code>时，通过<code>context_kload</code>将一个函数的信息加载到一个进程块里。</li>
+<li><code>AM</code>层，由上面调用<code>kcontext</code>，传入一段内存空间，帮助构造一个内核线程的初始状态：放置一个合适的<code>Context</code>对象在内核栈的末尾位置。然后将这个上下文数据返回回去。</li>
+<li><code>Nanos-lite</code>层，将从<code>AM</code>层获得的上下文指针记录到进程块里。</li>
+<li>此时手上的一个进程块就初始化完毕了，它的栈顶位置有一个<code>Context</code>结构，栈底有一个<code>cp</code>指针指向这个<code>Context</code>对象。到这里我们就完成了加载的步骤。</li>
+<li><code>Nanos-lite</code>层，执行<code>yield</code>函数时触发系统调用。</li>
+<li><code>AM</code>层，通过<code>ecall</code>触发<code>yield</code>的系统调用，进入<code>__am_asm_trap</code>。此时的栈指针属于正在运行的<code>Nanos-lite</code>，保存其运行状态到内核栈后跳转到<code>__am_irq_handle</code>，打包<code>SYS_yield</code>事件。</li>
+<li><code>Nanos-lite</code>层，执行回调函数处理事件，偷梁换柱<code>c = schedule(c)</code>将使用的上下文数据切换到进程块0然后返回。</li>
+<li><code>AM</code>层，将返回值所在的寄存器<code>a0</code>的数据移动给<code>sp</code>，接下来就恢复了预设好的进程块0的上下文结构。</li>
+<li><code>NEMU</code>层，cpu将执行<code>mret</code>指令之后的的mepc指针写到pc上，开始执行预设好的进程块0的指令。</li>
+</ul>
+<p>至此就成功地跳转(<del>调用</del>)到了<code>hello</code>函数。</p>
+<p>这里在调用<code>kcontext</code>的时候需要为之指定所要用的内存空间，我一开始在思考开头的部分是否要去掉多余的部分，后来想到如果函数栈已经走到这里了，多几个少几个是否发生覆盖已经没有太大意义了。所以实现的时候就直接将整个连续的范围都给了<code>kcontext</code>去使用。</p>
+<p>这里放在内存区域的<code>end</code>位置是构造的，因为栈的增长是从内存高的位置走到低的位置。</p>
+<blockquote>
+<h5 id="实现上下文切换-2"><a href="#实现上下文切换-2" class="headerlink" title="实现上下文切换(2)"></a>实现上下文切换(2)</h5><p>参数写到c-&gt;GPR2即可。</p>
+<p>因为shcedule的实现，这里会看到交替打印的结果。</p>
+</blockquote>
+<h3 id="用户进程"><a href="#用户进程" class="headerlink" title="用户进程"></a>用户进程</h3><p>在之前执行加载的用户程序的时候，使用的是函数直接跳转执行的方式，因此使用的是<code>Nanos-lite</code>的栈，也就是由<code>am</code>提供的。在多道程序的背景下，如果有一个损坏的程序导致了内核栈的数据出错，那么其他共用内核栈的用户程序也会出错。</p>
+<p>为了解决这个问题，需要给用户程序提供隔离性：给用户程序分配用户内存空间，代码数据堆栈都应该位于用户区而不是内核区，并且用户程序不能影响其他用户程序的运行。</p>
+<blockquote>
+<p>:question:内核栈的用途</p>
+<p>是的，用户程序需要自己的堆栈来实现隔离性，但是每个进程都有的内核栈是给谁用的？<code>Nanos-lite</code>使用的是<code>AM</code>提供的栈区，每个进程分配的内核栈是否落在这个范围里？</p>
+</blockquote>
+<p>在<code>PCB</code>中分配的栈是内存栈，位于用户区的栈称作用户栈。目前用户栈的分配方式是直接将堆区末尾的一部分作为用户栈。</p>
+<blockquote>
+<p>:question:哦等等，这样分配内存其他用户进程怎么办</p>
+<p>会产生相互覆盖的问题，这里缺少了一个分配内存的方式，只是简单的划分了一下不用的部分给他用而已。</p>
+</blockquote>
+<blockquote>
+<h5 id="实现多道程序系统"><a href="#实现多道程序系统" class="headerlink" title="实现多道程序系统"></a>实现多道程序系统</h5><p>有一说一，之前没提过<code>Navy-apps</code>里的<code>_start</code>啊。</p>
+<p>怎么证明确实在使用用户栈而不是内核栈？</p>
+</blockquote>
+<blockquote>
+<h5 id="一山不能藏二虎"><a href="#一山不能藏二虎" class="headerlink" title="一山不能藏二虎?"></a>一山不能藏二虎?</h5><p>两个用户程序用的用户栈都是<code>heap.end</code>，互相冲突了。</p>
+</blockquote>
+
+        
+      </div>
+
+         
+    </div>
+    
+     
+  </div>
+  
+    
+<nav id="article-nav">
+  <a class="article-nav-btn left  disabled "
+     >
+    <i class="fa-solid fa-angle-left"></i>
+    <p class="title-text">
+        
+    </p>
+  </a>
+  <a class="article-nav-btn right "
+    
+      href="/2024/04/04/NJU-PA3/"
+      title="NJU PA3"
+     >
+
+    <p class="title-text">
+      
+        NJU PA3
+        
+    </p>
+    <i class="fa-solid fa-angle-right"></i>
+  </a>
+</nav>
+
+
+  
+</article>
+
+
+
+
+
+    </div>
+    <div id="footer-wrapper">
+      <footer id="footer">
+  
+  <div id="footer-info" class="inner">
+    
+    &copy; 2024 Catizard<br>
+    Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & Theme <a target="_blank" rel="noopener" href="https://github.com/saicaca/hexo-theme-vivia">Vivia</a>
+  </div>
+</footer>
+
+    </div>
+    <div class="back-to-top-wrapper">
+    <button id="back-to-top-btn" class="back-to-top-btn hide" onclick="topFunction()">
+        <i class="fa-solid fa-angle-up"></i>
+    </button>
+</div>
+
+<script>
+    function topFunction() {
+        window.scroll({ top: 0, behavior: 'smooth' });
+    }
+    let btn = document.getElementById('back-to-top-btn');
+    function scrollFunction() {
+        if (document.body.scrollTop > 600 || document.documentElement.scrollTop > 600) {
+            btn.classList.remove('hide')
+        } else {
+            btn.classList.add('hide')
+        }
+    }
+    window.onscroll = function() {
+        scrollFunction();
+    }
+</script>
+
+  </div>
+  <script src="/js/light-dark-switch.js"></script>
+</body>
+</html>

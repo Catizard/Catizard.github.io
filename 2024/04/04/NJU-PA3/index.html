@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+
+
+<html theme="dark" showBanner="true" hasBanner="true" > 
+<link href="https://cdn.staticfile.org/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet">
+<link href="https://cdn.staticfile.org/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet">
+<link href="https://cdn.staticfile.org/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet">
+<script src="/js/color.global.min.js" ></script>
+<script src="/js/load-settings.js" ></script>
+<head>
+  <meta charset="utf-8">
+  
+  
+  
+
+  
+  <title>NJU PA3 | Catizard&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="preload" href="/css/fonts/Roboto-Regular.ttf" as="font" type="font/ttf" crossorigin="anonymous">
+  <link rel="preload" href="/css/fonts/Roboto-Bold.ttf" as="font" type="font/ttf" crossorigin="anonymous">
+
+  <meta name="description" content="最简单的操作系统批处理系统最简单的操作系统：一个后台程序，每次加载一个前台程序运行，结束了之后换另外一个。 目标:  用户程序结束执行之后，回到操作系统处继续运行 操作系统能加载在某些位置的用户程序执行  对于前者，需要有一个执行流切换机制，但是如果直接使用jal指令跳转的话就显得太随意了，在硬件上有对应的限制：如果执行了非当前权限的代码就会导致陷入操作系统内核然后交由操作系统执行。 穿越时空的旅">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NJU PA3">
+<meta property="og:url" content="https://catizard.github.io/2024/04/04/NJU-PA3/index.html">
+<meta property="og:site_name" content="Catizard&#39;s blog">
+<meta property="og:description" content="最简单的操作系统批处理系统最简单的操作系统：一个后台程序，每次加载一个前台程序运行，结束了之后换另外一个。 目标:  用户程序结束执行之后，回到操作系统处继续运行 操作系统能加载在某些位置的用户程序执行  对于前者，需要有一个执行流切换机制，但是如果直接使用jal指令跳转的话就显得太随意了，在硬件上有对应的限制：如果执行了非当前权限的代码就会导致陷入操作系统内核然后交由操作系统执行。 穿越时空的旅">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-04-03T19:27:42.000Z">
+<meta property="article:modified_time" content="2024-04-03T11:30:29.699Z">
+<meta property="article:author" content="Catizard">
+<meta property="article:tag" content="NJU PA">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Catizard's blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-32.png" sizes="32x32">
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-128.png" sizes="128x128">
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-180.png" sizes="180x180">
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-192.png" sizes="192x192">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-32.png" sizes="32x32">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-128.png" sizes="128x128">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-180.png" sizes="180x180">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-192.png" sizes="192x192">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+<body>
+  
+  
+    
+<div id="banner" class="">
+  <img src="/banner.jpg" itemprop="image">
+  <div id="banner-dim"></div>
+</div>
+ 
+   
+  <div id="main-grid" class="  ">
+    <div id="nav" class=""  >
+      <navbar id="navbar">
+  <nav id="title-nav">
+    <a href="/">
+      <div id="vivia-logo">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+      <div>Catizard's blog </div>
+    </a>
+  </nav>
+  <nav id="main-nav">
+    
+      <a class="main-nav-link" href="/">Home</a>
+    
+      <a class="main-nav-link" href="/archives">Archives</a>
+    
+      <a class="main-nav-link" href="/about">About</a>
+    
+  </nav>
+  <nav id="sub-nav">
+    <a id="theme-btn" class="nav-icon">
+      <span class="light-mode-icon"><svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M438.5-829.913v-48q0-17.452 11.963-29.476 11.964-12.024 29.326-12.024 17.363 0 29.537 12.024t12.174 29.476v48q0 17.452-11.963 29.476-11.964 12.024-29.326 12.024-17.363 0-29.537-12.024T438.5-829.913Zm0 747.826v-48q0-17.452 11.963-29.476 11.964-12.024 29.326-12.024 17.363 0 29.537 12.024t12.174 29.476v48q0 17.452-11.963 29.476-11.964 12.024-29.326 12.024-17.363 0-29.537-12.024T438.5-82.087ZM877.913-438.5h-48q-17.452 0-29.476-11.963-12.024-11.964-12.024-29.326 0-17.363 12.024-29.537t29.476-12.174h48q17.452 0 29.476 11.963 12.024 11.964 12.024 29.326 0 17.363-12.024 29.537T877.913-438.5Zm-747.826 0h-48q-17.452 0-29.476-11.963-12.024-11.964-12.024-29.326 0-17.363 12.024-29.537T82.087-521.5h48q17.452 0 29.476 11.963 12.024 11.964 12.024 29.326 0 17.363-12.024 29.537T130.087-438.5Zm660.174-290.87-34.239 32q-12.913 12.674-29.565 12.174-16.653-.5-29.327-13.174-12.674-12.673-12.554-28.826.12-16.152 12.794-28.826l33-35q12.913-12.674 30.454-12.674t30.163 12.847q12.709 12.846 12.328 30.826-.38 17.98-13.054 30.653ZM262.63-203.978l-32 34q-12.913 12.674-30.454 12.674t-30.163-12.847q-12.709-12.846-12.328-30.826.38-17.98 13.054-30.653l33.239-31q12.913-12.674 29.565-12.174 16.653.5 29.327 13.174 12.674 12.673 12.554 28.826-.12 16.152-12.794 28.826Zm466.74 33.239-32-33.239q-12.674-12.913-12.174-29.565.5-16.653 13.174-29.327 12.673-12.674 28.826-13.054 16.152-.38 28.826 12.294l35 33q12.674 12.913 12.674 30.454t-12.847 30.163q-12.846 12.709-30.826 12.328-17.98-.38-30.653-13.054ZM203.978-697.37l-34-33q-12.674-12.913-13.174-29.945-.5-17.033 12.174-29.707t31.326-13.293q18.653-.62 31.326 13.054l32 34.239q11.674 12.913 11.174 29.565-.5 16.653-13.174 29.327-12.673 12.674-28.826 12.554-16.152-.12-28.826-12.794ZM480-240q-100 0-170-70t-70-170q0-100 70-170t170-70q100 0 170 70t70 170q0 100-70 170t-170 70Zm-.247-82q65.703 0 111.475-46.272Q637-414.544 637-480.247t-45.525-111.228Q545.95-637 480.247-637t-111.475 45.525Q323-545.95 323-480.247t45.525 111.975Q414.05-322 479.753-322ZM481-481Z"/></svg></span>
+      <span class="dark-mode-icon"><svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M480.239-116.413q-152.63 0-258.228-105.478Q116.413-327.37 116.413-480q0-130.935 77.739-227.435t206.304-125.043q43.022-9.631 63.87 10.869t3.478 62.805q-8.891 22.043-14.315 44.463-5.424 22.42-5.424 46.689 0 91.694 64.326 155.879 64.325 64.186 156.218 64.186 24.369 0 46.978-4.946 22.609-4.945 44.413-14.076 42.826-17.369 62.967 1.142 20.142 18.511 10.511 61.054Q807.174-280 712.63-198.206q-94.543 81.793-232.391 81.793Zm0-95q79.783 0 143.337-40.217 63.554-40.218 95.793-108.283-15.608 4.044-31.097 5.326-15.49 1.283-31.859.805-123.706-4.066-210.777-90.539-87.071-86.473-91.614-212.092-.24-16.369.923-31.978 1.164-15.609 5.446-30.978-67.826 32.478-108.282 96.152Q211.652-559.543 211.652-480q0 111.929 78.329 190.258 78.329 78.329 190.258 78.329ZM466.13-465.891Z"/></svg></span>
+    </a>
+    
+      <a id="nav-rss-link" class="nav-icon mobile-hide" href="/atom.xml" title="RSS 订阅">
+        <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M198-120q-25.846 0-44.23-18.384-18.384-18.385-18.384-44.23 0-25.846 18.384-44.23 18.384-18.385 44.23-18.385 25.846 0 44.23 18.385 18.384 18.384 18.384 44.23 0 25.845-18.384 44.23Q223.846-120 198-120Zm538.385 0q-18.846 0-32.923-13.769-14.076-13.769-15.922-33.23-8.692-100.616-51.077-188.654-42.385-88.039-109.885-155.539-67.5-67.501-155.539-109.885Q283-663.462 182.385-672.154q-19.461-1.846-33.23-16.23-13.769-14.385-13.769-33.846t14.076-32.922q14.077-13.461 32.923-12.23 120.076 8.692 226.038 58.768 105.961 50.077 185.73 129.846 79.769 79.769 129.846 185.731 50.077 105.961 58.769 226.038 1.231 18.846-12.538 32.922Q756.461-120 736.385-120Zm-252 0q-18.231 0-32.423-13.461t-18.653-33.538Q418.155-264.23 348.886-333.5q-69.27-69.27-166.501-84.423-20.077-4.462-33.538-18.961-13.461-14.5-13.461-33.346 0-19.076 13.884-33.23 13.884-14.153 33.115-10.922 136.769 15.384 234.384 112.999 97.615 97.615 112.999 234.384 3.231 19.23-10.538 33.115Q505.461-120 484.385-120Z"/></svg>
+      </a>
+    
+    <div id="nav-menu-btn" class="nav-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M177.37-252.282q-17.453 0-29.477-11.964-12.024-11.963-12.024-29.326t12.024-29.537q12.024-12.174 29.477-12.174h605.26q17.453 0 29.477 11.964 12.024 11.963 12.024 29.326t-12.024 29.537q-12.024 12.174-29.477 12.174H177.37Zm0-186.218q-17.453 0-29.477-11.963-12.024-11.964-12.024-29.326 0-17.363 12.024-29.537T177.37-521.5h605.26q17.453 0 29.477 11.963 12.024 11.964 12.024 29.326 0 17.363-12.024 29.537T782.63-438.5H177.37Zm0-186.217q-17.453 0-29.477-11.964-12.024-11.963-12.024-29.326t12.024-29.537q12.024-12.174 29.477-12.174h605.26q17.453 0 29.477 11.964 12.024 11.963 12.024 29.326t-12.024 29.537q-12.024 12.174-29.477 12.174H177.37Z"/></svg>
+    </div>
+  </nav>
+</navbar>
+<div id="nav-dropdown" class="hidden">
+  <div id="dropdown-link-list">
+    
+      <a class="nav-dropdown-link" href="/">Home</a>
+    
+      <a class="nav-dropdown-link" href="/archives">Archives</a>
+    
+      <a class="nav-dropdown-link" href="/about">About</a>
+    
+    
+      <a class="nav-dropdown-link" href="/atom.xml" title="RSS 订阅">RSS</a>
+     
+    </div>
+</div>
+<script>
+  let dropdownBtn = document.getElementById("nav-menu-btn");
+  let dropdownEle = document.getElementById("nav-dropdown");
+  dropdownBtn.onclick = function() {
+    dropdownEle.classList.toggle("hidden");
+  }
+</script>
+    </div>
+    <div id="sidebar-wrapper">
+      <sidebar id="sidebar">
+  
+    <div class="widget-wrap">
+  <div class="info-card">
+    <div class="avatar">
+      
+      <div class="img-dim"></div>
+    </div>
+    <div class="info">
+      <div class="username">Catizard </div>
+      <div class="dot"></div>
+      <div class="subtitle"> </div>
+      <div class="link-list">
+        
+          <a class="link-btn" target="_blank" rel="noopener" href="https://github.com/Catizard" title="GitHub"><i class="fa-brands fa-github"></i></a>
+         
+      </div>  
+    </div>
+  </div>
+</div>
+
+  
+  <div class="sticky">
+    
+      
+
+
+
+    
+      
+  <div class="widget-wrap">
+    <div class="widget">
+      <h3 class="widget-title">标签</h3>
+      <ul class="widget-tag-list" itemprop="keywords"><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/NJU-PA/" rel="tag">NJU PA</a></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</sidebar>
+    </div>
+    <div id="content-body">
+       
+
+
+<article id="post-NJU-PA3" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  
+    
+   
+  <div class="article-inner">
+    <div class="article-main">
+      <header class="article-header">
+        
+<div class="main-title-bar">
+  <div class="main-title-dot"></div>
+  
+    
+      <h1 class="p-name article-title" itemprop="headline name">
+        NJU PA3
+      </h1>
+    
+  
+</div>
+
+        <div class='meta-info-bar'>
+          <div class="meta-info">
+  <time class="dt-published" datetime="2024-04-03T19:27:42.000Z" itemprop="datePublished">2024-04-03</time>
+</div>
+          <div class="need-seperator meta-info">
+            <div class="meta-cate-flex">
+  
+    未分类 
+   
+</div>
+  
+          </div>
+          <div class="wordcount need-seperator meta-info">
+            7.4k 词 
+          </div>
+        </div>
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NJU-PA/" rel="tag">NJU PA</a></li></ul>
+
+      </header>
+      <div class="e-content article-entry" itemprop="articleBody">
+        
+          <h2 id="最简单的操作系统"><a href="#最简单的操作系统" class="headerlink" title="最简单的操作系统"></a>最简单的操作系统</h2><h3 id="批处理系统"><a href="#批处理系统" class="headerlink" title="批处理系统"></a>批处理系统</h3><p>最简单的操作系统：一个后台程序，每次加载一个前台程序运行，结束了之后换另外一个。</p>
+<p>目标:</p>
+<ul>
+<li>用户程序结束执行之后，回到操作系统处继续运行</li>
+<li>操作系统能加载在某些位置的用户程序执行</li>
+</ul>
+<p>对于前者，需要有一个执行流切换机制，但是如果直接使用jal指令跳转的话就显得太随意了，在硬件上有对应的限制：如果执行了非当前权限的代码就会导致陷入操作系统内核然后交由操作系统执行。</p>
+<h3 id="穿越时空的旅程"><a href="#穿越时空的旅程" class="headerlink" title="穿越时空的旅程"></a>穿越时空的旅程</h3><p>除了被动地进入操作系统之外，还需要主动地陷入操作系统：有的操作不应由用户程序执行，必须请求操作系统。当用户程序执行了一条自陷指令之后，跳转到操作系统预先设定好的位置执行特定的代码。大部分ISA不区分异常和自陷。</p>
+<p>对于riscv32:</p>
+<ul>
+<li>将当前pc写入mepc寄存器</li>
+<li>在mcause寄存器中设置异常号</li>
+<li>从mtvec寄存器中取出异常入口地址</li>
+<li>跳转到异常入口地址</li>
+</ul>
+<p>这部分由硬件完成。</p>
+<blockquote>
+<h4 id="特殊的原因-建议二周目思考"><a href="#特殊的原因-建议二周目思考" class="headerlink" title="特殊的原因? (建议二周目思考)"></a>特殊的原因? (建议二周目思考)</h4><p>如果由软件保存，用户程序可能可以写入特定的值来让操作系统执行特定的操作来破坏操作系统。</p>
+</blockquote>
+<p>硬件提供的在操作系统和用户程序之间切换操作流的过程也是上下文切换。为了抽象上下文管理，操作系统的处理过程中需要哪些信息？</p>
+<ul>
+<li>本次切换的原因，异常或自陷等</li>
+<li>用户程序的上下文，之后返回用户程序</li>
+</ul>
+<p>切换原因：抽象成一个事件。上下文：与isa强相关。</p>
+<blockquote>
+<h4 id="实现异常响应机制"><a href="#实现异常响应机制" class="headerlink" title="实现异常响应机制"></a>实现异常响应机制</h4></blockquote>
+<p>目前的过程是：用户程序-&gt;系统调用-&gt;执行ecall指令-&gt;跳转到<code>__am_asm_trap</code>-&gt;执行流到硬件。</p>
+<p>在执行流切换到硬件之前，还有一些事情要处理：程序的执行无可避免的要用到cpu的寄存器，因此需要保存用户程序的寄存器到内存里，然后在硬件层执行完毕后还原现场。riscv32是通过sw指令保存上下文，具体地实现方式是写到sp寄存器指向的内存位置（即内核栈空间）。</p>
+<blockquote>
+<h4 id="question-等等，栈空间在哪里"><a href="#question-等等，栈空间在哪里" class="headerlink" title=":question: 等等，栈空间在哪里"></a>:question: 等等，栈空间在哪里</h4><p>首先栈空间肯定在内存上，其次其具体的位置定义在am的链接脚本里。</p>
+<p>栈顶&#x3D;堆起始位置&#x3D;<code>0x1000</code>，栈底&#x3D;<code>0x8000</code>。在am的<code>Start.S</code>中将<code>_stack_pointer</code>赋值给<code>sp</code>寄存器。</p>
+</blockquote>
+<blockquote>
+<h4 id="重新组织Context结构体"><a href="#重新组织Context结构体" class="headerlink" title="重新组织Context结构体"></a>重新组织Context结构体</h4><ul>
+<li>Trap.S的执行过程:<ul>
+<li><code>addi sp, sp, -CONTEXT_SIZE</code>，让sp指针向下增长<code>CONTEXT_SIZE</code>的，预留出空位</li>
+<li><code>MAP(REGS, PUSH)</code>，对定义的寄存器列表执行<code>PUSH</code>，展开之后类似于调用<code>PUSH(1), PUSH(3), PUSH(4)...</code>。然后将<code>PUSH</code>展开，就是顺序的写入sp偏移的位置。调用中不存在0和2，其中0号寄存器永远是0，不需要保存或者恢复；2号寄存器是sp自己，也不需要恢复。当然还是预留了这些数据的位置。</li>
+<li>后面是三个CSR寄存器，按偏移量顺序是<code>CAUSE, STATUS, EPC</code></li>
+<li>将寄存器设置好之后，额外的设置一下<code>mstatus</code>寄存器以通过diff</li>
+<li><code>mv a0, sp</code>，将sp指针的地址放到参数寄存器上，手动设置函数的参数</li>
+<li><code>jal __am_irq_handle</code>跳转到 <code>__am_irq_handle</code>函数处执行，这个函数有一个类型为<code>Context*</code>的参数，就是此时a0寄存器的数据</li>
+<li>从<code>__am_irq_handle</code>返回后，对称的将sp对应的内存地址上的数据还原出来</li>
+<li><code>addi sp, sp, CONTEXT_SIZE</code>回到一开始的状态</li>
+</ul>
+</li>
+</ul>
+<p>等等，所谓的地址空间的信息在哪里？为什么只在Context里面看到了一个指针？文档里说riscv32是将其和0号寄存器放在一起共用地址空间，但是目前看不出来这个事。</p>
+</blockquote>
+<blockquote>
+<h4 id="异常号的保存"><a href="#异常号的保存" class="headerlink" title="异常号的保存"></a>异常号的保存</h4><p>riscv32可以通过软件保存异常号吗?</p>
+</blockquote>
+<blockquote>
+<h4 id="对比异常处理与函数调用"><a href="#对比异常处理与函数调用" class="headerlink" title="对比异常处理与函数调用"></a>对比异常处理与函数调用</h4></blockquote>
+<blockquote>
+<h4 id="question-内存空间里的数据是随机的"><a href="#question-内存空间里的数据是随机的" class="headerlink" title=":question: 内存空间里的数据是随机的"></a>:question: 内存空间里的数据是随机的</h4><p>一开始sp移动的过程类似于预留空位，但是这部分的内存数据并不保证直接就是0。因此0号寄存器在这个过程里可能不是0？</p>
+</blockquote>
+<blockquote>
+<h4 id="必答题-需要在实验报告中回答-理解上下文结构体的前世今生"><a href="#必答题-需要在实验报告中回答-理解上下文结构体的前世今生" class="headerlink" title="必答题(需要在实验报告中回答) - 理解上下文结构体的前世今生"></a>必答题(需要在实验报告中回答) - 理解上下文结构体的前世今生</h4><p><code>__am_irq_handle</code>函数里的上下文结构体指针是从哪里来的？上面已经分析了。</p>
+</blockquote>
+<blockquote>
+<h4 id="实现正确的事件分发"><a href="#实现正确的事件分发" class="headerlink" title="实现正确的事件分发"></a>实现正确的事件分发</h4></blockquote>
+<blockquote>
+<h4 id="必答题-需要在实验报告中回答-理解穿越时空的旅程"><a href="#必答题-需要在实验报告中回答-理解穿越时空的旅程" class="headerlink" title="必答题(需要在实验报告中回答) - 理解穿越时空的旅程"></a>必答题(需要在实验报告中回答) - 理解穿越时空的旅程</h4><p>实际上上面也差不多了，之后补充吧。</p>
+</blockquote>
+<blockquote>
+<h5 id="实现etrace"><a href="#实现etrace" class="headerlink" title="实现etrace"></a>实现etrace</h5><p>跳过</p>
+</blockquote>
+<h2 id="用户程序和系统调用"><a href="#用户程序和系统调用" class="headerlink" title="用户程序和系统调用"></a>用户程序和系统调用</h2><p>目前已经有了跳到特定程序位置的上下文切换机制，还差加载用户程序的部分。</p>
+<p>加载实际上就是把可执行文件中的代码和数据加载到合适的地方，然后从一个特定的位置起开始执行指令。</p>
+<p>目前规定：加载的程序链接到<code>0x83000000</code>附近的位置来避免和操作系统冲突。编译的dummy程序非常简单，他的位置直接就在0字节开始处。</p>
+<blockquote>
+<p>:question:堆和栈在哪里</p>
+<p>上面提到过这个问题，首先他们最终落脚在内存上，其次他们的定义在am上。对于用户程序，他们目前的存在是和操作系统共用的。之后对这个问题还有更新。</p>
+</blockquote>
+<p>对于操作系统，他可以说只是一个普通的c程序，运行在am提供的运行时环境之上，由am提供了直接的硬件访问支持。对于目前运行多个程序的需求，直接让用户程序操作内存资源显然是不合理的，所以管理资源的职责就给了操作系统，在操作系统上运行的用户程序不能直接操作资源，必须要通过操作系统。</p>
+<p>操作系统也提供了运行时环境，他的运行时环境和am提供的不太一样，但是目的是类似的：让用户程序在其上运行。</p>
+<p>操作系统需要向用户程序提供访问资源的接口，用户程序也只能通过这个接口来访问资源。这个接口就是系统调用。他和普通的函数调用的区别在于执行流的切换：在系统调用时，上下文会切换到操作系统内部，由操作系统接管。</p>
+<blockquote>
+<h4 id="系统调用的必要性"><a href="#系统调用的必要性" class="headerlink" title="系统调用的必要性"></a>系统调用的必要性</h4><p>直接向外暴露am的api就相当于暴露硬件本身。</p>
+</blockquote>
+<p>系统调用将程序的运行时环境分成了两部分：用户态和内核态。用户程序在大部分时间只能在用户态执行非特权级的操作，如果需要调用资源，需要放弃自身的执行由操作系统接管</p>
+<blockquote>
+<h4 id="识别系统调用"><a href="#识别系统调用" class="headerlink" title="识别系统调用"></a>识别系统调用</h4><p>目前dummy已经直接调用了系统调用。将数据写到寄存器然后执行<code>ecall</code>指令。</p>
+<p>这一块我觉得比较奇怪的点是，之前已经对事件有上层的抽象了，但是这里实际上完全没用起来：执行系统调用的时候是将系统调用号直接写到a7寄存器里了，而不是有一个抽象统一的标号标记这次异常是一次系统调用，然后读取之后用状态码来区别具体的系统调用。</p>
+<p>这里我是在<code>do_syscall</code>的内部决定是否让pc+4的，考虑到可能会有特定的系统调用。当然目前已经有不会返回的系统调用了，比如<code>SYS_EXIT</code>。</p>
+</blockquote>
+<blockquote>
+<h5 id="实现SYS-yield系统调用"><a href="#实现SYS-yield系统调用" class="headerlink" title="实现SYS_yield系统调用"></a>实现SYS_yield系统调用</h5><p>注意实现返回值。</p>
+</blockquote>
+<blockquote>
+<h5 id="实现SYS-exit系统调用"><a href="#实现SYS-exit系统调用" class="headerlink" title="实现SYS_exit系统调用"></a>实现SYS_exit系统调用</h5><p>可以通过让yield返回值发生变化的方式来检查实现的正确性。</p>
+</blockquote>
+<blockquote>
+<h5 id="RISC-V系统调用号的传递"><a href="#RISC-V系统调用号的传递" class="headerlink" title="RISC-V系统调用号的传递"></a>RISC-V系统调用号的传递</h5><p>riscv是用a7寄存器来传递编号的，最后一个参数寄存器。不是a0的原因可能是为了简化实现，a0是第一个参数寄存器。</p>
+</blockquote>
+<blockquote>
+<h5 id="实现strace"><a href="#实现strace" class="headerlink" title="实现strace"></a>实现strace</h5><p>跳过</p>
+</blockquote>
+<p>目前已经实现了两个系统调用，因为操作系统和AM很像，考虑一个TRM提供了哪些功能</p>
+<ul>
+<li>基本的运算指令，由硬件提供</li>
+<li>能输出字符</li>
+<li>有堆区可以动态申请内存</li>
+<li>可以结束运行，目前已经有系统调用实现了</li>
+</ul>
+<p>所以接下来的两个问题是如何输出字符和动态申请内存。后者在之前的时候是直接在硬件内存上划分了足够大的空间，没有管理策略，硬件只负责提供功能实现，具体策略由操作系统提供：操作系统负责提供申请内存的请求处理和管理内存资源如何分配。</p>
+<blockquote>
+<h5 id="在Nanos-lite上运行Hello-world"><a href="#在Nanos-lite上运行Hello-world" class="headerlink" title="在Nanos-lite上运行Hello world"></a>在Nanos-lite上运行Hello world</h5><p>实现之后可以看到一直在输出，可以改一下hello程序让他只输出一次方便检查。</p>
+</blockquote>
+<p>目前还没有引入多程序，所以内存分配只是实现了简单的一个人随意申请的情况。</p>
+<blockquote>
+<h4 id="question-怎么证明现在的printf没有使用堆区"><a href="#question-怎么证明现在的printf没有使用堆区" class="headerlink" title=":question:怎么证明现在的printf没有使用堆区"></a>:question:怎么证明现在的printf没有使用堆区</h4><p>把hello程序修改一下，然后每次write的时候多putch一下当前的count就好了</p>
+</blockquote>
+<blockquote>
+<h5 id="实现堆区管理"><a href="#实现堆区管理" class="headerlink" title="实现堆区管理"></a>实现堆区管理</h5><p>两部分，实现<code>_sbrk</code>对需要的内存量管理；硬件的系统调用，目前只会返回0。</p>
+</blockquote>
+<blockquote>
+<h4 id="question-谁调用了七号系统调用"><a href="#question-谁调用了七号系统调用" class="headerlink" title=":question:谁调用了七号系统调用"></a>:question:谁调用了七号系统调用</h4><p>将hello程序里的循环去掉之后重新运行会发现最终调用了一个7号系统调用并<code>HIT BAD TRAP</code>了。检查表得知7号是<code>SYS_close</code>，尝试取消所有的输出之后发现不会触发，猜测可能是内部实现有在程序结束时尝试关闭打开的文件（即使他们是标准输出&#x2F;标准错误？）。</p>
+</blockquote>
+<blockquote>
+<h4 id="必答题-需要在实验报告中回答-hello程序是什么-它从而何来-要到哪里去"><a href="#必答题-需要在实验报告中回答-hello程序是什么-它从而何来-要到哪里去" class="headerlink" title="必答题(需要在实验报告中回答) - hello程序是什么, 它从而何来, 要到哪里去"></a>必答题(需要在实验报告中回答) - hello程序是什么, 它从而何来, 要到哪里去</h4><p>TODO</p>
+</blockquote>
+<h3 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h3><p>文件的本质就是一串字节序列。</p>
+<blockquote>
+<h5 id="让loader使用文件"><a href="#让loader使用文件" class="headerlink" title="让loader使用文件"></a>让loader使用文件</h5><p>实现几个文件相关的调用就可以了。</p>
+<p>在实现的过程里我发现一个问题：我的lsp会给我的文件自动补充头文件，导致重复调用和一些比较奇怪的问题，非常的无语。</p>
+</blockquote>
+<blockquote>
+<h5 id="实现完整的文件系统"><a href="#实现完整的文件系统" class="headerlink" title="实现完整的文件系统"></a>实现完整的文件系统</h5><p>这里我实现的<code>loader</code>是借助<code>fs_lseek</code>定位的，所以一开始就实现完了。</p>
+<p>在sfs中由于文件定长，我觉得可以直接将越界读写throw出去，<code>lseek</code>的manual中是有提到是需要允许其越界的，我这里的实现是直接返回-1认为失败。</p>
+</blockquote>
+<blockquote>
+<h5 id="把串口抽象成文件"><a href="#把串口抽象成文件" class="headerlink" title="把串口抽象成文件"></a>把串口抽象成文件</h5><p>只需要实现写到<code>serial_write</code>即可</p>
+</blockquote>
+<blockquote>
+<h5 id="实现gettimeofday"><a href="#实现gettimeofday" class="headerlink" title="实现gettimeofday"></a>实现gettimeofday</h5><p>测试是需要自己实现的</p>
+</blockquote>
+<blockquote>
+<h5 id="实现NDL的时钟"><a href="#实现NDL的时钟" class="headerlink" title="实现NDL的时钟"></a>实现NDL的时钟</h5><p>注意实现的层次，刚刚是在<code>nanos-lite</code>上提供了获取当前系统时间的系统调用，实现方式是直接由操作系统对硬件数据的访问。现在需要让这个接口更好用，在<code>nanos-lite</code>之上的多媒体库中提供功能。</p>
+<p>这里又发生了我的lsp补全导致重复定义的问题，有点无语。</p>
+</blockquote>
+<blockquote>
+<h5 id="把按键输入抽象成文件"><a href="#把按键输入抽象成文件" class="headerlink" title="把按键输入抽象成文件"></a>把按键输入抽象成文件</h5><p>两个部分：</p>
+<ul>
+<li>实现<code>events_read</code>：当读取虚拟文件<code>/dev/events</code>的时候，操作系统读取硬件寄存器获取数据，如果有数据就将信息写到buf里。</li>
+<li>实现<code>NDL</code>中的<code>poll_events</code>，该函数返回1&#x2F;0来表示是否有事件。</li>
+</ul>
+</blockquote>
+<blockquote>
+<h5 id="用fopen-还是open"><a href="#用fopen-还是open" class="headerlink" title="用fopen()还是open()?"></a>用fopen()还是open()?</h5><p>TODO，有可能是文件偏移量的差别。</p>
+</blockquote>
+<blockquote>
+<h5 id="在NDL中获取屏幕大小"><a href="#在NDL中获取屏幕大小" class="headerlink" title="在NDL中获取屏幕大小"></a>在NDL中获取屏幕大小</h5><p><code>NDL_OpenCanvas</code>里的代码比较奇怪，<code>README</code>中提到4号文件是控制屏幕大小的，5号是屏幕输出文件，但是目前没有提到使用控制屏幕大小的硬件。</p>
+<p>不过他又提到<code>NWM</code>是只能在<code>native</code>运行的，所以可能是因为这个原因没有做兼容处理。</p>
+</blockquote>
+<blockquote>
+<h5 id="把VGA显存抽象成文件"><a href="#把VGA显存抽象成文件" class="headerlink" title="把VGA显存抽象成文件"></a>把VGA显存抽象成文件</h5><p>这里有一个困惑我很久的问题：当我通过<code>lseek</code>写入<code>open_offset</code>之后，来自<code>NDL</code>的<code>write</code>调用要怎么把偏移量给最终的<code>fb_write</code>？</p>
+<p>后来想到，一直忽略了是谁调用了<code>fb_write</code>，在<code>fs_write</code>的时候，如果对应的<code>write</code>函数不为空，我直接写了一个&#x3D;0进去，所以一直拿不到offset。改成文件自己的<code>open_offset</code>就可以了。</p>
+<p>当然<code>/dev/fb</code>我没有维护在写的时候的偏移量改变，因为对外只有一个<code>NDL_DrawRect</code>的接口，每次绘制时都需要<code>lseek</code>，就不存在问题了。</p>
+<p>还有一个问题是，<code>write</code>和<code>lseek</code>这些调用里的长度是以字节为单位的，而一个颜色是32位的长度，所以很多地方要乘4来算出字节大小。</p>
+</blockquote>
+<blockquote>
+<h5 id="实现居中的画布"><a href="#实现居中的画布" class="headerlink" title="实现居中的画布"></a>实现居中的画布</h5><p>只需要算出画布自身位置的偏移量就可以了</p>
+</blockquote>
+<h3 id="精彩纷呈的应用程序"><a href="#精彩纷呈的应用程序" class="headerlink" title="精彩纷呈的应用程序"></a>精彩纷呈的应用程序</h3><blockquote>
+<h5 id="神奇的fixedpt-rconst"><a href="#神奇的fixedpt-rconst" class="headerlink" title="神奇的fixedpt_rconst"></a>神奇的fixedpt_rconst</h5><p>宏替换，在编译期时借助了编译器的能力把浮点数消除了，不会翻译出带浮点的指令进入<code>NEMU</code>。</p>
+</blockquote>
+<blockquote>
+<h5 id="实现更多的fixedptc-API"><a href="#实现更多的fixedptc-API" class="headerlink" title="实现更多的fixedptc API"></a>实现更多的fixedptc API</h5></blockquote>
+<p>还是先理一下目前所在的层次，在<code>Nanos-lite</code>上实现了对硬件文件的写(<code>/dev/fb</code>)，然后在之上有<code>NDL</code>库提供了更好的api调用：直接对<code>(x,y)</code>坐标的<code>(w,h)</code>的矩阵写数据。现在需要做的是移植<code>SDL</code>库，提供了完整的应用程序支持。</p>
+<blockquote>
+<h5 id="如何将浮点变量转换成fixedpt类型"><a href="#如何将浮点变量转换成fixedpt类型" class="headerlink" title="如何将浮点变量转换成fixedpt类型?"></a>如何将浮点变量转换成fixedpt类型?</h5><p>TODO</p>
+</blockquote>
+<blockquote>
+<h5 id="运行NSlider"><a href="#运行NSlider" class="headerlink" title="运行NSlider"></a>运行NSlider</h5><p>先准备一个幻灯片，把大小调整到4:3然后再转换成图片bmp。这个脚本会自动把数据写到<code>fsimg/slides</code>下。</p>
+<p>然后需要实现<code>SDL_UpdateRect</code>。</p>
+</blockquote>
+<p>文档里说先理解一下<code>Surface</code>这个<code>SDL</code>里的概念：文档里说代表了一块可以绘制的内存，然后要求读数据之前先对其上锁。但是<code>Surface</code>的结构体里本身没有描述上锁这个概念。像素数据由<code>SDL_PixelFormat</code>和<code>pixels</code>给出，后者是一个<code>void*</code>。<code>SDL_PixelFormat</code>用来描述在<code>Surface</code> 里的<code>pixels</code>数据的格式（不是数据本身）。</p>
+<p>框架代码中已经实现了<code>SDL_CreateRGBSurface</code>：创建一个空的表面。其中<code>depth</code>参数是单个像素信息的大小，如果是8则会分配一个空的调色盘<code>platte</code>供使用，否则会创建一个<code>SDL_PixelFormat</code>，并记录当前的颜色mask。文档中提供的示例说明了这一点：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">if</span> SDL_BYTEORDER == SDL_BIG_ENDIAN</span></span><br><span class="line">    rmask = <span class="number">0xff000000</span>;</span><br><span class="line">    gmask = <span class="number">0x00ff0000</span>;</span><br><span class="line">    bmask = <span class="number">0x0000ff00</span>;</span><br><span class="line">    amask = <span class="number">0x000000ff</span>;</span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line">    rmask = <span class="number">0x000000ff</span>;</span><br><span class="line">    gmask = <span class="number">0x0000ff00</span>;</span><br><span class="line">    bmask = <span class="number">0x00ff0000</span>;</span><br><span class="line">    amask = <span class="number">0xff000000</span>;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<p>框架里提供的代码限制了长度只能是8位或32位，如果是8位则会创建一个长度256的调色板数据，初始化数据全部为0。或者32位记录当前mask和shift。后面就是一些对表面信息的设置，申请<code>pixels</code>数据所需的内存，将表面返回。</p>
+<p><code>pixels</code>数组是一个<code>width*height</code>大小的，单个元素大小为<code>BytesPerPixel</code>的二维数组，以行优先。所以<code>SDL_UpdateRect</code>就是将表面上<code>(x,y);(w,h)</code>指示的像素信息写到设备上。这个方法在<code>NSlider</code>这个任务中是通过调用<code>SDL_SetVideoMode</code>调用的，mask使用的是默认数据：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> DEFAULT_RMASK 0x00ff0000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DEFAULT_GMASK 0x0000ff00</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DEFAULT_BMASK 0x000000ff</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DEFAULT_AMASK 0xff000000</span></span><br></pre></td></tr></table></figure>
+
+<p>排列方式是ARGB，和之前的约定一致。因为<code>NSlider</code>使用的是32位长度的数据，所以直接调用<code>NDL_DrawRect</code>是可以绘制成功的。具体的流程是：<code>NSlider</code>中先将bmp文件读出来，然后把像素数据通过<code>SDL_CreateRGBSurface</code>放进表面里。接下来调用<code>SDL_UpdateRect(slide, 0, 0, 0, 0)</code>来将整个屏幕重绘。</p>
+<p>但是如果长度是8位的话，就不能直接使用当前的数据了，需要使用调色板翻译过来。这里我有一点疑问，如果要翻译的话就需要额外的<code>pixel</code>空间来储存翻译后的结果，那这样的话无法避免使用<code>malloc</code>，但是如果每次绘制的时候都<code>malloc</code>，<del>之前提到过目前的内存实际上没有<code>free</code>调用，他只管申请不管回收，这样似乎很容易爆掉。</del>不会回收的是<code>klib</code>中实现的，这个属于<code>nanos-lite</code>的lib，使用之前实现的系统调用<code>brk</code>维护可用的内存区域，所以没有问题。<del>但是我还是感觉这样很奇怪。</del></p>
+<p>这里排出一个非常整蛊的bug，具体在loader这里：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">-    fs_read(fd, (<span class="type">uint32_t</span>*)pheader.p_vaddr, pheader.p_filesz);</span><br><span class="line">-    <span class="built_in">memset</span>((<span class="type">uint32_t</span> *) pheader.p_vaddr + pheader.p_filesz, <span class="number">0</span>, pheader.p_memsz - pheader.p_filesz);</span><br><span class="line">+    fs_read(fd, (<span class="type">void</span>*)pheader.p_vaddr, pheader.p_filesz);</span><br><span class="line">+    <span class="built_in">memset</span>((<span class="type">void</span> *) pheader.p_vaddr + pheader.p_filesz, <span class="number">0</span>, pheader.p_memsz - pheader.p_filesz);</span><br></pre></td></tr></table></figure>
+
+<p>转成32位的定义会导致数据清空的行为异常，最终导致<code>static slider = NULL</code>这行代码产生的数据不是<code>NULL</code>最终走到了未知的内存位置导致panic。</p>
+<p>还有一个类似的问题，文档里定义的表面的<code>pixels</code>的类型是<code>void*</code>，但是框架代码里的是<code>uint8_t</code>，在执行指针的移动操作之前需要先考虑转指针的类型再移动。</p>
+<blockquote>
+<h5 id="运行NSlider-2"><a href="#运行NSlider-2" class="headerlink" title="运行NSlider(2)"></a>运行NSlider(2)</h5><p>这里有个问题：之前<code>NDL</code>里暴露的事件我的实现是把名字写出来了，在<code>SDL</code>层我就需要做一个翻译的过程：把按键的名称翻译回编码，这里我选择了跳过这个事情，让下层直接暴露编码。原则上来说还是以输出名称比较稳妥？</p>
+<p>当然由于操作系统层和应用层都是自己编写的，所以不存在太大的问题。</p>
+<p><del>还有就是渲染速度比较堪忧，甚至会慢慢刷新屏幕看到中间过程。</del></p>
+</blockquote>
+<blockquote>
+<h5 id="运行开机菜单"><a href="#运行开机菜单" class="headerlink" title="运行开机菜单"></a>运行开机菜单</h5><ul>
+<li><code>SDL_FillRect</code>，32位颜色直接写入即可，8位颜色根据文档描述需要过一个转换。</li>
+<li><code>SDL_BlitSurface</code>，复制数据。但是在8位下可能不太一样？</li>
+</ul>
+<p>需要注意的是32位数据长度的问题，需要先转换指针类型再操作指针移动。</p>
+</blockquote>
+<blockquote>
+<h5 id="运行NTerm"><a href="#运行NTerm" class="headerlink" title="运行NTerm"></a>运行NTerm</h5><p>填充一下api就可以了，不过速度堪忧。</p>
+<p><del>而且echo还要自己实现</del></p>
+</blockquote>
+<p>文档里说可以在<code>linux native</code>上运行bird，但是我找了一下似乎没有sdl1的包可以下载，没有继续研究。</p>
+<blockquote>
+<h5 id="运行Flappy-Bird"><a href="#运行Flappy-Bird" class="headerlink" title="运行Flappy Bird"></a>运行Flappy Bird</h5><p>有一个奇怪的问题，<code>assert</code>只会往控制台打印一个a就退出了。而且还是小写的a。</p>
+<p>另外一个问题是bird中有一处代码读取txt时使用了<code>feof</code>来检查文件是否已经读取完全，但是会陷入死循环。我怀疑是因为<code>fscanf</code>的失败导致了<code>EOF</code>的最终状态没有正常的更新，因为数据量不大我就直接改成了break来跳出。</p>
+<p>执行速度如果过慢的问题有可能是因为把tracer打开了。</p>
+</blockquote>
+<blockquote>
+<h5 id="运行仙剑奇侠传"><a href="#运行仙剑奇侠传" class="headerlink" title="运行仙剑奇侠传"></a>运行仙剑奇侠传</h5><p>我在这里卡了很久，第一个问题是关于按键状态：实际上不需要实现一个任务队列，只需要维护一个长数组表示各个按键的状态就可以了；第二个是在播放商标图案之后会陷入长久的等待，是因为<code>SDL_GetTicks</code>实现导致的错误。pal的代码会在商标播放完成之后等待一小段时间，但是由于实现的错误使得等待的时间非常长。</p>
+<p>还有一个比较蛋疼的问题是：<code>SDL_Color</code>里的val字段实际上不直接对应32位的颜色格式，需要自己转换，否则渲染的数据会类似于反色。</p>
+</blockquote>
+<blockquote>
+<h5 id="可以运行其它程序的开机菜单"><a href="#可以运行其它程序的开机菜单" class="headerlink" title="可以运行其它程序的开机菜单"></a>可以运行其它程序的开机菜单</h5><p>实现系统调用就可以了</p>
+</blockquote>
+<blockquote>
+<h5 id="展示你的批处理系统"><a href="#展示你的批处理系统" class="headerlink" title="展示你的批处理系统"></a>展示你的批处理系统</h5><p>不知道怎么退出当前运行的程序</p>
+</blockquote>
+<blockquote>
+<h4 id="必答题-理解计算机系统"><a href="#必答题-理解计算机系统" class="headerlink" title="必答题 - 理解计算机系统"></a>必答题 - 理解计算机系统</h4><ul>
+<li><p>理解上下文结构体的前世今生 (见PA3.1阶段)</p>
+</li>
+<li><p>理解穿越时空的旅程 (见PA3.1阶段)</p>
+</li>
+<li><p>hello程序是什么, 它从而何来, 要到哪里去 (见PA3.2阶段)</p>
+</li>
+</ul>
+</blockquote>
+
+        
+      </div>
+
+         
+    </div>
+    
+     
+  </div>
+  
+    
+<nav id="article-nav">
+  <a class="article-nav-btn left "
+    
+      href="/2024/04/04/NJU-PA4/"
+      title="NJU PA4"
+     >
+    <i class="fa-solid fa-angle-left"></i>
+    <p class="title-text">
+      
+        NJU PA4
+        
+    </p>
+  </a>
+  <a class="article-nav-btn right "
+    
+      href="/2024/04/04/NJU-PA2/"
+      title="NJU PA2"
+     >
+
+    <p class="title-text">
+      
+        NJU PA2
+        
+    </p>
+    <i class="fa-solid fa-angle-right"></i>
+  </a>
+</nav>
+
+
+  
+</article>
+
+
+
+
+
+    </div>
+    <div id="footer-wrapper">
+      <footer id="footer">
+  
+  <div id="footer-info" class="inner">
+    
+    &copy; 2024 Catizard<br>
+    Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & Theme <a target="_blank" rel="noopener" href="https://github.com/saicaca/hexo-theme-vivia">Vivia</a>
+  </div>
+</footer>
+
+    </div>
+    <div class="back-to-top-wrapper">
+    <button id="back-to-top-btn" class="back-to-top-btn hide" onclick="topFunction()">
+        <i class="fa-solid fa-angle-up"></i>
+    </button>
+</div>
+
+<script>
+    function topFunction() {
+        window.scroll({ top: 0, behavior: 'smooth' });
+    }
+    let btn = document.getElementById('back-to-top-btn');
+    function scrollFunction() {
+        if (document.body.scrollTop > 600 || document.documentElement.scrollTop > 600) {
+            btn.classList.remove('hide')
+        } else {
+            btn.classList.add('hide')
+        }
+    }
+    window.onscroll = function() {
+        scrollFunction();
+    }
+</script>
+
+  </div>
+  <script src="/js/light-dark-switch.js"></script>
+</body>
+</html>

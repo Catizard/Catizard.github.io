@@ -146,6 +146,13 @@
 
     
       
+  <div class="widget-wrap">
+    <div class="widget">
+      <h3 class="widget-title">标签</h3>
+      <ul class="widget-tag-list" itemprop="keywords"><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/NJU-PA/" rel="tag">NJU PA</a></li></ul>
+    </div>
+  </div>
+
 
     
   </div>
@@ -153,6 +160,428 @@
     </div>
     <div id="content-body">
       
+   
+
+
+<article id="post-NJU-PA4" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+   
+  <div class="article-inner">
+    <div class="article-main">
+      <header class="article-header">
+        
+<div class="main-title-bar">
+  <div class="main-title-dot"></div>
+  
+    
+      <h1 itemprop="name">
+        <a class="p-name article-title" href="/2024/04/04/NJU-PA4/">NJU PA4</a>
+      </h1>
+    
+  
+</div>
+
+        <div class='meta-info-bar'>
+          <div class="meta-info">
+  <time class="dt-published" datetime="2024-04-03T19:30:41.000Z" itemprop="datePublished">2024-04-03</time>
+</div>
+          <div class="need-seperator meta-info">
+            <div class="meta-cate-flex">
+  
+    未分类 
+   
+</div>
+  
+          </div>
+          <div class="wordcount need-seperator meta-info">
+            3k 词 
+          </div>
+        </div>
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NJU-PA/" rel="tag">NJU PA</a></li></ul>
+
+      </header>
+      <div class="e-content article-entry" itemprop="articleBody">
+        
+          <div class="truncate-text">
+            
+              多道程序批处理系统目前的缺陷是同一时刻只能执行一个程序。在一些场景下cpu会浪费，比如等待硬件的数据读取的时间里cpu要一直空转等待。所以很自然的一个新的需求就是：在操作系统上期望能“同时”运行多个程序。
+接下来需要实现两个目标：
+
+在内存中可以同时存在多个进程
+在满足某些条件的情况下, 可以让执行流在这些进程之间切换
+
+前者是之前在加载阶段做过的，程序就是一截指令序列，通过上下文赋予其意义。既然要运行多个自然就要有能加载多个的能力。
+
+为什么需要使用不同的栈空间?思考一下目前阶段程序所使用的栈空间，是在am的链接脚本中定义的，他直接划分了硬件提供的内存空间：将前面一部分分配为栈区，后面全部为堆区。这个堆栈是am这个运行环境提供给在上面运行的nanos-lite使用的，而目前nanos-lite加载应用程序是直接的内存拷贝，运行应用程序是简单的函数调用，让pc指针走到内存中特定的位置然后加载指令
+
+上下文切换之前在CTE里是通过栈指针恢复数据的：将当前的数据保存到栈上，恢复时让函数参数的寄存器指向这里，就能获取到当时保存的数据了。
+对于多个进程的切换，在这里可以偷梁换柱：A进程的...
+            
+          </div>
+        
+      </div>
+
+         
+    </div>
+    
+     
+    <a class="right-panel  non-pic  "
+      
+      href="/2024/04/04/NJU-PA4/" 
+    >
+       
+      <i class="fa-solid fa-angle-right non-pic"></i>
+       
+    </a>
+     
+  </div>
+  
+</article>
+
+
+
+
+
+
+   
+
+
+<article id="post-NJU-PA3" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+   
+  <div class="article-inner">
+    <div class="article-main">
+      <header class="article-header">
+        
+<div class="main-title-bar">
+  <div class="main-title-dot"></div>
+  
+    
+      <h1 itemprop="name">
+        <a class="p-name article-title" href="/2024/04/04/NJU-PA3/">NJU PA3</a>
+      </h1>
+    
+  
+</div>
+
+        <div class='meta-info-bar'>
+          <div class="meta-info">
+  <time class="dt-published" datetime="2024-04-03T19:27:42.000Z" itemprop="datePublished">2024-04-03</time>
+</div>
+          <div class="need-seperator meta-info">
+            <div class="meta-cate-flex">
+  
+    未分类 
+   
+</div>
+  
+          </div>
+          <div class="wordcount need-seperator meta-info">
+            7.4k 词 
+          </div>
+        </div>
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NJU-PA/" rel="tag">NJU PA</a></li></ul>
+
+      </header>
+      <div class="e-content article-entry" itemprop="articleBody">
+        
+          <div class="truncate-text">
+            
+              最简单的操作系统批处理系统最简单的操作系统：一个后台程序，每次加载一个前台程序运行，结束了之后换另外一个。
+目标:
+
+用户程序结束执行之后，回到操作系统处继续运行
+操作系统能加载在某些位置的用户程序执行
+
+对于前者，需要有一个执行流切换机制，但是如果直接使用jal指令跳转的话就显得太随意了，在硬件上有对应的限制：如果执行了非当前权限的代码就会导致陷入操作系统内核然后交由操作系统执行。
+穿越时空的旅程除了被动地进入操作系统之外，还需要主动地陷入操作系统：有的操作不应由用户程序执行，必须请求操作系统。当用户程序执行了一条自陷指令之后，跳转到操作系统预先设定好的位置执行特定的代码。大部分ISA不区分异常和自陷。
+对于riscv32:
+
+将当前pc写入mepc寄存器
+在mcause寄存器中设置异常号
+从mtvec寄存器中取出异常入口地址
+跳转到异常入口地址
+
+这部分由硬件完成。
+
+特殊的原因? (建议二周目思考)如果由软件保存，用户程序可能可以写入特定的值来让操作系统执行特定的操作来破坏操作系统。
+
+硬件提供的在操作系统和用户程序之间切换操作流的过程也是上下文切换。为了抽象上下文管理，操...
+            
+          </div>
+        
+      </div>
+
+         
+    </div>
+    
+     
+    <a class="right-panel  non-pic  "
+      
+      href="/2024/04/04/NJU-PA3/" 
+    >
+       
+      <i class="fa-solid fa-angle-right non-pic"></i>
+       
+    </a>
+     
+  </div>
+  
+</article>
+
+
+
+
+
+
+   
+
+
+<article id="post-NJU-PA2" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+   
+  <div class="article-inner">
+    <div class="article-main">
+      <header class="article-header">
+        
+<div class="main-title-bar">
+  <div class="main-title-dot"></div>
+  
+    
+      <h1 itemprop="name">
+        <a class="p-name article-title" href="/2024/04/04/NJU-PA2/">NJU PA2</a>
+      </h1>
+    
+  
+</div>
+
+        <div class='meta-info-bar'>
+          <div class="meta-info">
+  <time class="dt-published" datetime="2024-04-03T19:27:38.000Z" itemprop="datePublished">2024-04-03</time>
+</div>
+          <div class="need-seperator meta-info">
+            <div class="meta-cate-flex">
+  
+    未分类 
+   
+</div>
+  
+          </div>
+          <div class="wordcount need-seperator meta-info">
+            7.9k 词 
+          </div>
+        </div>
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NJU-PA/" rel="tag">NJU PA</a></li></ul>
+
+      </header>
+      <div class="e-content article-entry" itemprop="articleBody">
+        
+          <div class="truncate-text">
+            
+              不停计算的机器最简单的计算机TRM的运行方式:
+12345while (1) &#123;  从PC指示的存储器位置取出指令;  执行指令;  更新PC;&#125;
+
+具体地，cpu执行指令的方式是：
+
+取指：从内存空间中读取出一条指令，具体位置由pc寄存器给出。
+译码：读取出来的是一个字长的01串，cpu会查表翻译指令。
+执行：根据译码的结果来执行具体的行为。
+更新pc，指向下一条指令
+
+回顾一下，用户程序是运行在模拟的硬件之上的，所以这里的任务是模拟一个cpu的执行，来支撑用户程序的执行。
+
+:question: cpu一次只能执行一条指令吗
+在这个模型里，如果细化到下去，在一个时刻cpu应该只能同时执行一条指令，这是一个重要的假设，当然这个假设不是谁规定的，他实际上从一开始编程就成了一种习惯：代码是一行一行执行，指令也应该是这样的。
+
+ 但是现代的cpu似乎对这个事情有所打破，可能是一个叫微指令的概念
+
+
+
+理解YEMU如何执行程序加法状态的状态机：把内存和寄存器的值作为状态。
+两者的联系？cpu执行一条指令就是一次状态转移。
+
+这个例子可以说明，只要有加法器和跳转功能，...
+            
+          </div>
+        
+      </div>
+
+         
+    </div>
+    
+     
+    <a class="right-panel  non-pic  "
+      
+      href="/2024/04/04/NJU-PA2/" 
+    >
+       
+      <i class="fa-solid fa-angle-right non-pic"></i>
+       
+    </a>
+     
+  </div>
+  
+</article>
+
+
+
+
+
+
+   
+
+
+<article id="post-NJU-PA1" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+   
+  <div class="article-inner">
+    <div class="article-main">
+      <header class="article-header">
+        
+<div class="main-title-bar">
+  <div class="main-title-dot"></div>
+  
+    
+      <h1 itemprop="name">
+        <a class="p-name article-title" href="/2024/04/04/NJU-PA1/">NJU PA1</a>
+      </h1>
+    
+  
+</div>
+
+        <div class='meta-info-bar'>
+          <div class="meta-info">
+  <time class="dt-published" datetime="2024-04-03T19:27:34.000Z" itemprop="datePublished">2024-04-03</time>
+</div>
+          <div class="need-seperator meta-info">
+            <div class="meta-cate-flex">
+  
+    未分类 
+   
+</div>
+  
+          </div>
+          <div class="wordcount need-seperator meta-info">
+            5.4k 词 
+          </div>
+        </div>
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NJU-PA/" rel="tag">NJU PA</a></li></ul>
+
+      </header>
+      <div class="e-content article-entry" itemprop="articleBody">
+        
+          <div class="truncate-text">
+            
+              fceux按照readme把内容下载下来之后运行可能会出现这个问题：
+123456789/home/suzume/proj/ics2022/fceux-am/src/emufile.cpp: In member function ‘void EMUFILE_FILE::open(const char*, const char*)’:/home/suzume/proj/ics2022/fceux-am/src/emufile.cpp:33:22: error: array subscript 1 is above array bounds of ‘rom [1]’ [-Werror=array-bounds=]   33 |     if (strcmp(roms[i].name, fname) == 0) &#123;      |                ~~~~~~^In file included from /home/suzume/proj/ics2022/fceux-am/src/emufile.cpp:27:./nes/gen/roms.h:10:12: not...
+            
+          </div>
+        
+      </div>
+
+         
+    </div>
+    
+     
+    <a class="right-panel  non-pic  "
+      
+      href="/2024/04/04/NJU-PA1/" 
+    >
+       
+      <i class="fa-solid fa-angle-right non-pic"></i>
+       
+    </a>
+     
+  </div>
+  
+</article>
+
+
+
+
+
+
+   
+
+
+<article id="post-NJU-PA0" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+   
+  <div class="article-inner">
+    <div class="article-main">
+      <header class="article-header">
+        
+<div class="main-title-bar">
+  <div class="main-title-dot"></div>
+  
+    
+      <h1 itemprop="name">
+        <a class="p-name article-title" href="/2024/04/04/NJU-PA0/">NJU PA0</a>
+      </h1>
+    
+  
+</div>
+
+        <div class='meta-info-bar'>
+          <div class="meta-info">
+  <time class="dt-published" datetime="2024-04-03T19:27:27.000Z" itemprop="datePublished">2024-04-03</time>
+</div>
+          <div class="need-seperator meta-info">
+            <div class="meta-cate-flex">
+  
+    未分类 
+   
+</div>
+  
+          </div>
+          <div class="wordcount need-seperator meta-info">
+            505 词 
+          </div>
+        </div>
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NJU-PA/" rel="tag">NJU PA</a></li></ul>
+
+      </header>
+      <div class="e-content article-entry" itemprop="articleBody">
+        
+          <div class="truncate-text">
+            
+              installationos: Endeavouros&#x2F;osx
+libreadline在哪里？
+在aur上搜索到了，但是版本在8.0上下，考虑到ubuntu上的版本可能会有偏差？问题是ubuntu上下载到的是多少？
+在ubuntu package search的网站上找到jammy的也是8.0上下，那就没问题直接下载了
+
+另外sdl也可以直接下载，但是sdl似乎是pinned version？不太了解
+llvm version?在网上搜索了一篇教导其他人如何在ubuntu上下载llvm的文章（他们到处都是！）得知版本为14。
+但是这里有个小小的问题，当我直接llvm-config --version的时候发现版本为16,
+git log这个系统的一个i好处时，如果你还不习惯git的记录方式，他会自动帮你记录。但是我不是，同时我也不是nju的学生所以我选择直接关闭。这个功能开启之后你会有运行记录并且里面会携带你的修改内容，我觉得这样不舒服。
+关于代码补全和跳转本人使用的是nvim+clangd作为lsp, 阅读clangd的文档有提到make这种组织方式推荐的方法是安装一...
+            
+          </div>
+        
+      </div>
+
+         
+    </div>
+    
+     
+    <a class="right-panel  non-pic  "
+      
+      href="/2024/04/04/NJU-PA0/" 
+    >
+       
+      <i class="fa-solid fa-angle-right non-pic"></i>
+       
+    </a>
+     
+  </div>
+  
+</article>
+
+
+
+
+
+
    
 
 

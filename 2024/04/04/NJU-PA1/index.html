@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+
+
+<html theme="dark" showBanner="true" hasBanner="true" > 
+<link href="https://cdn.staticfile.org/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet">
+<link href="https://cdn.staticfile.org/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet">
+<link href="https://cdn.staticfile.org/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet">
+<script src="/js/color.global.min.js" ></script>
+<script src="/js/load-settings.js" ></script>
+<head>
+  <meta charset="utf-8">
+  
+  
+  
+
+  
+  <title>NJU PA1 | Catizard&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="preload" href="/css/fonts/Roboto-Regular.ttf" as="font" type="font/ttf" crossorigin="anonymous">
+  <link rel="preload" href="/css/fonts/Roboto-Bold.ttf" as="font" type="font/ttf" crossorigin="anonymous">
+
+  <meta name="description" content="fceux按照readme把内容下载下来之后运行可能会出现这个问题： 123456789&#x2F;home&#x2F;suzume&#x2F;proj&#x2F;ics2022&#x2F;fceux-am&#x2F;src&#x2F;emufile.cpp: In member function ‘void EMUFILE_FILE::open(const char*, const char*)’:&#x2F;home&#x2F;suzume&#x2F;proj&#x2F;ics2022&#x2F;fceux-a">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NJU PA1">
+<meta property="og:url" content="https://catizard.github.io/2024/04/04/NJU-PA1/index.html">
+<meta property="og:site_name" content="Catizard&#39;s blog">
+<meta property="og:description" content="fceux按照readme把内容下载下来之后运行可能会出现这个问题： 123456789&#x2F;home&#x2F;suzume&#x2F;proj&#x2F;ics2022&#x2F;fceux-am&#x2F;src&#x2F;emufile.cpp: In member function ‘void EMUFILE_FILE::open(const char*, const char*)’:&#x2F;home&#x2F;suzume&#x2F;proj&#x2F;ics2022&#x2F;fceux-a">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://catizard.github.io/home/suzume/.config/Typora/typora-user-images/image-20240107223737535.png">
+<meta property="article:published_time" content="2024-04-03T19:27:34.000Z">
+<meta property="article:modified_time" content="2024-04-03T11:29:52.369Z">
+<meta property="article:author" content="Catizard">
+<meta property="article:tag" content="NJU PA">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://catizard.github.io/home/suzume/.config/Typora/typora-user-images/image-20240107223737535.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Catizard's blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-32.png" sizes="32x32">
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-128.png" sizes="128x128">
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-180.png" sizes="180x180">
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-192.png" sizes="192x192">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-32.png" sizes="32x32">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-128.png" sizes="128x128">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-180.png" sizes="180x180">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-192.png" sizes="192x192">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+<body>
+  
+  
+    
+<div id="banner" class="">
+  <img src="/banner.jpg" itemprop="image">
+  <div id="banner-dim"></div>
+</div>
+ 
+   
+  <div id="main-grid" class="  ">
+    <div id="nav" class=""  >
+      <navbar id="navbar">
+  <nav id="title-nav">
+    <a href="/">
+      <div id="vivia-logo">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+      <div>Catizard's blog </div>
+    </a>
+  </nav>
+  <nav id="main-nav">
+    
+      <a class="main-nav-link" href="/">Home</a>
+    
+      <a class="main-nav-link" href="/archives">Archives</a>
+    
+      <a class="main-nav-link" href="/about">About</a>
+    
+  </nav>
+  <nav id="sub-nav">
+    <a id="theme-btn" class="nav-icon">
+      <span class="light-mode-icon"><svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M438.5-829.913v-48q0-17.452 11.963-29.476 11.964-12.024 29.326-12.024 17.363 0 29.537 12.024t12.174 29.476v48q0 17.452-11.963 29.476-11.964 12.024-29.326 12.024-17.363 0-29.537-12.024T438.5-829.913Zm0 747.826v-48q0-17.452 11.963-29.476 11.964-12.024 29.326-12.024 17.363 0 29.537 12.024t12.174 29.476v48q0 17.452-11.963 29.476-11.964 12.024-29.326 12.024-17.363 0-29.537-12.024T438.5-82.087ZM877.913-438.5h-48q-17.452 0-29.476-11.963-12.024-11.964-12.024-29.326 0-17.363 12.024-29.537t29.476-12.174h48q17.452 0 29.476 11.963 12.024 11.964 12.024 29.326 0 17.363-12.024 29.537T877.913-438.5Zm-747.826 0h-48q-17.452 0-29.476-11.963-12.024-11.964-12.024-29.326 0-17.363 12.024-29.537T82.087-521.5h48q17.452 0 29.476 11.963 12.024 11.964 12.024 29.326 0 17.363-12.024 29.537T130.087-438.5Zm660.174-290.87-34.239 32q-12.913 12.674-29.565 12.174-16.653-.5-29.327-13.174-12.674-12.673-12.554-28.826.12-16.152 12.794-28.826l33-35q12.913-12.674 30.454-12.674t30.163 12.847q12.709 12.846 12.328 30.826-.38 17.98-13.054 30.653ZM262.63-203.978l-32 34q-12.913 12.674-30.454 12.674t-30.163-12.847q-12.709-12.846-12.328-30.826.38-17.98 13.054-30.653l33.239-31q12.913-12.674 29.565-12.174 16.653.5 29.327 13.174 12.674 12.673 12.554 28.826-.12 16.152-12.794 28.826Zm466.74 33.239-32-33.239q-12.674-12.913-12.174-29.565.5-16.653 13.174-29.327 12.673-12.674 28.826-13.054 16.152-.38 28.826 12.294l35 33q12.674 12.913 12.674 30.454t-12.847 30.163q-12.846 12.709-30.826 12.328-17.98-.38-30.653-13.054ZM203.978-697.37l-34-33q-12.674-12.913-13.174-29.945-.5-17.033 12.174-29.707t31.326-13.293q18.653-.62 31.326 13.054l32 34.239q11.674 12.913 11.174 29.565-.5 16.653-13.174 29.327-12.673 12.674-28.826 12.554-16.152-.12-28.826-12.794ZM480-240q-100 0-170-70t-70-170q0-100 70-170t170-70q100 0 170 70t70 170q0 100-70 170t-170 70Zm-.247-82q65.703 0 111.475-46.272Q637-414.544 637-480.247t-45.525-111.228Q545.95-637 480.247-637t-111.475 45.525Q323-545.95 323-480.247t45.525 111.975Q414.05-322 479.753-322ZM481-481Z"/></svg></span>
+      <span class="dark-mode-icon"><svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M480.239-116.413q-152.63 0-258.228-105.478Q116.413-327.37 116.413-480q0-130.935 77.739-227.435t206.304-125.043q43.022-9.631 63.87 10.869t3.478 62.805q-8.891 22.043-14.315 44.463-5.424 22.42-5.424 46.689 0 91.694 64.326 155.879 64.325 64.186 156.218 64.186 24.369 0 46.978-4.946 22.609-4.945 44.413-14.076 42.826-17.369 62.967 1.142 20.142 18.511 10.511 61.054Q807.174-280 712.63-198.206q-94.543 81.793-232.391 81.793Zm0-95q79.783 0 143.337-40.217 63.554-40.218 95.793-108.283-15.608 4.044-31.097 5.326-15.49 1.283-31.859.805-123.706-4.066-210.777-90.539-87.071-86.473-91.614-212.092-.24-16.369.923-31.978 1.164-15.609 5.446-30.978-67.826 32.478-108.282 96.152Q211.652-559.543 211.652-480q0 111.929 78.329 190.258 78.329 78.329 190.258 78.329ZM466.13-465.891Z"/></svg></span>
+    </a>
+    
+      <a id="nav-rss-link" class="nav-icon mobile-hide" href="/atom.xml" title="RSS 订阅">
+        <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M198-120q-25.846 0-44.23-18.384-18.384-18.385-18.384-44.23 0-25.846 18.384-44.23 18.384-18.385 44.23-18.385 25.846 0 44.23 18.385 18.384 18.384 18.384 44.23 0 25.845-18.384 44.23Q223.846-120 198-120Zm538.385 0q-18.846 0-32.923-13.769-14.076-13.769-15.922-33.23-8.692-100.616-51.077-188.654-42.385-88.039-109.885-155.539-67.5-67.501-155.539-109.885Q283-663.462 182.385-672.154q-19.461-1.846-33.23-16.23-13.769-14.385-13.769-33.846t14.076-32.922q14.077-13.461 32.923-12.23 120.076 8.692 226.038 58.768 105.961 50.077 185.73 129.846 79.769 79.769 129.846 185.731 50.077 105.961 58.769 226.038 1.231 18.846-12.538 32.922Q756.461-120 736.385-120Zm-252 0q-18.231 0-32.423-13.461t-18.653-33.538Q418.155-264.23 348.886-333.5q-69.27-69.27-166.501-84.423-20.077-4.462-33.538-18.961-13.461-14.5-13.461-33.346 0-19.076 13.884-33.23 13.884-14.153 33.115-10.922 136.769 15.384 234.384 112.999 97.615 97.615 112.999 234.384 3.231 19.23-10.538 33.115Q505.461-120 484.385-120Z"/></svg>
+      </a>
+    
+    <div id="nav-menu-btn" class="nav-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M177.37-252.282q-17.453 0-29.477-11.964-12.024-11.963-12.024-29.326t12.024-29.537q12.024-12.174 29.477-12.174h605.26q17.453 0 29.477 11.964 12.024 11.963 12.024 29.326t-12.024 29.537q-12.024 12.174-29.477 12.174H177.37Zm0-186.218q-17.453 0-29.477-11.963-12.024-11.964-12.024-29.326 0-17.363 12.024-29.537T177.37-521.5h605.26q17.453 0 29.477 11.963 12.024 11.964 12.024 29.326 0 17.363-12.024 29.537T782.63-438.5H177.37Zm0-186.217q-17.453 0-29.477-11.964-12.024-11.963-12.024-29.326t12.024-29.537q12.024-12.174 29.477-12.174h605.26q17.453 0 29.477 11.964 12.024 11.963 12.024 29.326t-12.024 29.537q-12.024 12.174-29.477 12.174H177.37Z"/></svg>
+    </div>
+  </nav>
+</navbar>
+<div id="nav-dropdown" class="hidden">
+  <div id="dropdown-link-list">
+    
+      <a class="nav-dropdown-link" href="/">Home</a>
+    
+      <a class="nav-dropdown-link" href="/archives">Archives</a>
+    
+      <a class="nav-dropdown-link" href="/about">About</a>
+    
+    
+      <a class="nav-dropdown-link" href="/atom.xml" title="RSS 订阅">RSS</a>
+     
+    </div>
+</div>
+<script>
+  let dropdownBtn = document.getElementById("nav-menu-btn");
+  let dropdownEle = document.getElementById("nav-dropdown");
+  dropdownBtn.onclick = function() {
+    dropdownEle.classList.toggle("hidden");
+  }
+</script>
+    </div>
+    <div id="sidebar-wrapper">
+      <sidebar id="sidebar">
+  
+    <div class="widget-wrap">
+  <div class="info-card">
+    <div class="avatar">
+      
+      <div class="img-dim"></div>
+    </div>
+    <div class="info">
+      <div class="username">Catizard </div>
+      <div class="dot"></div>
+      <div class="subtitle"> </div>
+      <div class="link-list">
+        
+          <a class="link-btn" target="_blank" rel="noopener" href="https://github.com/Catizard" title="GitHub"><i class="fa-brands fa-github"></i></a>
+         
+      </div>  
+    </div>
+  </div>
+</div>
+
+  
+  <div class="sticky">
+    
+      
+
+
+
+    
+      
+  <div class="widget-wrap">
+    <div class="widget">
+      <h3 class="widget-title">标签</h3>
+      <ul class="widget-tag-list" itemprop="keywords"><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/NJU-PA/" rel="tag">NJU PA</a></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</sidebar>
+    </div>
+    <div id="content-body">
+       
+
+
+<article id="post-NJU-PA1" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  
+    
+   
+  <div class="article-inner">
+    <div class="article-main">
+      <header class="article-header">
+        
+<div class="main-title-bar">
+  <div class="main-title-dot"></div>
+  
+    
+      <h1 class="p-name article-title" itemprop="headline name">
+        NJU PA1
+      </h1>
+    
+  
+</div>
+
+        <div class='meta-info-bar'>
+          <div class="meta-info">
+  <time class="dt-published" datetime="2024-04-03T19:27:34.000Z" itemprop="datePublished">2024-04-03</time>
+</div>
+          <div class="need-seperator meta-info">
+            <div class="meta-cate-flex">
+  
+    未分类 
+   
+</div>
+  
+          </div>
+          <div class="wordcount need-seperator meta-info">
+            5.4k 词 
+          </div>
+        </div>
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NJU-PA/" rel="tag">NJU PA</a></li></ul>
+
+      </header>
+      <div class="e-content article-entry" itemprop="articleBody">
+        
+          <h2 id="fceux"><a href="#fceux" class="headerlink" title="fceux"></a>fceux</h2><p>按照readme把内容下载下来之后运行可能会出现这个问题：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">/home/suzume/proj/ics2022/fceux-am/src/emufile.cpp: In member function ‘void EMUFILE_FILE::open(const char*, const char*)’:</span><br><span class="line">/home/suzume/proj/ics2022/fceux-am/src/emufile.cpp:33:22: error: array subscript 1 is above array bounds of ‘rom [1]’ [-Werror=array-bounds=]</span><br><span class="line">   33 |     if (strcmp(roms[i].name, fname) == 0) &#123;</span><br><span class="line">      |                ~~~~~~^</span><br><span class="line">In file included from /home/suzume/proj/ics2022/fceux-am/src/emufile.cpp:27:</span><br><span class="line">./nes/gen/roms.h:10:12: note: while referencing ‘roms’</span><br><span class="line">   10 | struct rom roms[] = &#123;</span><br><span class="line">      |            ^~~~</span><br><span class="line">cc1plus: all warnings being treated as errors</span><br></pre></td></tr></table></figure>
+
+<p>然后看了一下makefile,他应该是先执行了一个小脚本来生成了一个roms.h，当然这个roms.h不在这个目录下。之后这里的程序会用到nroms这个变量，虽然有这个条件限制但是编译器还是给了一个warning，猜测：如果他能看到这个nroms是一个常量可能就不会抛出这个warning。</p>
+<p>我的解决方案：想办法直接压制这个warning,stfw找到压制特定某个warning的方式然后加进编译选项就可以玩了。</p>
+<h2 id="RTFSC"><a href="#RTFSC" class="headerlink" title="RTFSC"></a>RTFSC</h2><blockquote>
+<h4 id="计算机可以没有寄存器吗"><a href="#计算机可以没有寄存器吗" class="headerlink" title="计算机可以没有寄存器吗"></a>计算机可以没有寄存器吗</h4><p>可以没有？如果站在寄存器只是内存的缓存的角度来看？</p>
+</blockquote>
+<blockquote>
+<h4 id="尝试理解计算机如何计算"><a href="#尝试理解计算机如何计算" class="headerlink" title="尝试理解计算机如何计算"></a>尝试理解计算机如何计算</h4><p>先放置两个值到寄存器里一个是结果r1一个是当前迭代的数r2，然后每次让迭代值先+1再加到结果r1里，之后跳转到开始的位置继续执行直到满足条件r2 &gt;&#x3D; 100。这个用例的意义在于我们只用跳转和基础指令理论上可以表达出任意的效果。</p>
+</blockquote>
+<blockquote>
+<h4 id="计算机是个状态机"><a href="#计算机是个状态机" class="headerlink" title="计算机是个状态机"></a>计算机是个状态机</h4><p>当读上面那段文档的时候我想到一个问题：怎么把这些单元区分开了，下面的格子就解释了：一部分是时序相关的单元，一部分是和时序无关的，他们只是在那里执行任务而已。</p>
+<p>他有什么好处？现实中的程序状态数量可能非常多，因此可以通过提取抽象状态来刻画你的程序的进行路径来分析出错的位置。这种做法应该每个程序员都会随着经验的增长而自然学会，但是这是一个更准确具体的描述，一些对你来说习以为常的事情。</p>
+<p>其次这个视角会更方便描述递归这一行为。</p>
+</blockquote>
+<blockquote>
+<h4 id="程序的起点？"><a href="#程序的起点？" class="headerlink" title="程序的起点？"></a>程序的起点？</h4><p>解决了pa0的时候可能会觉得这个问题理所当然:)</p>
+<p>好像要到pa4的阶段才会对这个问题有解释</p>
+</blockquote>
+<blockquote>
+<h4 id="为什么全部都是函数？"><a href="#为什么全部都是函数？" class="headerlink" title="为什么全部都是函数？"></a>为什么全部都是函数？</h4><p>从实现上来说可以分离执行函数，减少局部变量引入。从设计上来说，如果有类似于与isa有关的行为，那么只需要定义相同的api,具体实现由条件编译来给出就可以了。</p>
+</blockquote>
+<blockquote>
+<h4 id="参数的处理过程"><a href="#参数的处理过程" class="headerlink" title="参数的处理过程"></a>参数的处理过程</h4><p>如果是说参数在内存中的具体位置的话，这是一个比较远的话题，由操作系统放在制定的位置，程序读取环境数据，在之后pa4的阶段会实现。</p>
+<p>如果是说nemu运行时给定的额外参数的话，就需要理解到make做了什么：基本上他只是帮你执行了一些额外的步骤来构造可执行程序，然后启动了nemu程序，然后在合适的地方加入参数就可以了。思考一下make启动nemu和手动编译然后启动nemu的方式的不同就可以理解这个蓝框题目。</p>
+<p>这一点还是很重要的，后面的实验里有要求对这一点的理解。</p>
+</blockquote>
+<blockquote>
+<h4 id="初探操作系统启动"><a href="#初探操作系统启动" class="headerlink" title="初探操作系统启动"></a>初探操作系统启动</h4><p>看了一下<code>dmesg | wc -l</code>在我的机器上有1163行，还是挺长的。这个东西主要是可以给你这个”用户”一种直觉：我可以知道我的操作系统上发生的任何事情，计算机世界里不存在黑盒。</p>
+</blockquote>
+<blockquote>
+<h4 id="物理内存的起始位置"><a href="#物理内存的起始位置" class="headerlink" title="物理内存的起始位置"></a>物理内存的起始位置</h4><p>这里注意一点，说的不是宿主机的内存而是用户内存。现在运行的是用户程序，用户程序想要访问地址<code>0x8000000</code>他最终走到的宿主机上为他模拟的内存<code>pmem[0]</code>。是的，模拟的内存只是一个非常大的数组:)</p>
+<p>注意这里的物理内存和模拟内存是不同的概念，并不是说调用paddr_read(x)就相当于访问pmem[x]。物理内存是相对虚拟内存来说的，对于用户程序他并不知道模拟内存的概念（如果我们活在模拟器之内，怎么样知道我们在模拟器里）</p>
+</blockquote>
+<p>这里有一张图来描述此时用户程序加载到哪里了，然后我们约定他固定会加载到<code>RESET_VECTOR</code>。之所以要这样做是因为用户程序的cpu需要知道指令从哪里开始执行。可以看到图上还画了pc也指向这个位置，具体地代码里是直接让<code>cpu.pc=RESET_VECTOR</code>。</p>
+<p>在这个简化的模型中，很简单，上下约定好的固定位置，在实际的世界中可能需要了解BIOS启动和操作系统的cpu初始化的过程，在操作系统的课程中可能会提到。</p>
+<blockquote>
+<h4 id="question-RESET-HEADER在哪里"><a href="#question-RESET-HEADER在哪里" class="headerlink" title=":question: RESET_HEADER在哪里"></a>:question: RESET_HEADER在哪里</h4><p>打印会发现一开始的位置&#x3D;<code>0x80000000</code>，是不是有点意外？这张图只是起了一个象征意义，没有留空。</p>
+<p>这里有个比较蠢的事情，我的lsp给我跳到了其他的isa的init.c里导致我没有输出成功，似乎删掉其他没有用的isa也不会有什么问题。</p>
+</blockquote>
+<blockquote>
+<h4 id="究竟要执行多久？"><a href="#究竟要执行多久？" class="headerlink" title="究竟要执行多久？"></a>究竟要执行多久？</h4><p>-1为永远执行。</p>
+<p>注意这里的说明，menu会不断的执行指令，这和cpu的基本假设是一致的。指示结束的人是<code>nemu_trap</code>这条虚拟的指令。但是除此之外还有一种情况：达到了要求的循环次数，这一点应该是用来防止无止尽的执行的。</p>
+</blockquote>
+<blockquote>
+<h4 id="潜在的威胁"><a href="#潜在的威胁" class="headerlink" title="潜在的威胁"></a>潜在的威胁</h4><ul>
+<li><input disabled="" type="checkbox"> TODO</li>
+</ul>
+</blockquote>
+<blockquote>
+<h4 id="谁来指示程序的结束？"><a href="#谁来指示程序的结束？" class="headerlink" title="谁来指示程序的结束？"></a>谁来指示程序的结束？</h4><p>[ ] TODO</p>
+<p>我感觉如何证明这个问题是一个不trivial的问题，之后补充</p>
+</blockquote>
+<blockquote>
+<h4 id="有始有终"><a href="#有始有终" class="headerlink" title="有始有终"></a>有始有终</h4><p>实际程序是怎样中止的？存疑。</p>
+<p>这是一个比较关键的问题，因为在之前的模型假设中cpu是一个无情的执行指令的设备，他只会不停的执行指令，对他来说应该只有启动和断电两种状态，他没有中止这个概念。</p>
+</blockquote>
+<blockquote>
+<h4 id="gdb"><a href="#gdb" class="headerlink" title="gdb"></a>gdb</h4><ul>
+<li><input disabled="" type="checkbox"> 我个人是没有用gdb调试，但是这里有个遗留的问题：当打开gdb选项的时候，内部发生了什么变化。</li>
+</ul>
+</blockquote>
+<blockquote>
+<h4 id="优美地退出"><a href="#优美地退出" class="headerlink" title="优美地退出"></a>优美地退出</h4><p>NEMU有自己的运行状态，看结束时的代码是怎么输出有关程序状态的信息的就可以了。</p>
+</blockquote>
+<h2 id="基础设施"><a href="#基础设施" class="headerlink" title="基础设施"></a>基础设施</h2><blockquote>
+<p>有代码的地方，就有基础设施 :)</p>
+</blockquote>
+<p>在做之前重新梳理一下结构：在宿主机上模拟了硬件设备（例如上一节的内存只是一个巨大的数组），然后在模拟的硬件上运行了模拟的程序NEMU,这个NEMU还会加载用户程序，所以对于NEMU来说，用户程序对他来说是透明的，他可以随时了解用户程序的信息。但是这些信息对于外部的程序例如gdb是不好理解的，因为gdb在的位置是宿主机调试NEMU这个程序。</p>
+<p>因此这里的sdb是为了调试模拟的程序NEMU上加载的用户程序，他打印展示的也是我们模拟的硬件信息，例如打印模拟的用户内存，模拟的cpu的寄存器值等等。</p>
+<h3 id="单步执行"><a href="#单步执行" class="headerlink" title="单步执行"></a>单步执行</h3><p>单步执行的时候有个小细节：如果是直接c执行完整程序他不会打印执行的指令，但是单步会。这一点由框架代码给出了，主要是用来验证单步执行的正确性（虽然单步执行这个任务只有一行代码），演示了正确性的验证这个话题。</p>
+<h3 id="打印寄存器"><a href="#打印寄存器" class="headerlink" title="打印寄存器"></a>打印寄存器</h3><p>这里有一个抽象，因为具体实现和isa有关，所以在<code>$isa/reg.c</code>里，但是方法的签名是通用的，具体在<code>include/isa.h</code>里。</p>
+<blockquote>
+<p>:question: 寄存器的数量</p>
+<ul>
+<li><input disabled="" type="checkbox"> cpu只有32个寄存器吗？如果有更多的寄存器，应该怎么定义？</li>
+</ul>
+</blockquote>
+<p>先别急，在printf输出的时候占位符也是与isa有关的，所以如果要写出有可移植性的代码不能直接假定输出的字长是多少，那printf应该怎么写占位符呢？之前文档中煞有介事的提了一下如果你没有用过printf应该RTSC一下，现在就是践行这件事的时刻了:)</p>
+<h3 id="扫描内存"><a href="#扫描内存" class="headerlink" title="扫描内存"></a>扫描内存</h3><p>扫描内存，扫描的是谁的内存？至少首先他不是宿主机的内存，因为现在是在NEMU上开发的调试器。而下面的文档里也提到如果要测试可以扫描<code>0x80000000</code>附近的内存，因为这是<code>riscv32</code>上的物理内存的起始位置。之前提到在客户程序运行的过程中，总是用<code>vaddr_read/vaddr_write</code>来访问模拟的内存。</p>
+<blockquote>
+<p>:question: 虚拟内存</p>
+<p>这里为什么要用vaddr_read而不是paddr_read。如果你在这个阶段去看vaddr_read的实现，会看到他只是转调了paddr_read，等价于直接调用，所以这里不必纠结。至少在现阶段，他们两个是一样的。</p>
+<ul>
+<li><input disabled="" type="checkbox"> 但是这里用vaddr_read是有理由的，之后这里补充。</li>
+</ul>
+</blockquote>
+<p>文档中说还可以扫描<code>0x1000000</code>这个地址，我没太理解，因为这个位置显然不在模拟的内存里，会直接爆掉。</p>
+<h2 id="表达式求值"><a href="#表达式求值" class="headerlink" title="表达式求值"></a>表达式求值</h2><blockquote>
+<h4 id="为什么printf的输出要换行？"><a href="#为什么printf的输出要换行？" class="headerlink" title="为什么printf的输出要换行？"></a>为什么printf的输出要换行？</h4><p>需要刷新缓冲区，否则crash的时候可能看不到输出的结果。</p>
+</blockquote>
+<blockquote>
+<h4 id="实现带有负数的求值"><a href="#实现带有负数的求值" class="headerlink" title="实现带有负数的求值"></a>实现带有负数的求值</h4><p>单独对待符号和减号即可。</p>
+<p>实现完成之后就可以拓展原有的扫描内存功能了。</p>
+</blockquote>
+<h2 id="监视点"><a href="#监视点" class="headerlink" title="监视点"></a>监视点</h2><p>监视一个表达式的变化，一个比较强力的工具，尤其是你的场景比较底层的时候，例如直接对一个内存地址监视。</p>
+<h3 id="拓展表达式求值的功能"><a href="#拓展表达式求值的功能" class="headerlink" title="拓展表达式求值的功能"></a>拓展表达式求值的功能</h3><p>这里的实现方式已经很明确了，另外负数的处理方式也是一样的。</p>
+<p>不过在拓展了表达式求值的功能之后原有的随机测试就无法直接描述了，因为行为被拓展了。当然他没有修改旧有的行为，所以你的测试仍然可以运行只是此时测试的是你的功能的子集。当然，测试也不是100%覆盖到所有情况的:)</p>
+<blockquote>
+<p> :question: 为什么要用无符号类型？</p>
+<ul>
+<li><input disabled="" type="checkbox"> 也许是因为符号拓展的效果？</li>
+</ul>
+</blockquote>
+<h3 id="实现监视点"><a href="#实现监视点" class="headerlink" title="实现监视点"></a>实现监视点</h3><p>这里有一个比较烦的事情是，WP这个结构体是直接定义在.c里的，因此在sdb里是没有办法看到WP这个结构体的定义的，所以我把new_wp的定义改成了返回创建的编号，同时free_wp按编号来释放。</p>
+<p>然后因为监视点需要在每次执行指令之后来扫描所有监视的表达式，所以如果任何时候都把这个功能启用的话损耗的性能比较多，所以可以类似的在Kconfig里写一个可配置项来控制是否期望有这个行为，当然加入这个配置之后不要忘了<code>make menuconfig</code>以及在命令执行的部分加上，因为如果你确实需要这个功能但是他没有启用的话，命令应该是不允许执行的。否则你只能看着你能加监视点但是却不生效，这很迷惑。</p>
+<blockquote>
+<p>:warning: 设置为bool的配置项消失了</p>
+<p>我是这么设置WATCHPOINT的:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">config WATCHPOINT</span><br><span class="line"><span class="type">bool</span> <span class="string">&quot;Enable watchpoint&quot;</span></span><br><span class="line"><span class="keyword">default</span> y</span><br></pre></td></tr></table></figure>
+
+<p>当配置真的时候会有一个CONFIG_WATCHPOINT存在，但是为假时这个宏会直接删除，我本来期望的是他有一个为假的宏而不是直接删除。这导致我本来期望写的是<code>if (CONFIG_WATCHPOINT)</code>，而实际上我只能写<code>  IFDEF(CONFIG_WATCHPOINT, run_watchpoint());</code>。</p>
+<p>同时为了防止命令的错误调用，我得这么添加两处相同的代码:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifndef</span> CONFIG_WATCHPOINT</span></span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;watchpoint is not enabled\n&quot;</span>);</span><br><span class="line"> <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* ifdef CONFIG_WATCHPOINT */</span></span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>此时我才反应过来之前为什么写成那样:(，之前RTFSC环节没有太研究makefile踩坑了。</p>
+<ul>
+<li><input disabled="" type="checkbox"> 有没有在假的时候也继续存在的配置？这样的话可以简单的写if结构而不是使用宏ifndef来做。</li>
+</ul>
+</blockquote>
+<ul>
+<li><input disabled="" type="checkbox"> 在实现完了监视点之后，之前实现的基础设施中的<code>info w</code>也可以补齐了。</li>
+</ul>
+<h2 id="调试工具与原理"><a href="#调试工具与原理" class="headerlink" title="调试工具与原理"></a>调试工具与原理</h2><blockquote>
+<ul>
+<li>机器永远是对的</li>
+<li>计算机世界没有魔法</li>
+</ul>
+</blockquote>
+<blockquote>
+<h4 id="你会如何测试你的监视点实现"><a href="#你会如何测试你的监视点实现" class="headerlink" title="你会如何测试你的监视点实现?"></a>你会如何测试你的监视点实现?</h4><p>事实上我完全没用到监视点。</p>
+</blockquote>
+<blockquote>
+<h4 id="强大的GDB"><a href="#强大的GDB" class="headerlink" title="强大的GDB"></a>强大的GDB</h4><ul>
+<li><input disabled="" type="checkbox"> 没有使用gdb,之后补吧</li>
+</ul>
+</blockquote>
+<h2 id="断点"><a href="#断点" class="headerlink" title="断点"></a>断点</h2><p>我们很容易用这种方式来模拟断点:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">w $pc=ADDR</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>:warning: 等等，pc寄存器</p>
+<p>是的，pc寄存器不和其他普通的寄存器在一起，普通的调用reg_display并不能打印他。</p>
+</blockquote>
+<blockquote>
+<h4 id="如何提高断点的效率-建议二周目思考"><a href="#如何提高断点的效率-建议二周目思考" class="headerlink" title="如何提高断点的效率 (建议二周目思考)"></a>如何提高断点的效率 (建议二周目思考)</h4><p>断点的效率差是因为需要在每个指令执行结束的时候检查一遍，并且每次都需要执行一次expr来计算。</p>
+<p>如何优化他？我暂且没什么方法，因为pc是可以任意跳转的，并不能预测他的位置。</p>
+</blockquote>
+<p>这里还有一篇文章<a target="_blank" rel="noopener" href="https://eli.thegreenplace.net/2011/01/27/how-debuggers-work-part-2-breakpoints">how debuggers work</a>。调试器的断点工作原理和监视点模拟断点的工作原理不太一样，也许看了这篇文章之后可以理解为什么模拟的速度不够快？</p>
+<blockquote>
+<h4 id="随心所欲的断点"><a href="#随心所欲的断点" class="headerlink" title="随心所欲的断点"></a>随心所欲的断点</h4><ul>
+<li><input disabled="" type="checkbox"> 猜测会停不下来？</li>
+</ul>
+</blockquote>
+<blockquote>
+<h4 id="NEMU的前世今生"><a href="#NEMU的前世今生" class="headerlink" title="NEMU的前世今生"></a>NEMU的前世今生</h4><ul>
+<li><p>模拟器与调试器有什么不同？</p>
+</li>
+<li><p>与NEMU相比，GDB到底是怎么调试程序的？</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+我感觉两个问题都不是很trivial，之后补齐</p>
+</li>
+</ul>
+</blockquote>
+<h2 id="如何阅读手册"><a href="#如何阅读手册" class="headerlink" title="如何阅读手册"></a>如何阅读手册</h2><p>在看i386手册时，html的手册只展示到了二级目录所以你会找不到<code>selector</code>这个概念，看pdf版本的就没有这个问题。</p>
+<blockquote>
+<h4 id="必答题"><a href="#必答题" class="headerlink" title="必答题"></a>必答题</h4><ul>
+<li><p>riscv32</p>
+<ul>
+<li><p>riscv32有哪几种指令格式?</p>
+<p>基础的有四种:<code>R/I/S/U</code>,有两种变种:<code>B/J</code></p>
+</li>
+<li><p>LUI指令的行为是什么?</p>
+<p>以U型指令的格式加载一个数到寄存器rd,将其低12位置0</p>
+</li>
+<li><p>mstatus寄存器的结构是怎么样的?</p>
+<p><img src="/home/suzume/.config/Typora/typora-user-images/image-20240107223737535.png" alt="image-20240107223737535"></p>
+</li>
+</ul>
+</li>
+<li><p>shell</p>
+<ul>
+<li><p>完成pa1的内容之后，所有.c和.h一共有多少行代码?</p>
+<p><code>find </code>找到所有相关的文件，然后用<code>wc -l</code>统计，最后通过wc自己的筛选去掉中间结果</p>
+</li>
+<li><p>和框架代码相比，你写了多少代码？</p>
+<p>322 insertions(+), 34 deletions(-)</p>
+</li>
+<li><p>把这件事写进makefile?</p>
+<ul>
+<li><input disabled="" type="checkbox"> 比较好做，但是后面那个去除空行好像不太行</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<blockquote>
+<p>:sunny: 温馨提示: pa1到此结束</p>
+</blockquote>
+
+        
+      </div>
+
+         
+    </div>
+    
+     
+  </div>
+  
+    
+<nav id="article-nav">
+  <a class="article-nav-btn left "
+    
+      href="/2024/04/04/NJU-PA2/"
+      title="NJU PA2"
+     >
+    <i class="fa-solid fa-angle-left"></i>
+    <p class="title-text">
+      
+        NJU PA2
+        
+    </p>
+  </a>
+  <a class="article-nav-btn right "
+    
+      href="/2024/04/04/NJU-PA0/"
+      title="NJU PA0"
+     >
+
+    <p class="title-text">
+      
+        NJU PA0
+        
+    </p>
+    <i class="fa-solid fa-angle-right"></i>
+  </a>
+</nav>
+
+
+  
+</article>
+
+
+
+
+
+    </div>
+    <div id="footer-wrapper">
+      <footer id="footer">
+  
+  <div id="footer-info" class="inner">
+    
+    &copy; 2024 Catizard<br>
+    Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & Theme <a target="_blank" rel="noopener" href="https://github.com/saicaca/hexo-theme-vivia">Vivia</a>
+  </div>
+</footer>
+
+    </div>
+    <div class="back-to-top-wrapper">
+    <button id="back-to-top-btn" class="back-to-top-btn hide" onclick="topFunction()">
+        <i class="fa-solid fa-angle-up"></i>
+    </button>
+</div>
+
+<script>
+    function topFunction() {
+        window.scroll({ top: 0, behavior: 'smooth' });
+    }
+    let btn = document.getElementById('back-to-top-btn');
+    function scrollFunction() {
+        if (document.body.scrollTop > 600 || document.documentElement.scrollTop > 600) {
+            btn.classList.remove('hide')
+        } else {
+            btn.classList.add('hide')
+        }
+    }
+    window.onscroll = function() {
+        scrollFunction();
+    }
+</script>
+
+  </div>
+  <script src="/js/light-dark-switch.js"></script>
+</body>
+</html>
