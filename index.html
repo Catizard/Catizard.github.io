@@ -163,6 +163,89 @@
    
 
 
+<article id="post-mit6-s081-chapter4" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+   
+  <div class="article-inner">
+    <div class="article-main">
+      <header class="article-header">
+        
+<div class="main-title-bar">
+  <div class="main-title-dot"></div>
+  
+    
+      <h1 itemprop="name">
+        <a class="p-name article-title" href="/2024/05/04/mit6-s081-chapter4/">mit6.s081 chapter4</a>
+      </h1>
+    
+  
+</div>
+
+        <div class='meta-info-bar'>
+          <div class="meta-info">
+  <time class="dt-published" datetime="2024-05-04T09:56:15.000Z" itemprop="datePublished">2024-05-04</time>
+</div>
+          <div class="need-seperator meta-info">
+            <div class="meta-cate-flex">
+  
+    未分类 
+   
+</div>
+  
+          </div>
+          <div class="wordcount need-seperator meta-info">
+            1.5k 词 
+          </div>
+        </div>
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mit6-s081/" rel="tag">mit6.s081</a></li></ul>
+
+      </header>
+      <div class="e-content article-entry" itemprop="articleBody">
+        
+          <div class="truncate-text">
+            
+              Lab: Copy-on-Write Fork for xv62021的lab没有了lazy lab作为COW的前置，虽然实验内容里提到了lazy lab。而且提示里少了一两条非常关键的信息，似乎默认了做过前面的lab。
+在做这个lab之前先读一下fork的流程:
+
+分配一个新进程np = allocproc()
+把整个内存空间复制给新进程uvncopy(p-&gt;pagetable, np-&gt;pagetable, p-&gt;sz)
+复制寄存器，设置函数返回值*(np-&gt;trapframe) = *(p-&gt;trapframe); np-&gt;trapframe-&gt;a0=0
+所有进程已经打开的文件，链接数+1
+设置基础数据，名称状态父级等
+
+这里要优化的就是第二步：复制整个内存空间的操作太大。改为懒惰机制：只在有必要的时候复制物理内存。
+改写uvmcopyuvmcopy目前的实现是直接分配一个物理内存mem=kalloc()，然后将其映射在新进程的内存空间里。现在，不直接分配一个物理内存而是将手上的物理内存pa映射给新进程。
+两个进程前后走到的物理页的...
+            
+          </div>
+        
+      </div>
+
+         
+    </div>
+    
+     
+    <a class="right-panel  non-pic  "
+      
+      href="/2024/05/04/mit6-s081-chapter4/" 
+    >
+       
+      <i class="fa-solid fa-angle-right non-pic"></i>
+       
+    </a>
+     
+  </div>
+  
+</article>
+
+
+
+
+
+
+   
+
+
 <article id="post-mit6-s081-chapter3" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
    
   <div class="article-inner">
@@ -193,7 +276,7 @@
   
           </div>
           <div class="wordcount need-seperator meta-info">
-            3.2k 词 
+            3.6k 词 
           </div>
         </div>
         

@@ -28,7 +28,7 @@
 <meta property="og:description" content="问题 为什么需要虚拟内存？  早期在操作系统只能同时运行一个程序，操作系统只是一组库函数，在物理内存里存在，例如占据[0,64KB)的位置，然后运行的程序可以直接操作从64KB开始的物理内存。如果需要切换运行的用户程序，只需要将用户程序加载到64KB开始的位置，然后执行指令即可。 但是随着同时运行多个用户程序的需求产生，直接操作物理内存的弊端就露出来了：在之前只有一个用户程序的时候，损坏了操作系统">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-04-05T10:55:09.000Z">
-<meta property="article:modified_time" content="2024-04-06T06:31:10.019Z">
+<meta property="article:modified_time" content="2024-04-13T05:28:21.621Z">
 <meta property="article:author" content="Catizard">
 <meta property="article:tag" content="mit6.s081">
 <meta name="twitter:card" content="summary">
@@ -199,7 +199,7 @@
   
           </div>
           <div class="wordcount need-seperator meta-info">
-            3.2k 词 
+            3.6k 词 
           </div>
         </div>
         
@@ -262,6 +262,10 @@
 </blockquote>
 <p>用户程序的<code>trampoline</code>分配在<code>K/proc.c#allocproc</code>里，如果找到一个<code>unused</code>的进程，会调用<code>K/proc.c#proc_pagetable</code>来创建一个用户进程的页表，其中就通过<code>mappages(pagetable, TRAMPOLINE, PGSIZE, (uint64)trampoline, PTE_R | PTE_X) &lt; 0</code>，来把虚拟地址空间中最高的位置映射到<code>trampoline</code>物理位置上。</p>
 <p>特别的，如果有多个cpu核，只有第一个cpu会构造三级页表，其他cpu只会写入<code>satp</code>寄存器来打开分页机制，因为全局变量对多个核是可见的。</p>
+<h2 id="Lab3-page-tables"><a href="#Lab3-page-tables" class="headerlink" title="Lab3: page tables"></a>Lab3: page tables</h2><h3 id="Speed-up-system-calls-easy"><a href="#Speed-up-system-calls-easy" class="headerlink" title="Speed up system calls (easy)"></a>Speed up system calls (easy)</h3><p>如果只打开了<code>PTE_R</code>会触发<code>load fault</code>，因为这个测试是在用户空间访问这个页，所以需要打开<code>PTE_W</code>。</p>
+<h3 id="Speed-up-system-calls-easy-1"><a href="#Speed-up-system-calls-easy-1" class="headerlink" title="Speed up system calls (easy)"></a>Speed up system calls (easy)</h3><p>也是个坑，我一开始用的2020的lab页面，这个测试里多一个页，因为上一个测试里添加了一张。</p>
+<h3 id="Detecting-which-pages-have-been-accessed-hard"><a href="#Detecting-which-pages-have-been-accessed-hard" class="headerlink" title="Detecting which pages have been accessed (hard)"></a>Detecting which pages have been accessed (hard)</h3><p>题目描述有点看不懂，具体的就是问一个虚拟地址<code>va</code>有没有被访问，访问的定义是当这个页不存在于TLB时，硬件会给页表项写一个bit位表示这个页刚刚被访问了（走过了完整的流程而不是cache）。注意读取完了之后要把表项上的bit清掉。</p>
+<p>这个东西为什么是hard，感觉不如第一个实验难。我觉得要答出来读取参数，<code>copyin/copyout</code>的实现相关的东西才够难度。因为这个题非常容易稀里糊涂做出来了。</p>
 
         
       </div>
@@ -274,10 +278,15 @@
   
     
 <nav id="article-nav">
-  <a class="article-nav-btn left  disabled "
+  <a class="article-nav-btn left "
+    
+      href="/2024/05/04/mit6-s081-chapter4/"
+      title="mit6.s081 chapter4"
      >
     <i class="fa-solid fa-angle-left"></i>
     <p class="title-text">
+      
+        mit6.s081 chapter4
         
     </p>
   </a>
