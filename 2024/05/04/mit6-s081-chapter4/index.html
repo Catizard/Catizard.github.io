@@ -28,7 +28,7 @@
 <meta property="og:description" content="Lab: Copy-on-Write Fork for xv62021的lab没有了lazy lab作为COW的前置，虽然实验内容里提到了lazy lab。而且提示里少了一两条非常关键的信息，似乎默认了做过前面的lab。 在做这个lab之前先读一下fork的流程:  分配一个新进程np &#x3D; allocproc() 把整个内存空间复制给新进程uvncopy(p-&gt;pagetable, np-&amp;">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-05-04T09:56:15.000Z">
-<meta property="article:modified_time" content="2024-05-04T11:53:07.212Z">
+<meta property="article:modified_time" content="2024-05-05T05:08:13.233Z">
 <meta property="article:author" content="Catizard">
 <meta property="article:tag" content="mit6.s081">
 <meta name="twitter:card" content="summary">
@@ -199,7 +199,7 @@
   
           </div>
           <div class="wordcount need-seperator meta-info">
-            1.5k 词 
+            1.7k 词 
           </div>
         </div>
         
@@ -237,9 +237,13 @@
 <h2 id="usertests"><a href="#usertests" class="headerlink" title="usertests"></a>usertests</h2><ul>
 <li>注意内核里很多时候不能简单的panic掉，需要正确的处理异常情况：例如kalloc失败时需要将用户进程kill掉(<code>p-&gt;killed=1</code>)。</li>
 <li>物理内存初始化时也需要注意refcount，因为调用了kfree来初始化内存里的数据。一种做法是在kinit里先给所有物理地址的引用数置为1，然后kfree结束时就是正确的0。</li>
-<li>尝试分配物理地址时也需要判断pte是否合法，是否是用户页。</li>
 <li>小心修改refcount，因为多线程存在race，考虑用kmem的锁。</li>
+<li>在试图复制页之前需要判断空指针，是否合法和是否是用户页。如果不满足，说明错误的捕获了一个不属于cow页的异常，需要补齐对异常的处理（kill process）。</li>
 </ul>
+<p>对于第四点，需要理解代码本来的结构是:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (r_cause() == <span class="number">8</span>) &#123;...&#125;</span><br><span class="line"><span class="keyword">else</span> p-&gt;killed = <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>在这之前除了&#x3D;8的scause都会导致用户进程被杀掉。所以是否需要复制cow的页面还要看是否空指针，是否有效页和是否用户页，否则会把其他情况带进来导致panic。</p>
 
         
       </div>
