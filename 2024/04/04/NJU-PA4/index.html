@@ -28,7 +28,7 @@
 <meta property="og:description" content="多道程序批处理系统目前的缺陷是同一时刻只能执行一个程序。在一些场景下cpu会浪费，比如等待硬件的数据读取的时间里cpu要一直空转等待。所以很自然的一个新的需求就是：在操作系统上期望能“同时”运行多个程序。 接下来需要实现两个目标：  在内存中可以同时存在多个进程 在满足某些条件的情况下, 可以让执行流在这些进程之间切换  前者是之前在加载阶段做过的，程序就是一截指令序列，通过上下文赋予其意义。既然">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-04-03T19:30:41.000Z">
-<meta property="article:modified_time" content="2024-04-03T11:30:51.529Z">
+<meta property="article:modified_time" content="2024-05-13T10:57:43.298Z">
 <meta property="article:author" content="Catizard">
 <meta property="article:tag" content="NJU PA">
 <meta name="twitter:card" content="summary">
@@ -199,7 +199,7 @@
   
           </div>
           <div class="wordcount need-seperator meta-info">
-            3k 词 
+            3.1k 词 
           </div>
         </div>
         
@@ -270,6 +270,7 @@
 <blockquote>
 <p>:question:内核栈的用途</p>
 <p>是的，用户程序需要自己的堆栈来实现隔离性，但是每个进程都有的内核栈是给谁用的？<code>Nanos-lite</code>使用的是<code>AM</code>提供的栈区，每个进程分配的内核栈是否落在这个范围里？</p>
+<p>栈是由编译器生成指令时使用的概念，这样内核的代码段使用的栈sp寄存器的位置显然落在内核内存空间而不是用户内存空间；因此当用户进程陷入内核的时候，此时内核程序需要一个可用的栈。</p>
 </blockquote>
 <p>在<code>PCB</code>中分配的栈是内存栈，位于用户区的栈称作用户栈。目前用户栈的分配方式是直接将堆区末尾的一部分作为用户栈。</p>
 <blockquote>
@@ -336,7 +337,7 @@
   
   <div id="footer-info" class="inner">
     
-    &copy; 2024 Catizard<br>
+    &copy; 2025 Catizard<br>
     Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & Theme <a target="_blank" rel="noopener" href="https://github.com/saicaca/hexo-theme-vivia">Vivia</a>
   </div>
 </footer>

@@ -163,6 +163,87 @@
    
 
 
+<article id="post-在mac上玩beatoraja" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+   
+  <div class="article-inner">
+    <div class="article-main">
+      <header class="article-header">
+        
+<div class="main-title-bar">
+  <div class="main-title-dot"></div>
+  
+    
+      <h1 itemprop="name">
+        <a class="p-name article-title" href="/2025/04/19/%E5%9C%A8mac%E4%B8%8A%E7%8E%A9beatoraja/">在mac上玩beatoraja</a>
+      </h1>
+    
+  
+</div>
+
+        <div class='meta-info-bar'>
+          <div class="meta-info">
+  <time class="dt-published" datetime="2025-04-19T12:18:12.000Z" itemprop="datePublished">2025-04-19</time>
+</div>
+          <div class="need-seperator meta-info">
+            <div class="meta-cate-flex">
+  
+    未分类 
+   
+</div>
+  
+          </div>
+          <div class="wordcount need-seperator meta-info">
+            1.3k 词 
+          </div>
+        </div>
+        
+      </header>
+      <div class="e-content article-entry" itemprop="articleBody">
+        
+          <div class="truncate-text">
+            
+              TL;DR在目前的阶段(2025-04-19)，在mac上玩beatoraja是不可能的。目前认为只有两种可行的路径：
+
+下载一个非常早期的oracle jdk8，要求下载的时候仅有x86选项，没有提供arm64选项。同时该方法只能游玩0.8.7及以下的版本，在0.8.8之后要求jdk17后该方法彻底不适用。
+使用Endless Dream社区fork的版本，同时需要加上我为其编写的pr代码补丁以支持mac的运行。fork分支地址见这里。
+
+以上说法主要针对arm64的mac用户（方法1），但是这不意味着x86的mac用户就可以正常的运行了，见issue838。同时方法2被确认为arm64和x86都可以修复。
+如果你不会自己编译项目你可以:
+
+等待这个pr被合并到Endless Dream之后，下载最新的jar文件使用
+在这个位置: Release下载一个jar文件，如果你想下载0.3.0需要下载有aarch64后缀的文件，0.2.1下载macos的jar即可。（特别地，如果你是x86用户则没有0.2.1的jar，只能下载0.3.0的不带后缀的macos的jar）。
+
+如果你会自...
+            
+          </div>
+        
+      </div>
+
+         
+    </div>
+    
+     
+    <a class="right-panel  non-pic  "
+      
+      href="/2025/04/19/%E5%9C%A8mac%E4%B8%8A%E7%8E%A9beatoraja/" 
+    >
+       
+      <i class="fa-solid fa-angle-right non-pic"></i>
+       
+    </a>
+     
+  </div>
+  
+</article>
+
+
+
+
+
+
+   
+
+
 <article id="post-mit6-s081-chapter4" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
    
   <div class="article-inner">
@@ -359,7 +440,7 @@
   
           </div>
           <div class="wordcount need-seperator meta-info">
-            3k 词 
+            3.1k 词 
           </div>
         </div>
         
@@ -839,7 +920,7 @@ More info: Deployment
   
   <div id="footer-info" class="inner">
     
-    &copy; 2024 Catizard<br>
+    &copy; 2025 Catizard<br>
     Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & Theme <a target="_blank" rel="noopener" href="https://github.com/saicaca/hexo-theme-vivia">Vivia</a>
   </div>
 </footer>
