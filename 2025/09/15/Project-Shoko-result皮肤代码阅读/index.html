@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+
+
+<html theme="dark" showBanner="true" hasBanner="true" > 
+<link href="https://cdn.staticfile.org/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet">
+<link href="https://cdn.staticfile.org/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet">
+<link href="https://cdn.staticfile.org/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet">
+<script src="/js/color.global.min.js" ></script>
+<script src="/js/load-settings.js" ></script>
+<head>
+  <meta charset="utf-8">
+  
+  
+  
+
+  
+  <title>Project-Shoko result皮肤代码阅读 | Catizard&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="preload" href="/css/fonts/Roboto-Regular.ttf" as="font" type="font/ttf" crossorigin="anonymous">
+  <link rel="preload" href="/css/fonts/Roboto-Bold.ttf" as="font" type="font/ttf" crossorigin="anonymous">
+
+  <meta name="description" content="前言这是一个阅读Project-Shoko的result部分代码来理解如何编写皮肤和Beatoraja的皮肤系统的流水账，内容可能未整理，随时间修改的可能性较大。 Beatoraja Wiki 初始化首先一个皮肤肯定要定义自己，然后被读取，解析，执行成一个java object。根据wiki的指示可以知道一个皮肤文件从一个.luaskin文件开始，它会作为一个lua文件被执行，其返回值就是这个皮肤">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Project-Shoko result皮肤代码阅读">
+<meta property="og:url" content="https://catizard.github.io/2025/09/15/Project-Shoko-result%E7%9A%AE%E8%82%A4%E4%BB%A3%E7%A0%81%E9%98%85%E8%AF%BB/index.html">
+<meta property="og:site_name" content="Catizard&#39;s blog">
+<meta property="og:description" content="前言这是一个阅读Project-Shoko的result部分代码来理解如何编写皮肤和Beatoraja的皮肤系统的流水账，内容可能未整理，随时间修改的可能性较大。 Beatoraja Wiki 初始化首先一个皮肤肯定要定义自己，然后被读取，解析，执行成一个java object。根据wiki的指示可以知道一个皮肤文件从一个.luaskin文件开始，它会作为一个lua文件被执行，其返回值就是这个皮肤">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://catizard.github.io/Users/xiangyang/Documents/hexo-blog/public/images/image-20250915092841994.png">
+<meta property="og:image" content="https://catizard.github.io/Users/xiangyang/Documents/hexo-blog/public/images/image-20250915101952687.png">
+<meta property="og:image" content="https://catizard.github.io/Users/xiangyang/Documents/hexo-blog/public/images/image-20250915115618562.png">
+<meta property="article:published_time" content="2025-09-15T09:02:59.000Z">
+<meta property="article:modified_time" content="2025-09-15T09:51:22.992Z">
+<meta property="article:author" content="Catizard">
+<meta property="article:tag" content="Beatoraja">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://catizard.github.io/Users/xiangyang/Documents/hexo-blog/public/images/image-20250915092841994.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Catizard's blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-32.png" sizes="32x32">
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-128.png" sizes="128x128">
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-180.png" sizes="180x180">
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-192.png" sizes="192x192">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-32.png" sizes="32x32">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-128.png" sizes="128x128">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-180.png" sizes="180x180">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-192.png" sizes="192x192">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+<body>
+  
+  
+    
+<div id="banner" class="">
+  <img src="/banner.jpg" itemprop="image">
+  <div id="banner-dim"></div>
+</div>
+ 
+   
+  <div id="main-grid" class="  ">
+    <div id="nav" class=""  >
+      <navbar id="navbar">
+  <nav id="title-nav">
+    <a href="/">
+      <div id="vivia-logo">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+      <div>Catizard's blog </div>
+    </a>
+  </nav>
+  <nav id="main-nav">
+    
+      <a class="main-nav-link" href="/">Home</a>
+    
+      <a class="main-nav-link" href="/archives">Archives</a>
+    
+      <a class="main-nav-link" href="/about">About</a>
+    
+  </nav>
+  <nav id="sub-nav">
+    <a id="theme-btn" class="nav-icon">
+      <span class="light-mode-icon"><svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M438.5-829.913v-48q0-17.452 11.963-29.476 11.964-12.024 29.326-12.024 17.363 0 29.537 12.024t12.174 29.476v48q0 17.452-11.963 29.476-11.964 12.024-29.326 12.024-17.363 0-29.537-12.024T438.5-829.913Zm0 747.826v-48q0-17.452 11.963-29.476 11.964-12.024 29.326-12.024 17.363 0 29.537 12.024t12.174 29.476v48q0 17.452-11.963 29.476-11.964 12.024-29.326 12.024-17.363 0-29.537-12.024T438.5-82.087ZM877.913-438.5h-48q-17.452 0-29.476-11.963-12.024-11.964-12.024-29.326 0-17.363 12.024-29.537t29.476-12.174h48q17.452 0 29.476 11.963 12.024 11.964 12.024 29.326 0 17.363-12.024 29.537T877.913-438.5Zm-747.826 0h-48q-17.452 0-29.476-11.963-12.024-11.964-12.024-29.326 0-17.363 12.024-29.537T82.087-521.5h48q17.452 0 29.476 11.963 12.024 11.964 12.024 29.326 0 17.363-12.024 29.537T130.087-438.5Zm660.174-290.87-34.239 32q-12.913 12.674-29.565 12.174-16.653-.5-29.327-13.174-12.674-12.673-12.554-28.826.12-16.152 12.794-28.826l33-35q12.913-12.674 30.454-12.674t30.163 12.847q12.709 12.846 12.328 30.826-.38 17.98-13.054 30.653ZM262.63-203.978l-32 34q-12.913 12.674-30.454 12.674t-30.163-12.847q-12.709-12.846-12.328-30.826.38-17.98 13.054-30.653l33.239-31q12.913-12.674 29.565-12.174 16.653.5 29.327 13.174 12.674 12.673 12.554 28.826-.12 16.152-12.794 28.826Zm466.74 33.239-32-33.239q-12.674-12.913-12.174-29.565.5-16.653 13.174-29.327 12.673-12.674 28.826-13.054 16.152-.38 28.826 12.294l35 33q12.674 12.913 12.674 30.454t-12.847 30.163q-12.846 12.709-30.826 12.328-17.98-.38-30.653-13.054ZM203.978-697.37l-34-33q-12.674-12.913-13.174-29.945-.5-17.033 12.174-29.707t31.326-13.293q18.653-.62 31.326 13.054l32 34.239q11.674 12.913 11.174 29.565-.5 16.653-13.174 29.327-12.673 12.674-28.826 12.554-16.152-.12-28.826-12.794ZM480-240q-100 0-170-70t-70-170q0-100 70-170t170-70q100 0 170 70t70 170q0 100-70 170t-170 70Zm-.247-82q65.703 0 111.475-46.272Q637-414.544 637-480.247t-45.525-111.228Q545.95-637 480.247-637t-111.475 45.525Q323-545.95 323-480.247t45.525 111.975Q414.05-322 479.753-322ZM481-481Z"/></svg></span>
+      <span class="dark-mode-icon"><svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M480.239-116.413q-152.63 0-258.228-105.478Q116.413-327.37 116.413-480q0-130.935 77.739-227.435t206.304-125.043q43.022-9.631 63.87 10.869t3.478 62.805q-8.891 22.043-14.315 44.463-5.424 22.42-5.424 46.689 0 91.694 64.326 155.879 64.325 64.186 156.218 64.186 24.369 0 46.978-4.946 22.609-4.945 44.413-14.076 42.826-17.369 62.967 1.142 20.142 18.511 10.511 61.054Q807.174-280 712.63-198.206q-94.543 81.793-232.391 81.793Zm0-95q79.783 0 143.337-40.217 63.554-40.218 95.793-108.283-15.608 4.044-31.097 5.326-15.49 1.283-31.859.805-123.706-4.066-210.777-90.539-87.071-86.473-91.614-212.092-.24-16.369.923-31.978 1.164-15.609 5.446-30.978-67.826 32.478-108.282 96.152Q211.652-559.543 211.652-480q0 111.929 78.329 190.258 78.329 78.329 190.258 78.329ZM466.13-465.891Z"/></svg></span>
+    </a>
+    
+      <a id="nav-rss-link" class="nav-icon mobile-hide" href="/atom.xml" title="RSS 订阅">
+        <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M198-120q-25.846 0-44.23-18.384-18.384-18.385-18.384-44.23 0-25.846 18.384-44.23 18.384-18.385 44.23-18.385 25.846 0 44.23 18.385 18.384 18.384 18.384 44.23 0 25.845-18.384 44.23Q223.846-120 198-120Zm538.385 0q-18.846 0-32.923-13.769-14.076-13.769-15.922-33.23-8.692-100.616-51.077-188.654-42.385-88.039-109.885-155.539-67.5-67.501-155.539-109.885Q283-663.462 182.385-672.154q-19.461-1.846-33.23-16.23-13.769-14.385-13.769-33.846t14.076-32.922q14.077-13.461 32.923-12.23 120.076 8.692 226.038 58.768 105.961 50.077 185.73 129.846 79.769 79.769 129.846 185.731 50.077 105.961 58.769 226.038 1.231 18.846-12.538 32.922Q756.461-120 736.385-120Zm-252 0q-18.231 0-32.423-13.461t-18.653-33.538Q418.155-264.23 348.886-333.5q-69.27-69.27-166.501-84.423-20.077-4.462-33.538-18.961-13.461-14.5-13.461-33.346 0-19.076 13.884-33.23 13.884-14.153 33.115-10.922 136.769 15.384 234.384 112.999 97.615 97.615 112.999 234.384 3.231 19.23-10.538 33.115Q505.461-120 484.385-120Z"/></svg>
+      </a>
+    
+    <div id="nav-menu-btn" class="nav-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M177.37-252.282q-17.453 0-29.477-11.964-12.024-11.963-12.024-29.326t12.024-29.537q12.024-12.174 29.477-12.174h605.26q17.453 0 29.477 11.964 12.024 11.963 12.024 29.326t-12.024 29.537q-12.024 12.174-29.477 12.174H177.37Zm0-186.218q-17.453 0-29.477-11.963-12.024-11.964-12.024-29.326 0-17.363 12.024-29.537T177.37-521.5h605.26q17.453 0 29.477 11.963 12.024 11.964 12.024 29.326 0 17.363-12.024 29.537T782.63-438.5H177.37Zm0-186.217q-17.453 0-29.477-11.964-12.024-11.963-12.024-29.326t12.024-29.537q12.024-12.174 29.477-12.174h605.26q17.453 0 29.477 11.964 12.024 11.963 12.024 29.326t-12.024 29.537q-12.024 12.174-29.477 12.174H177.37Z"/></svg>
+    </div>
+  </nav>
+</navbar>
+<div id="nav-dropdown" class="hidden">
+  <div id="dropdown-link-list">
+    
+      <a class="nav-dropdown-link" href="/">Home</a>
+    
+      <a class="nav-dropdown-link" href="/archives">Archives</a>
+    
+      <a class="nav-dropdown-link" href="/about">About</a>
+    
+    
+      <a class="nav-dropdown-link" href="/atom.xml" title="RSS 订阅">RSS</a>
+     
+    </div>
+</div>
+<script>
+  let dropdownBtn = document.getElementById("nav-menu-btn");
+  let dropdownEle = document.getElementById("nav-dropdown");
+  dropdownBtn.onclick = function() {
+    dropdownEle.classList.toggle("hidden");
+  }
+</script>
+    </div>
+    <div id="sidebar-wrapper">
+      <sidebar id="sidebar">
+  
+    <div class="widget-wrap">
+  <div class="info-card">
+    <div class="avatar">
+      
+      <div class="img-dim"></div>
+    </div>
+    <div class="info">
+      <div class="username">Catizard </div>
+      <div class="dot"></div>
+      <div class="subtitle"> </div>
+      <div class="link-list">
+        
+          <a class="link-btn" target="_blank" rel="noopener" href="https://github.com/Catizard" title="GitHub"><i class="fa-brands fa-github"></i></a>
+         
+      </div>  
+    </div>
+  </div>
+</div>
+
+  
+  <div class="sticky">
+    
+      
+
+
+
+    
+      
+  <div class="widget-wrap">
+    <div class="widget">
+      <h3 class="widget-title">标签</h3>
+      <ul class="widget-tag-list" itemprop="keywords"><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/BMS/" rel="tag">BMS</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/Beatoraja/" rel="tag">Beatoraja</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/NJU-PA/" rel="tag">NJU PA</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/mit6-s081/" rel="tag">mit6.s081</a></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</sidebar>
+    </div>
+    <div id="content-body">
+       
+
+
+<article id="post-Project-Shoko-result皮肤代码阅读" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  
+    
+   
+  <div class="article-inner">
+    <div class="article-main">
+      <header class="article-header">
+        
+<div class="main-title-bar">
+  <div class="main-title-dot"></div>
+  
+    
+      <h1 class="p-name article-title" itemprop="headline name">
+        Project-Shoko result皮肤代码阅读
+      </h1>
+    
+  
+</div>
+
+        <div class='meta-info-bar'>
+          <div class="meta-info">
+  <time class="dt-published" datetime="2025-09-15T09:02:59.000Z" itemprop="datePublished">2025-09-15</time>
+</div>
+          <div class="need-seperator meta-info">
+            <div class="meta-cate-flex">
+  
+    未分类 
+   
+</div>
+  
+          </div>
+          <div class="wordcount need-seperator meta-info">
+            8.6k 词 
+          </div>
+        </div>
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Beatoraja/" rel="tag">Beatoraja</a></li></ul>
+
+      </header>
+      <div class="e-content article-entry" itemprop="articleBody">
+        
+          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>这是一个阅读<a target="_blank" rel="noopener" href="https://github.com/dj-shoko/Project-Shoko">Project-Shoko</a>的<code>result</code>部分代码来理解如何编写皮肤和<code>Beatoraja</code>的皮肤系统的流水账，内容可能未整理，随时间修改的可能性较大。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/exch-bms2/beatoraja/wiki/Lua%E3%82%B9%E3%82%AD%E3%83%B3%E3%81%AE%E8%A8%98%E8%BF%B0%E6%96%B9%E6%B3%95">Beatoraja Wiki</a></p>
+<h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><p>首先一个皮肤肯定要定义自己，然后被读取，解析，执行成一个java object。根据wiki的指示可以知道一个皮肤文件从一个<code>.luaskin</code>文件开始，它会作为一个lua文件被执行，其返回值就是这个皮肤的定义：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- result/result.luaskin</span></span><br><span class="line"><span class="keyword">local</span> t = <span class="built_in">require</span>(<span class="string">&quot;resultmain&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> skin_config <span class="keyword">then</span></span><br><span class="line">	<span class="keyword">return</span> t.main()</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	<span class="keyword">return</span> t.header</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p>显然<code>skin_config</code>是由beatoraja通过某种方式传下来的信息，目前不清楚这个分支有什么作用。让我们把这里的事情展开一下：</p>
+<ul>
+<li>首先<code>Project-Shoko</code>有多个文件夹，分别对应不同的beatoraja的场景，例如<code>select</code>，<code>result</code>等</li>
+<li>这样的场景文件夹下有一个<code>.luaskin</code>文件定义了这个场景的皮肤文件</li>
+<li>执行这个<code>.luaskin</code>文件的返回值会被转换成java中的一个object实例。</li>
+</ul>
+<p>wiki给的例子（不完整）是:</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- example.luaskin</span></span><br><span class="line"><span class="keyword">return</span> &#123;</span><br><span class="line">    <span class="built_in">type</span> = <span class="number">0</span>,        <span class="comment">-- skin type: 7keys</span></span><br><span class="line">    name = <span class="string">&quot;Skin Name&quot;</span>,</span><br><span class="line">    w = <span class="number">1280</span>,</span><br><span class="line">    h = <span class="number">720</span>,</span><br><span class="line">    playstart = <span class="number">1000</span>,</span><br><span class="line">    scene = <span class="number">3600000</span>,</span><br><span class="line">    <span class="built_in">input</span> = <span class="number">500</span>,</span><br><span class="line">    <span class="built_in">close</span> = <span class="number">1500</span>,</span><br><span class="line">    fadeout = <span class="number">1000</span>,</span><br><span class="line">    property = &#123;&#125;,</span><br><span class="line">    filepath = &#123;&#125;,</span><br><span class="line">    offset = &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>他在java会被转换成一个<code>bms.player.beatoraja.skin.SkinHeader</code>的实例，不难发现字段都是对应的。</p>
+<p>不难猜到beatoarja里对应读取lua皮肤的文件是<code>bms.player.beatoraja.skin.lua.LuaSkinLoader</code>，打开就能发现<code>bms.player.beatoraja.skin.lua.LuaSkinLoader#load</code>这个方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Skin <span class="title function_">load</span><span class="params">(Path p, SkinType type, SkinConfig.Property property)</span> &#123;</span><br><span class="line">		<span class="type">Skin</span> <span class="variable">skin</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">		<span class="type">SkinHeader</span> <span class="variable">header</span> <span class="operator">=</span> loadHeader(p);</span><br><span class="line">		<span class="keyword">if</span>(header == <span class="literal">null</span>) &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		header.setSkinConfigProperty(property);</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">try</span> &#123;			</span><br><span class="line">			filemap = <span class="keyword">new</span> <span class="title class_">ObjectMap</span>&lt;&gt;();</span><br><span class="line">			<span class="keyword">for</span>(SkinHeader.CustomFile customFile : header.getCustomFiles()) &#123;</span><br><span class="line">				<span class="keyword">if</span>(customFile.getSelectedFilename() != <span class="literal">null</span>) &#123;</span><br><span class="line">					filemap.put(customFile.path, customFile.getSelectedFilename());</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			lua.exportSkinProperty(header, property, (String path) -&gt; &#123;</span><br><span class="line">				<span class="keyword">return</span> getPath(p.getParent().toString() + <span class="string">&quot;/&quot;</span> + path, filemap).getPath();</span><br><span class="line">			&#125;);</span><br><span class="line">			<span class="type">LuaValue</span> <span class="variable">value</span> <span class="operator">=</span> lua.execFile(p);</span><br><span class="line">			sk = fromLuaValue(JsonSkin.Skin.class, value);</span><br><span class="line">			skin = loadJsonSkin(header, sk, type, property, p);</span><br><span class="line">		&#125; <span class="keyword">catch</span> (Throwable e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> skin;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个方法的行为应该已经非常明确了：</p>
+<ul>
+<li>首先我们不用关心这个方法的调用路径，那不重要</li>
+<li>参数中p很明确是文件路径，type是对应的场景(play, select, result等)，而property可以根据<code>header.setSkinConfigProperty(property)</code>猜出来这是已配置的信息，注入到读取到的皮肤里</li>
+<li>返回值是一个<code>Skin</code>实例，很明显就是一个皮肤的完整定义</li>
+</ul>
+<p><img src="/Users/xiangyang/Documents/hexo-blog/public/images/image-20250915092841994.png" alt="image-20250915092841994"></p>
+<p>读取到header后，beatoraja会继续：</p>
+<ul>
+<li><p>读取这个皮肤的自定义的文件列表，这个事情是定义在<code>header.filepath</code>里的：</p>
+<ul>
+<li><pre><code class="lua">local filepath = &#123;
+    &#123;name = &quot;Default Stagefile&quot;,			path = &quot;customize/stagefile/*.png&quot;&#125;,
+    &#123;name = &quot;Result Background (CLEAR AAA)&quot;,	path = &quot;customize/bg/aaa/*.png&quot;&#125;,
+    &#123;name = &quot;Result Background (CLEAR AA)&quot;,		path = &quot;customize/bg/aa/*.png&quot;&#125;,
+    &#123;name = &quot;Result Background (CLEAR A)&quot;,		path = &quot;customize/bg/a/*.png&quot;&#125;,
+    &#123;name = &quot;Result Background (CLEAR)&quot;,		path = &quot;customize/bg/clear/*.png&quot;&#125;,
+    &#123;name = &quot;Result Background (FAILED)&quot;,		path = &quot;customize/bg/failed/*.png&quot;&#125;,
+&#125;
+
+local header = &#123;
+    -- 省略
+    filepath = filepath
+&#125;
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">  - 这个步骤只需要提取其中的`name/path`作为k/v即可，不需要在意</span><br><span class="line"></span><br><span class="line">- `lua.exportSkinProperty`这个方法最终将一个`table`导出到了一个全局变量`skin_config`里，通过检查其内容可以发现这是配置的信息:</span><br><span class="line"></span><br><span class="line">- ![image-20250915094049905](/Users/xiangyang/Documents/hexo-blog/public/images/image-20250915094049905.png)</span><br><span class="line"></span><br><span class="line">接着beatoraja会再解析执行一次这个lua文件，并将返回值处理成一个`Skin`实例。</span><br><span class="line"></span><br><span class="line">那么现在就可以理解为什么`.luaskin`会写成这个样子了，这和读取一个纯文本的手法相同：</span><br><span class="line"></span><br><span class="line">- 首先读取这个文件的前若干个字节，检查是否是某个特定值，例如java的class文件的前几个字节是`0xCAFFBABE`，通过这个方式可以知道这个文件确实是一个java的class文件。对应到皮肤这里就是先解释执行第一次，获得这个皮肤的头信息，即先要知道这个皮肤的“轮廓”，大概长什么样，有哪些文件要引入，有哪些配置</span><br><span class="line">- 然后执行第二次读取，将配置和内容混合在一起得到完整的皮肤信息，并转换到java的实例里</span><br><span class="line"></span><br><span class="line">&gt; 这样的设计是一个很常见的方式，这里再举一个例子来说明这样做的原因：</span><br><span class="line">&gt;</span><br><span class="line">&gt; Project-Shoko的result有一个配置项`Play Side`，可取值是`1P/2P`。但是beatoraja肯定不能提前假定皮肤有哪些可配置的信息，这样的话自由度太低了，而且随着beatoraja的更新很多皮肤都要联动修改，所以皮肤的配置项都是由皮肤自己定义的。相对的，beatoraja也就不知道皮肤有哪些可能的配置了，因此它需要先问一下皮肤有哪些配置，这就是第一次读取获得的header信息。第二次就是把用户的配置再传给皮肤，这个例子里就是告知皮肤用户`Play Side`这个配置的值是`1P`。</span><br><span class="line">&gt;</span><br><span class="line">&gt; 整个手法的好处就是把设计配置项的权利交给了皮肤这边。</span><br><span class="line"></span><br><span class="line">现在我们大概了解了皮肤的初始化步骤，这里做个总结：</span><br><span class="line"></span><br><span class="line">- 首先皮肤这边需要定义一个`.luaskin`文件，这个文件会被beatoraja当作`lua`文件解释执行</span><br><span class="line">- 这个文件的返回值根据`skin_config`这个全局变量是否存在来区分是第一次预读取头信息还是第二次读取完整皮肤信息</span><br><span class="line">- 第一次读取时，返回的是`t.header`，内容很简单，就是一个皮肤的基本信息</span><br><span class="line">- 第二次读取时，beatoraja会将用户的配置，文件路径等信息导出到全局变量`skin_config`中，此时返回的就是完整的皮肤信息</span><br><span class="line"></span><br><span class="line">## 配置</span><br><span class="line"></span><br><span class="line">那么，皮肤的自定义配置又是怎么定义的呢。首先不难想到自定义配置信息应该是在`header`里的，因为beatoraja配置皮肤的信息是在启动器里做的，此时肯定不需要加载完整的皮肤。不难发现代码里写的很明确:</span><br><span class="line"></span><br><span class="line">```lua</span><br><span class="line">-- result/resultmain.lua</span><br><span class="line">local property = require(&quot;lua.mainproperty&quot;)</span><br><span class="line"></span><br><span class="line">local header = &#123;</span><br><span class="line">	property = property.property,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">-- result/lua/mainproperty.lua</span><br><span class="line">local module = &#123;&#125;</span><br><span class="line"></span><br><span class="line">module.property = &#123;</span><br><span class="line">	&#123;name = &quot;Play Side&quot;, item = &#123;</span><br><span class="line">		&#123;name = &quot;1P&quot;, op = 900&#125;,</span><br><span class="line">		&#123;name = &quot;2P&quot;, op = 901&#125;</span><br><span class="line">	&#125;&#125;,</span><br><span class="line">	&#123;name = &quot;Stagefile&quot;, item = &#123;</span><br><span class="line">		&#123;name = &quot;ON&quot;, op = 910&#125;,</span><br><span class="line">		&#123;name = &quot;OFF&quot;, op = 911&#125;</span><br><span class="line">	&#125;&#125;,</span><br><span class="line">	&#123;name = &quot;Judge Detail&quot;, item = &#123;</span><br><span class="line">		&#123;name = &quot;Extra Fast/Slow Info&quot;, op = 920&#125;,</span><br><span class="line">		--&#123;name = &quot;Pie&quot;, op = 921&#125; --WIP</span><br><span class="line">	&#125;&#125;,</span><br><span class="line">	&#123;name = &quot;Network Info&quot;, item = &#123;</span><br><span class="line">		&#123;name = &quot;On&quot;, op = 922&#125;,</span><br><span class="line">		&#123;name = &quot;Off&quot;, op = 923&#125; --WIP</span><br><span class="line">	&#125;&#125;,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">return module</span><br></pre></td></tr></table></figure>
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<p>每个配置项是一个table，其中每个配置项有一个自己的名字name和可取值item，其中item又是一个table，内部就是一个简单的k&#x2F;v定义。这里唯独比较奇怪的是<code>op</code>，不过不难发现它就是保存到beatoraja的存档文件里的数值，只要互不相同就可以了。</p>
+<p>通过在<code>resultmain.lua</code>中寻找可以发现：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- result/resultmain.lua</span></span><br><span class="line"><span class="keyword">local</span> timingX = <span class="number">2500</span></span><br><span class="line"><span class="keyword">local</span> playerX = <span class="number">60</span></span><br><span class="line"><span class="keyword">local</span> playInfoX = <span class="number">1776</span></span><br><span class="line"><span class="keyword">local</span> songInfoX = <span class="number">60</span></span><br><span class="line"><span class="keyword">local</span> RGB = diffRGB()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> skin_config.option[<span class="string">&quot;Play Side&quot;</span>] == <span class="number">900</span> <span class="keyword">then</span></span><br><span class="line">  timingX = <span class="number">60</span></span><br><span class="line">  playerX = <span class="number">2500</span></span><br><span class="line">  playInfoX = <span class="number">60</span></span><br><span class="line">  songInfoX = <span class="number">1776</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p>配置项就是通过beatoraja导出的全局变量<code>skin_config</code>来获取的，然后具体皮肤可以根据配置项的取值来设置不同的值来控制不同的渲染结果。</p>
+<p>至于配置项是如何展示到beatoraja里的，这里就先略过了，并不太重要。</p>
+<h2 id="完整的皮肤定义"><a href="#完整的皮肤定义" class="headerlink" title="完整的皮肤定义"></a>完整的皮肤定义</h2><p>现在可以进入到重点了，一个皮肤在第二次读取时会返回给beatoraja这个皮肤的完整定义</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line">	<span class="keyword">local</span> textproperty = <span class="built_in">require</span>(<span class="string">&quot;lua.textproperty&quot;</span>)</span><br><span class="line">	<span class="keyword">local</span> imageproperty = <span class="built_in">require</span>(<span class="string">&quot;lua.imageproperty&quot;</span>)</span><br><span class="line">	<span class="keyword">local</span> valueproperty = <span class="built_in">require</span>(<span class="string">&quot;lua.valueproperty&quot;</span>)</span><br><span class="line">	<span class="keyword">local</span> graph = <span class="built_in">require</span>(<span class="string">&quot;lua.graph&quot;</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">local</span> skin = &#123;&#125;</span><br><span class="line">	<span class="keyword">for</span> k, v <span class="keyword">in</span> <span class="built_in">pairs</span>(header) <span class="keyword">do</span></span><br><span class="line">		skin[k] = v</span><br><span class="line">	<span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">-- 省略</span></span><br><span class="line">  </span><br><span class="line">	<span class="keyword">return</span> skin</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p>目前我们只知道这个方法会返回一个完整的skin对象，beatoraja会将其转换为一个<code>bms.player.beatoraja.skin.json.JsonSkin.Skin</code>对象，那么皮肤这边的定义就需要对应beatoraja的Skin类进行编写了，先简单看一下Skin类的轮廓：<img src="/Users/xiangyang/Documents/hexo-blog/public/images/image-20250915101952687.png" alt="image-20250915101952687"></p>
+<p>内容有点多，不过首先需要明确的一点是整个<code>JsonSkin</code>只是一个存储类定义的地方，他没有自己的字段。原始的lua文件的执行结果会被转换为一个<code>JsonSkin.Skin</code>类的实例，然后被当作一个json定义皮肤读取到beatoraja中，后面这个步骤属于beatoraja内部的处理，暂时不深入。</p>
+<p>通过阅读lua这边的代码可以发现大部分内容都是在定义<code>skin.destination</code>：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">skin.destination = &#123;</span><br><span class="line">	<span class="comment">--Background</span></span><br><span class="line">  &#123;id = <span class="string">&quot;bg_c&quot;</span>, op = &#123;<span class="number">90</span>&#125;, dst = &#123;&#123;x = <span class="number">0</span>, y = <span class="number">0</span>, w = <span class="number">2560</span>, h = <span class="number">1440</span>&#125;&#125;&#125;,</span><br><span class="line">  &#123;id = <span class="string">&quot;bg_aaa&quot;</span>, op = &#123;<span class="number">90</span>,<span class="number">300</span>&#125;, dst = &#123;&#123;x = <span class="number">0</span>, y = <span class="number">0</span>, w = <span class="number">2560</span>, h = <span class="number">1440</span>&#125;&#125;&#125;,</span><br><span class="line">  &#123;id = <span class="string">&quot;bg_aa&quot;</span>, op = &#123;<span class="number">90</span>,<span class="number">301</span>&#125;, dst = &#123;&#123;x = <span class="number">0</span>, y = <span class="number">0</span>, w = <span class="number">2560</span>, h = <span class="number">1440</span>&#125;&#125;&#125;,</span><br><span class="line">  &#123;id = <span class="string">&quot;bg_a&quot;</span>, op = &#123;<span class="number">90</span>,<span class="number">302</span>&#125;, dst = &#123;&#123;x = <span class="number">0</span>, y = <span class="number">0</span>, w = <span class="number">2560</span>, h = <span class="number">1440</span>&#125;&#125;&#125;,</span><br><span class="line">  &#123;id = <span class="string">&quot;bg_f&quot;</span>, op = &#123;<span class="number">91</span>&#125;, dst = &#123;&#123;x = <span class="number">0</span>, y = <span class="number">0</span>, w = <span class="number">2560</span>, h = <span class="number">1440</span>&#125;&#125;&#125;,</span><br><span class="line">  <span class="comment">-- 省略</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以猜测destination是指最终在beatoraja中渲染的组件。最开始的部分注释指出了是背景图，这部分代码也比较好理解，id是一个唯一标识，op是渲染这个dst的条件，dst是这个组件的坐标和长宽。显然对于背景图来说坐标是(0,0)，长宽为整个窗口。</p>
+<blockquote>
+<p>这里补充一下op的取值，其中<code>90, 91, 300, 301, 302</code>这几个值都不是定义在皮肤里的，而是定义在beatoraja里的，具体定义在<code>bms.player.beatoraja.skin.SkinProperty</code>，而这里的设计也比较随意，见<code>bms.player.beatoraja.skin.SkinObject#setDrawCondition(int[])</code>和<code>https://github.com/Catizard/lr2oraja-endlessdream/blob/112c5ce0ce7fd3d7942afef572486b40d142b35f/core/src/bms/player/beatoraja/skin/Skin.java#L193</code>，如果op里的取值是定义在<code>SkinProperty</code>里的话，那么按beatoraja的定义来，否则就是皮肤自定义的配置项，按皮肤的配置来。</p>
+</blockquote>
+<p>到这里实际上大部分内容都可以阅读了，这里给出一张截图来对比代码</p>
+<p><img src="/Users/xiangyang/Documents/hexo-blog/public/images/image-20250915115618562.png" alt="image-20250915115618562"></p>
+<p>先从最下面的静态文字开始，它的定义很简单：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> skin_config.option[<span class="string">&quot;Play Side&quot;</span>] == <span class="number">900</span> <span class="keyword">then</span></span><br><span class="line">  <span class="built_in">table</span>.<span class="built_in">insert</span>(skin.text, &#123;id = <span class="string">&quot;avg&quot;</span>,	font = <span class="number">0</span>, size = <span class="number">24</span>, align = <span class="number">0</span>, constantText = avg_str&#125;)</span><br><span class="line">  <span class="built_in">table</span>.<span class="built_in">insert</span>(skin.text, &#123;id = <span class="string">&quot;std&quot;</span>,	font = <span class="number">0</span>, size = <span class="number">24</span>, align = <span class="number">0</span>, constantText = std_str&#125;)</span><br><span class="line">  <span class="built_in">table</span>.<span class="built_in">insert</span>(skin.text, &#123;id = <span class="string">&quot;player&quot;</span>,	font = <span class="number">0</span>, size = <span class="number">24</span>, align = <span class="number">2</span>, constantText = playerid_str&#125;)</span><br><span class="line">  <span class="built_in">table</span>.<span class="built_in">insert</span>(skin.text, &#123;id = <span class="string">&quot;ir&quot;</span>,	font = <span class="number">0</span>, size = <span class="number">24</span>, align = <span class="number">2</span>, constantText = ir_str&#125;)</span><br><span class="line">  <span class="built_in">table</span>.<span class="built_in">insert</span>(skin.text, &#123;id = <span class="string">&quot;offline&quot;</span>,	font = <span class="number">0</span>, size = <span class="number">48</span>, align = <span class="number">2</span>, constantText = <span class="string">&quot;NETWORK OFFLINE&quot;</span>&#125;)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">  <span class="built_in">table</span>.<span class="built_in">insert</span>(skin.text, &#123;id = <span class="string">&quot;avg&quot;</span>,	font = <span class="number">0</span>, size = <span class="number">24</span>, align = <span class="number">2</span>, constantText = avg_str&#125;)</span><br><span class="line">  <span class="built_in">table</span>.<span class="built_in">insert</span>(skin.text, &#123;id = <span class="string">&quot;std&quot;</span>,	font = <span class="number">0</span>, size = <span class="number">24</span>, align = <span class="number">2</span>, constantText = std_str&#125;)</span><br><span class="line">  <span class="built_in">table</span>.<span class="built_in">insert</span>(skin.text, &#123;id = <span class="string">&quot;player&quot;</span>,	font = <span class="number">0</span>, size = <span class="number">24</span>, align = <span class="number">0</span>, constantText = playerid_str&#125;)</span><br><span class="line">  <span class="built_in">table</span>.<span class="built_in">insert</span>(skin.text, &#123;id = <span class="string">&quot;ir&quot;</span>,	font = <span class="number">0</span>, size = <span class="number">24</span>, align = <span class="number">0</span>, constantText = ir_str&#125;)</span><br><span class="line">  <span class="built_in">table</span>.<span class="built_in">insert</span>(skin.text, &#123;id = <span class="string">&quot;offline&quot;</span>,	font = <span class="number">0</span>, size = <span class="number">48</span>, align = <span class="number">0</span>, constantText = <span class="string">&quot;NETWORK OFFLINE&quot;</span>&#125;)</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p>文字是不能直接定义坐标的，它也不是直接渲染出来的，例如<code>id=offline</code>的text实际上还可以找到一个对应的destination:</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- destination</span></span><br><span class="line">&#123;id = <span class="string">&quot;offline&quot;</span>, op = &#123;<span class="number">50</span>, <span class="number">922</span>, <span class="number">-923</span>&#125;,	filter = <span class="number">1</span>,	dst = &#123;&#123;x = playerX, y = <span class="number">6</span>, h = <span class="number">48</span>, r = <span class="number">221</span>, g = <span class="number">120</span>, b = <span class="number">120</span>&#125;&#125;&#125;</span><br><span class="line"><span class="comment">-- text</span></span><br><span class="line"><span class="built_in">table</span>.<span class="built_in">insert</span>(skin.text, &#123;id = <span class="string">&quot;offline&quot;</span>,	font = <span class="number">0</span>, size = <span class="number">48</span>, align = <span class="number">0</span>, constantText = <span class="string">&quot;NETWORK OFFLINE&quot;</span>&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>于是可以猜想到align的定义是相对于坐标的偏移，取值0&#x2F;1&#x2F;2分别代表了左中右。</p>
+
+        
+      </div>
+
+         
+    </div>
+    
+     
+  </div>
+  
+    
+<nav id="article-nav">
+  <a class="article-nav-btn left  disabled "
+     >
+    <i class="fa-solid fa-angle-left"></i>
+    <p class="title-text">
+        
+    </p>
+  </a>
+  <a class="article-nav-btn right "
+    
+      href="/2025/04/19/%E5%9C%A8mac%E4%B8%8A%E7%8E%A9beatoraja/"
+      title="在mac上玩beatoraja"
+     >
+
+    <p class="title-text">
+      
+        在mac上玩beatoraja
+        
+    </p>
+    <i class="fa-solid fa-angle-right"></i>
+  </a>
+</nav>
+
+
+  
+</article>
+
+
+
+
+
+    </div>
+    <div id="footer-wrapper">
+      <footer id="footer">
+  
+  <div id="footer-info" class="inner">
+    
+    &copy; 2025 Catizard<br>
+    Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & Theme <a target="_blank" rel="noopener" href="https://github.com/saicaca/hexo-theme-vivia">Vivia</a>
+  </div>
+</footer>
+
+    </div>
+    <div class="back-to-top-wrapper">
+    <button id="back-to-top-btn" class="back-to-top-btn hide" onclick="topFunction()">
+        <i class="fa-solid fa-angle-up"></i>
+    </button>
+</div>
+
+<script>
+    function topFunction() {
+        window.scroll({ top: 0, behavior: 'smooth' });
+    }
+    let btn = document.getElementById('back-to-top-btn');
+    function scrollFunction() {
+        if (document.body.scrollTop > 600 || document.documentElement.scrollTop > 600) {
+            btn.classList.remove('hide')
+        } else {
+            btn.classList.add('hide')
+        }
+    }
+    window.onscroll = function() {
+        scrollFunction();
+    }
+</script>
+
+  </div>
+  <script src="/js/light-dark-switch.js"></script>
+</body>
+</html>
