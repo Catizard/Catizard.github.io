@@ -14,23 +14,23 @@
   
 
   
-  <title>mit6.s081 chapter4 | Catizard&#39;s blog</title>
+  <title>How score = false works in beatoraja | Catizard&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <link rel="preload" href="/css/fonts/Roboto-Regular.ttf" as="font" type="font/ttf" crossorigin="anonymous">
   <link rel="preload" href="/css/fonts/Roboto-Bold.ttf" as="font" type="font/ttf" crossorigin="anonymous">
 
-  <meta name="description" content="Lab: Copy-on-Write Fork for xv6 2021的lab没有了lazy lab作为COW的前置，虽然实验内容里提到了lazy lab。而且提示里少了一两条非常关键的信息，似乎默认了做过前面的lab。 在做这个lab之前先读一下fork的流程:  分配一个新进程np &#x3D; allocproc() 把整个内存空间复制给新进程uvncopy(p-&gt;pagetable, np-">
+  <meta name="description" content="How score &#x3D; false works in beatoraja  The code is based on lr2oraja endlessdream actually. There’re some additional notes about the design of freq mod in ed. Corresponding commit is fd76779133b425d8e1">
 <meta property="og:type" content="article">
-<meta property="og:title" content="mit6.s081 chapter4">
-<meta property="og:url" content="https://catizard.github.io/2024/05/04/mit6-s081-chapter4/index.html">
+<meta property="og:title" content="How score &#x3D; false works in beatoraja">
+<meta property="og:url" content="https://catizard.github.io/2025/11/06/How-score-false-works-in-beatoraja/index.html">
 <meta property="og:site_name" content="Catizard&#39;s blog">
-<meta property="og:description" content="Lab: Copy-on-Write Fork for xv6 2021的lab没有了lazy lab作为COW的前置，虽然实验内容里提到了lazy lab。而且提示里少了一两条非常关键的信息，似乎默认了做过前面的lab。 在做这个lab之前先读一下fork的流程:  分配一个新进程np &#x3D; allocproc() 把整个内存空间复制给新进程uvncopy(p-&gt;pagetable, np-">
+<meta property="og:description" content="How score &#x3D; false works in beatoraja  The code is based on lr2oraja endlessdream actually. There’re some additional notes about the design of freq mod in ed. Corresponding commit is fd76779133b425d8e1">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2024-05-04T09:56:15.000Z">
-<meta property="article:modified_time" content="2024-05-05T05:08:13.233Z">
+<meta property="article:published_time" content="2025-11-06T11:36:28.000Z">
+<meta property="article:modified_time" content="2025-11-06T03:36:48.022Z">
 <meta property="article:author" content="Catizard">
-<meta property="article:tag" content="mit6.s081">
+<meta property="article:tag" content="beatoraja">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/atom.xml" title="Catizard's blog" type="application/atom+xml">
@@ -167,7 +167,7 @@
        
 
 
-<article id="post-mit6-s081-chapter4" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+<article id="post-How-score-false-works-in-beatoraja" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   
     
    
@@ -180,7 +180,7 @@
   
     
       <h1 class="p-name article-title" itemprop="headline name">
-        mit6.s081 chapter4
+        How score = false works in beatoraja
       </h1>
     
   
@@ -188,7 +188,7 @@
 
         <div class='meta-info-bar'>
           <div class="meta-info">
-  <time class="dt-published" datetime="2024-05-04T09:56:15.000Z" itemprop="datePublished">2024-05-04</time>
+  <time class="dt-published" datetime="2025-11-06T11:36:28.000Z" itemprop="datePublished">2025-11-06</time>
 </div>
           <div class="need-seperator meta-info">
             <div class="meta-cate-flex">
@@ -199,56 +199,104 @@
   
           </div>
           <div class="wordcount need-seperator meta-info">
-            1.7k 词 
+            4.2k 词 
           </div>
         </div>
         
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mit6-s081/" rel="tag">mit6.s081</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/beatoraja/" rel="tag">beatoraja</a></li></ul>
 
       </header>
       <div class="e-content article-entry" itemprop="articleBody">
         
-          <h1>Lab: Copy-on-Write Fork for xv6</h1>
-<p>2021的lab没有了lazy lab作为COW的前置，虽然实验内容里提到了lazy lab。而且提示里少了一两条非常关键的信息，似乎默认了做过前面的lab。</p>
-<p>在做这个lab之前先读一下fork的流程:</p>
+          <h1>How score = false works in beatoraja</h1>
+<blockquote>
+<p>The code is based on lr2oraja endlessdream actually. There’re some additional notes about the design of freq mod in ed. Corresponding commit is <code>fd76779133b425d8e18703e5f67ec94ff0e84b33</code></p>
+</blockquote>
+<h2 id="Preface">Preface</h2>
+<p>This is a note about how raja stores player’s scores. There’re some situations that raja doesn’t “want to” save a score, for example, if you’re using the <code>expand judge</code> feature and having easier judge timing, your score won’t be saved and be sent to IR service.</p>
+<p>There’s a similar use cause in ED: Tachi IR specifically refused to receive any score with FREQ mod enabled. We’ll discuss the history of how ED implemented it, why there’re bugs, current situations later.</p>
+<h2 id="Score-false">Score = false</h2>
+<p>Raja would set score to false if it doesn’t want to save next score. Example:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (config.isCustomJudge() &amp;&amp;</span><br><span class="line">					(config.getKeyJudgeWindowRatePerfectGreat() &gt; <span class="number">100</span> || config.getKeyJudgeWindowRateGreat() &gt; <span class="number">100</span> || config.getKeyJudgeWindowRateGood() &gt; <span class="number">100</span></span><br><span class="line">					|| config.getScratchJudgeWindowRatePerfectGreat() &gt; <span class="number">100</span> || config.getScratchJudgeWindowRateGreat() &gt; <span class="number">100</span> || config.getScratchJudgeWindowRateGood() &gt; <span class="number">100</span>)) &#123;</span><br><span class="line">				assist = Math.max(assist, <span class="number">2</span>);</span><br><span class="line">				score = <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>And <code>score</code> flag is persisted on <code>BMSResource</code> by <code>resource.setUpdateScore(score)</code>. Therefore, we can see the usage of <code>bms.player.beatoraja.PlayerResource#isUpdateScore</code> to find where this flag is being used. And we can find the only usage that is related to score storage is here:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (isFreqTrainerEnabled()) &#123;</span><br><span class="line">  resource.getScoreData().setClear(NoPlay.id);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (resource.getPlayMode().mode == BMSPlayerMode.Mode.PLAY &amp;&amp; !(isFreqTrainerEnabled() &amp;&amp; isFreqNegative())) &#123;</span><br><span class="line">  main.getPlayDataAccessor().writeScoreData(resource.getScoreData(), resource.getBMSModel(),</span><br><span class="line">      resource.getPlayerConfig().getLnmode(), resource.isUpdateScore());</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  Logger.getGlobal().info(<span class="string">&quot;プレイモードが&quot;</span> + resource.getPlayMode().mode.name() + <span class="string">&quot;のため、スコア登録はされません&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="writeScoreData">writeScoreData</h2>
+<p>As the javadoc written, when flag <code>updateScore</code> is false, only <code>playcount</code> would be updated. Following the logic we can find the place that truly makes a difference is <code>bms.player.beatoraja.ScoreData#update(bms.player.beatoraja.ScoreData, boolean)</code>. It compares the old score and the new one, and only updates the old score itself when there’s a difference and <strong>updateScore is true</strong>. However, there’re some exceptions:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (clear &lt; newscore.getClear()) &#123;</span><br><span class="line">  setClear(newscore.getClear());</span><br><span class="line">  setOption(newscore.getOption());</span><br><span class="line">  setSeed(newscore.getSeed());</span><br><span class="line">  update = <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>This part isn’t required <code>updateScore</code> to be true. So by using the <code>score = false</code> doesn’t prevent raja stores a higher lamp score. This is the reason why <code>expand judge</code> feature is using the <code>assist</code> flag and <code>score</code> at the same time: to prevent storing a higher lamp.</p>
+<p>A common assumption among developers that haven’t looked into the code might have is that the <code>score</code> flag is working as preventing stroing the score in database. But it’s actually not, it’s working by not updating part of the fields on old score (yeah, even not all fields from <code>ScoreData</code> but part of it). The database insert line is always called no matter what.</p>
+<h2 id="Endless-Dream">Endless Dream</h2>
+<p>Currently, a score with <code>freq</code> enabled would be saved in local if the freq rate is positive(i.e. the chart is speeding up) and cannot be sent to IR service.</p>
 <ul>
-<li>分配一个新进程<code>np = allocproc()</code></li>
-<li>把整个内存空间复制给新进程<code>uvncopy(p-&gt;pagetable, np-&gt;pagetable, p-&gt;sz)</code></li>
-<li>复制寄存器，设置函数返回值<code>*(np-&gt;trapframe) = *(p-&gt;trapframe); np-&gt;trapframe-&gt;a0=0</code></li>
-<li>所有进程已经打开的文件，链接数+1</li>
-<li>设置基础数据，名称状态父级等</li>
+<li>
+<p>If the freq mod is enabled and with a negative rate, the whole process is being skipped. However, this design introduced a bug (see <a target="_blank" rel="noopener" href="https://github.com/seraxis/lr2oraja-endlessdream/issues/45">#45</a>) because you can disable the rate mod at the middle of play. And it’s fixed in <a target="_blank" rel="noopener" href="https://github.com/seraxis/lr2oraja-endlessdream/pull/71">#71</a> by persisting the value in <code>BMSResource</code> rather than accessing the fields from the <code>FreqTrainerMenu</code> directly.</p>
+</li>
+<li>
+<p>If the freq mod is enabled with a positive rate, the score would be updated except the lamp value since it’s set to <code>NO_PLAY</code> forcefully.</p>
+</li>
+<li>
+<p>For the IR service part, it’s achieved by preventing the IR send process happening, see the <code>core/src/bms/player/beatoraja/result/MusicResult.java</code> changes in #71.</p>
+</li>
 </ul>
-<p>这里要优化的就是第二步：复制整个内存空间的操作太大。改为懒惰机制：只在有必要的时候复制物理内存。</p>
-<h2 id="改写uvmcopy">改写uvmcopy</h2>
-<p>uvmcopy目前的实现是直接分配一个物理内存<code>mem=kalloc()</code>，然后将其映射在新进程的内存空间里。现在，不直接分配一个物理内存而是将手上的物理内存<code>pa</code>映射给新进程。</p>
-<p>两个进程前后走到的物理页的标志位里，<code>write</code>位需要清除，写入<code>RSW</code>位表示是因为COW产生的页面。还需要一个refcount来记录当前这个物理页被复制的次数。</p>
-<h2 id="改写usertrap">改写usertrap</h2>
-<p>在上一步修改了uvmcopy的实现之后，如果试图对COW的页面写，就会触发一个pagefault exception。这个异常需要在usertrap里捕获，查表得知错误码是15或者13。</p>
-<p>触发了异常的指令虚拟地址存放在<code>stval</code>寄存器里，可以直接获得，然后通过虚拟地址获得对应的物理地址和pte。拿到之后复制对应物理页，如果物理页申请不到，直接panic。在实验里可以忽略这种情形。注意这里重新map之前需要unmap，否则会被panic掉。</p>
-<p>接下来将原有的权限取出，加入写权限，然后将新的物理页映射给触发异常的虚拟地址。</p>
-<p>假设只有一次fork，那么如果是父(p)进程触发了写异常，则p进程对该物理页的权限现在是RW，子©进程对该物理页的权限还是R。可以想到这里可以做一个简单的优化：如果触发了写异常且对应物理页的refcount=1，那么可以直接将其写权限打开，因为没有其他人看到该物理页了。不难想到这个优化不限制单次或多次fork。</p>
-<h2 id="物理内存refcount">物理内存refcount</h2>
-<p>需要记录每个物理地址当前被引用的次数来确保释放物理地址的时机正确：只有在一个物理地址不再有任何进程引用时可以释放。整个物理空间可以看作是一个大数组，其大小是<code>PHYSTOP-KERNBASE</code>，内核加载在<code>KERNBASE</code>的位置。但是出于简单考虑，可以直接用<code>pa / PGSIZE</code>来定位数组，数组大小即<code>PHYSTOP / PGSIZE</code>。</p>
-<p>修改refcount的情形有：</p>
-<ul>
-<li>kalloc分配物理内存时</li>
-<li>kfree释放物理内存时</li>
-<li>uvmcopy复制内存空间时</li>
-<li>初始化物理内存时</li>
-</ul>
-<h2 id="修改copyout">修改copyout</h2>
-<p>如果copyout中的虚拟地址是复制出来的页，则将其复制。因为copyout等价写操作。</p>
-<p>这里需要额外判断对应页是否是用户页，是否合法等。</p>
-<h2 id="usertests">usertests</h2>
-<ul>
-<li>注意内核里很多时候不能简单的panic掉，需要正确的处理异常情况：例如kalloc失败时需要将用户进程kill掉(<code>p-&gt;killed=1</code>)。</li>
-<li>物理内存初始化时也需要注意refcount，因为调用了kfree来初始化内存里的数据。一种做法是在kinit里先给所有物理地址的引用数置为1，然后kfree结束时就是正确的0。</li>
-<li>小心修改refcount，因为多线程存在race，考虑用kmem的锁。</li>
-<li>在试图复制页之前需要判断空指针，是否合法和是否是用户页。如果不满足，说明错误的捕获了一个不属于cow页的异常，需要补齐对异常的处理（kill process）。</li>
-</ul>
-<p>对于第四点，需要理解代码本来的结构是:</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (r_cause() == <span class="number">8</span>) &#123;...&#125;</span><br><span class="line"><span class="keyword">else</span> p-&gt;killed = <span class="number">1</span></span><br></pre></td></tr></table></figure>
-<p>在这之前除了=8的scause都会导致用户进程被杀掉。所以是否需要复制cow的页面还要看是否空指针，是否有效页和是否用户页，否则会把其他情况带进来导致panic。</p>
+<p>However, as you can see we actually don’t have a simple flag that forbids sending scores to IR, I introduced one in <a target="_blank" rel="noopener" href="https://github.com/seraxis/lr2oraja-endlessdream/pull/126">#126</a>. It has a small overlap with the changes introduced in #71. So maybe we should remove the changes in #71 in the near future.</p>
+<h2 id="The-overlap">The overlap</h2>
+<p>Arised in <a target="_blank" rel="noopener" href="https://github.com/seraxis/lr2oraja-endlessdream/pull/142">#142</a>. Both <code>!score</code> and <code>forceNoIRSend</code> is preventing a score being sent to IR service. There’s a possibility that they’re both notified, for example, playing with <code>freq</code> enabled and a special random mod.</p>
+<p>Here’s a small table illustrates the mod and consequences:</p>
+<table>
+<thead>
+<tr>
+<th>mod</th>
+<th>assist</th>
+<th>local score</th>
+<th>IR</th>
+<th>lamp</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>expand judge(easier timing)</td>
+<td>yes</td>
+<td>no</td>
+<td>no</td>
+<td>assist clear</td>
+</tr>
+<tr>
+<td>expand judge(stricter timing)</td>
+<td>no</td>
+<td>yes</td>
+<td>yes</td>
+<td>play result</td>
+</tr>
+<tr>
+<td>custom judge(easier timing)</td>
+<td>yes</td>
+<td>no</td>
+<td>no</td>
+<td>assist clear</td>
+</tr>
+<tr>
+<td>expand judge(stricter timing)</td>
+<td>no</td>
+<td>yes</td>
+<td>yes</td>
+<td>play result</td>
+</tr>
+<tr>
+<td>negative freq</td>
+<td>no</td>
+<td>skipped</td>
+<td>no</td>
+<td>no update</td>
+</tr>
+<tr>
+<td>positive freq</td>
+<td>no</td>
+<td>yes</td>
+<td>no</td>
+<td>no update</td>
+</tr>
+</tbody>
+</table>
 
         
       </div>
@@ -261,27 +309,22 @@
   
     
 <nav id="article-nav">
-  <a class="article-nav-btn left "
-    
-      href="/2025/04/19/%E5%9C%A8mac%E4%B8%8A%E7%8E%A9beatoraja/"
-      title="在mac上玩beatoraja"
+  <a class="article-nav-btn left  disabled "
      >
     <i class="fa-solid fa-angle-left"></i>
     <p class="title-text">
-      
-        在mac上玩beatoraja
         
     </p>
   </a>
   <a class="article-nav-btn right "
     
-      href="/2024/04/05/mit6-s081-chapter3/"
-      title="mit6.s081 chapter3"
+      href="/2025/10/05/Enabling-Portaudio-in-beatoraja-on-OSX/"
+      title="Enabling Portaudio in beatoraja on OSX"
      >
 
     <p class="title-text">
       
-        mit6.s081 chapter3
+        Enabling Portaudio in beatoraja on OSX
         
     </p>
     <i class="fa-solid fa-angle-right"></i>

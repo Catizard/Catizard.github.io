@@ -20,12 +20,12 @@
   <link rel="preload" href="/css/fonts/Roboto-Regular.ttf" as="font" type="font/ttf" crossorigin="anonymous">
   <link rel="preload" href="/css/fonts/Roboto-Bold.ttf" as="font" type="font/ttf" crossorigin="anonymous">
 
-  <meta name="description" content="不停计算的机器最简单的计算机TRM的运行方式: 12345while (1) &#123;  从PC指示的存储器位置取出指令;  执行指令;  更新PC;&#125;  具体地，cpu执行指令的方式是：  取指：从内存空间中读取出一条指令，具体位置由pc寄存器给出。 译码：读取出来的是一个字长的01串，cpu会查表翻译指令。 执行：根据译码的结果来执行具体的行为。 更新pc，指向下一条指令  回顾">
+  <meta name="description" content="不停计算的机器 最简单的计算机TRM的运行方式: 12345while (1) &#123;  从PC指示的存储器位置取出指令;  执行指令;  更新PC;&#125; 具体地，cpu执行指令的方式是：  取指：从内存空间中读取出一条指令，具体位置由pc寄存器给出。 译码：读取出来的是一个字长的01串，cpu会查表翻译指令。 执行：根据译码的结果来执行具体的行为。 更新pc，指向下一条指令  回顾">
 <meta property="og:type" content="article">
 <meta property="og:title" content="NJU PA2">
 <meta property="og:url" content="https://catizard.github.io/2024/04/04/NJU-PA2/index.html">
 <meta property="og:site_name" content="Catizard&#39;s blog">
-<meta property="og:description" content="不停计算的机器最简单的计算机TRM的运行方式: 12345while (1) &#123;  从PC指示的存储器位置取出指令;  执行指令;  更新PC;&#125;  具体地，cpu执行指令的方式是：  取指：从内存空间中读取出一条指令，具体位置由pc寄存器给出。 译码：读取出来的是一个字长的01串，cpu会查表翻译指令。 执行：根据译码的结果来执行具体的行为。 更新pc，指向下一条指令  回顾">
+<meta property="og:description" content="不停计算的机器 最简单的计算机TRM的运行方式: 12345while (1) &#123;  从PC指示的存储器位置取出指令;  执行指令;  更新PC;&#125; 具体地，cpu执行指令的方式是：  取指：从内存空间中读取出一条指令，具体位置由pc寄存器给出。 译码：读取出来的是一个字长的01串，cpu会查表翻译指令。 执行：根据译码的结果来执行具体的行为。 更新pc，指向下一条指令  回顾">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-04-03T19:27:38.000Z">
 <meta property="article:modified_time" content="2024-04-03T11:30:10.816Z">
@@ -154,7 +154,7 @@
   <div class="widget-wrap">
     <div class="widget">
       <h3 class="widget-title">标签</h3>
-      <ul class="widget-tag-list" itemprop="keywords"><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/BMS/" rel="tag">BMS</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/Beatoraja/" rel="tag">Beatoraja</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/NJU-PA/" rel="tag">NJU PA</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/mit6-s081/" rel="tag">mit6.s081</a></li></ul>
+      <ul class="widget-tag-list" itemprop="keywords"><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/BMS/" rel="tag">BMS</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/Beatoraja/" rel="tag">Beatoraja</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/NJU-PA/" rel="tag">NJU PA</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/beatoraja/" rel="tag">beatoraja</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/mit6-s081/" rel="tag">mit6.s081</a></li></ul>
     </div>
   </div>
 
@@ -199,7 +199,7 @@
   
           </div>
           <div class="wordcount need-seperator meta-info">
-            7.9k 词 
+            7.8k 词 
           </div>
         </div>
         
@@ -208,9 +208,9 @@
       </header>
       <div class="e-content article-entry" itemprop="articleBody">
         
-          <h2 id="不停计算的机器"><a href="#不停计算的机器" class="headerlink" title="不停计算的机器"></a>不停计算的机器</h2><p>最简单的计算机TRM的运行方式:</p>
+          <h2 id="不停计算的机器">不停计算的机器</h2>
+<p>最简单的计算机TRM的运行方式:</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">while (1) &#123;</span><br><span class="line">  从PC指示的存储器位置取出指令;</span><br><span class="line">  执行指令;</span><br><span class="line">  更新PC;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>具体地，cpu执行指令的方式是：</p>
 <ul>
 <li>取指：从内存空间中读取出一条指令，具体位置由pc寄存器给出。</li>
@@ -223,39 +223,50 @@
 <p>:question: cpu一次只能执行一条指令吗</p>
 <p>在这个模型里，如果细化到下去，在一个时刻cpu应该只能同时执行一条指令，这是一个重要的假设，当然这个假设不是谁规定的，他实际上从一开始编程就成了一种习惯：代码是一行一行执行，指令也应该是这样的。</p>
 <ul>
-<li><input disabled="" type="checkbox"> 但是现代的cpu似乎对这个事情有所打破，可能是一个叫微指令的概念</li>
+<li>[ ] 但是现代的cpu似乎对这个事情有所打破，可能是一个叫微指令的概念</li>
 </ul>
 </blockquote>
 <blockquote>
-<h4 id="理解YEMU如何执行程序"><a href="#理解YEMU如何执行程序" class="headerlink" title="理解YEMU如何执行程序"></a>理解YEMU如何执行程序</h4><p>加法状态的状态机：把内存和寄存器的值作为状态。</p>
+<h4 id="理解YEMU如何执行程序">理解YEMU如何执行程序</h4>
+<p>加法状态的状态机：把内存和寄存器的值作为状态。</p>
 <p>两者的联系？cpu执行一条指令就是一次状态转移。</p>
 </blockquote>
 <p>这个例子可以说明，只要有加法器和跳转功能，理论上可以做出任何计算机程序(@brainfuck)。只是这样效率太低了。</p>
-<h2 id="RTFSC-2"><a href="#RTFSC-2" class="headerlink" title="RTFSC(2)"></a>RTFSC(2)</h2><h3 id="RTFM"><a href="#RTFM" class="headerlink" title="RTFM"></a>RTFM</h3><p>在PA中，riscv32的客户程序只有RV32I和RV32M组成。</p>
+<h2 id="RTFSC-2">RTFSC(2)</h2>
+<h3 id="RTFM">RTFM</h3>
+<p>在PA中，riscv32的客户程序只有RV32I和RV32M组成。</p>
 <ul>
 <li>RV32I: Base Integer Instruction Set</li>
 <li>RV32M: Extension for Integer Multiplication and Division</li>
 </ul>
 <p>通过目录就可以轻松定位到位置，但是找opcode table的时候我发现我现在看的手册版本里位置有变化，确实有点难发现。还有一点是The RISC-V Reader里的opcode有错误，建议还是看官方手册，虽然reader有中文可以看但是确实有问题。</p>
-<h3 id="RTFSC-2-1"><a href="#RTFSC-2-1" class="headerlink" title="RTFSC(2)"></a>RTFSC(2)</h3><blockquote>
-<h4 id="立即数背后的故事"><a href="#立即数背后的故事" class="headerlink" title="立即数背后的故事"></a>立即数背后的故事</h4><p>这个事情应该是和isa相关的，如果要移植大端序的isa，具体的读取应该要转换字节序列？</p>
+<h3 id="RTFSC-2-2">RTFSC(2)</h3>
+<blockquote>
+<h4 id="立即数背后的故事">立即数背后的故事</h4>
+<p>这个事情应该是和isa相关的，如果要移植大端序的isa，具体的读取应该要转换字节序列？</p>
 </blockquote>
 <blockquote>
-<h4 id="立即数背后的故事-2"><a href="#立即数背后的故事-2" class="headerlink" title="立即数背后的故事(2)"></a>立即数背后的故事(2)</h4><p>目前我的认知是他可以分开读取+某些指令不关心末尾的0（比如地址的末尾位）。</p>
+<h4 id="立即数背后的故事-2">立即数背后的故事(2)</h4>
+<p>目前我的认知是他可以分开读取+某些指令不关心末尾的0（比如地址的末尾位）。</p>
 </blockquote>
 <p>之前的代码中出现过两种pc:</p>
 <ul>
-<li>snpc: 静态pc，总是&#x3D;pc+4，即顺序执行的pc位置</li>
+<li>snpc: 静态pc，总是=pc+4，即顺序执行的pc位置</li>
 <li>dnpc:动态pc，对于跳转指令下一个pc的位置就不一定是+4</li>
 </ul>
 <p>所以实际是用s-&gt;dnpc来更新cpu的pc位置。</p>
-<h3 id="结构化程序设计"><a href="#结构化程序设计" class="headerlink" title="结构化程序设计"></a>结构化程序设计</h3><blockquote>
-<h4 id="来体会一下"><a href="#来体会一下" class="headerlink" title="来体会一下"></a>来体会一下</h4><p>写一个正确的函数然后两个函数对拍？既然都有了’正确的’程序还要他干什么，直接去掉。</p>
+<h3 id="结构化程序设计">结构化程序设计</h3>
+<blockquote>
+<h4 id="来体会一下">来体会一下</h4>
+<p>写一个正确的函数然后两个函数对拍？既然都有了’正确的’程序还要他干什么，直接去掉。</p>
 </blockquote>
 <blockquote>
-<h4 id="RTFSC理解指令执行的过程"><a href="#RTFSC理解指令执行的过程" class="headerlink" title="RTFSC理解指令执行的过程"></a>RTFSC理解指令执行的过程</h4></blockquote>
-<h3 id="运行第一个C程序"><a href="#运行第一个C程序" class="headerlink" title="运行第一个C程序"></a>运行第一个C程序</h3><blockquote>
-<h4 id="为什么执行了未实现指令会出现上述报错信息"><a href="#为什么执行了未实现指令会出现上述报错信息" class="headerlink" title="为什么执行了未实现指令会出现上述报错信息"></a>为什么执行了未实现指令会出现上述报错信息</h4><p>兜底命令</p>
+<h4 id="RTFSC理解指令执行的过程">RTFSC理解指令执行的过程</h4>
+</blockquote>
+<h3 id="运行第一个C程序">运行第一个C程序</h3>
+<blockquote>
+<h4 id="为什么执行了未实现指令会出现上述报错信息">为什么执行了未实现指令会出现上述报错信息</h4>
+<p>兜底命令</p>
 </blockquote>
 <blockquote>
 <p>:question: li命令是什么</p>
@@ -265,7 +276,6 @@
 </blockquote>
 <p>先解决一个问题：当调用make的时候发生了什么？执行一下make -nB可以拿到</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">/bin/echo -e <span class="string">&quot;NAME = dummy\nSRCS = tests/dummy.c\ninclude <span class="variable">$&#123;AM_HOME&#125;</span>/Makefile&quot;</span> &gt; Makefile.dummy</span><br><span class="line"><span class="keyword">if</span> make -s -f Makefile.dummy ARCH=riscv32-nemu run; <span class="keyword">then</span> \</span><br><span class="line">	<span class="built_in">printf</span> <span class="string">&quot;[%14s] \033[1;32mPASS!\033[0m\n&quot;</span> dummy &gt;&gt; .result; \</span><br><span class="line"><span class="keyword">else</span> \</span><br><span class="line">	<span class="built_in">printf</span> <span class="string">&quot;[%14s] \033[1;31mFAIL!\033[0m\n&quot;</span> dummy &gt;&gt; .result; \</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="built_in">rm</span> -f Makefile.dummy</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;&quot;</span> dummy</span><br><span class="line"><span class="built_in">cat</span> .result</span><br><span class="line"><span class="built_in">rm</span> .result</span><br></pre></td></tr></table></figure>
-
 <p>所以他应该是先生成了一个简单的makefile,然后立即执行他，执行完了之后就移除了。</p>
 <blockquote>
 <p>:question: 为什么他要创建一个临时的结果文件result？</p>
@@ -274,22 +284,28 @@
 </blockquote>
 <p>然后是这个makefile里的内容，比较简单就是</p>
 <figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">NAME=dummy</span><br><span class="line">SRCS = tests/dummy.c</span><br><span class="line"><span class="keyword">include</span> $&#123;AM_HOME&#125;/Makefile</span><br></pre></td></tr></table></figure>
-
-<p>就是定义了一下变量然后引用了AM的makefile，看来剩下的还要去AM里面找结果。在现阶段看来，因为AM是一个抽象层，dummy程序是运行在AM这个抽象层之上的，所以在AM的makefile里可能需要将这个<code>dummy.c</code>编译成一个可执行文件，然后将指令数据带给NEMU。后者比较好做，可能就是之前提过的NEMU加载指定用户程序的方式，前者目前还有些迷雾，一个比较明显的问题是不可能直接链接GNU&#x2F;LINUX的库，这里需要交叉编译。</p>
-<h3 id="运行更多的程序"><a href="#运行更多的程序" class="headerlink" title="运行更多的程序"></a>运行更多的程序</h3><blockquote>
+<p>就是定义了一下变量然后引用了AM的makefile，看来剩下的还要去AM里面找结果。在现阶段看来，因为AM是一个抽象层，dummy程序是运行在AM这个抽象层之上的，所以在AM的makefile里可能需要将这个<code>dummy.c</code>编译成一个可执行文件，然后将指令数据带给NEMU。后者比较好做，可能就是之前提过的NEMU加载指定用户程序的方式，前者目前还有些迷雾，一个比较明显的问题是不可能直接链接GNU/LINUX的库，这里需要交叉编译。</p>
+<h3 id="运行更多的程序">运行更多的程序</h3>
+<blockquote>
 <p>:exclamation: 未测试的代码永远是错的！</p>
 </blockquote>
 <p>只有两个需要klib的测试需要提供更多内容才可以做。</p>
 <p>这里有几个高位相关的指令需要补齐。</p>
-<h2 id="程序-运行时环境与AM"><a href="#程序-运行时环境与AM" class="headerlink" title="程序, 运行时环境与AM"></a>程序, 运行时环境与AM</h2><h3 id="运行时环境"><a href="#运行时环境" class="headerlink" title="运行时环境"></a>运行时环境</h3><h3 id="将运行时环境封装成库函数"><a href="#将运行时环境封装成库函数" class="headerlink" title="将运行时环境封装成库函数"></a>将运行时环境封装成库函数</h3><blockquote>
-<h4 id="这又能怎么样呢"><a href="#这又能怎么样呢" class="headerlink" title="这又能怎么样呢"></a>这又能怎么样呢</h4><p>在am上运行的程序不需要关心具体平台的具体细节，可移植。</p>
-</blockquote>
-<h3 id="AM-裸机-bare-metal-运行时环境"><a href="#AM-裸机-bare-metal-运行时环境" class="headerlink" title="AM - 裸机(bare-metal)运行时环境"></a>AM - 裸机(bare-metal)运行时环境</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AM = TRM + IOE + CTE + VME + MPE</span><br></pre></td></tr></table></figure>
-
+<h2 id="程序-运行时环境与AM">程序, 运行时环境与AM</h2>
+<h3 id="运行时环境">运行时环境</h3>
+<h3 id="将运行时环境封装成库函数">将运行时环境封装成库函数</h3>
 <blockquote>
-<h4 id="为什么要有AM-建议二周目思考"><a href="#为什么要有AM-建议二周目思考" class="headerlink" title="为什么要有AM? (建议二周目思考)"></a>为什么要有AM? (建议二周目思考)</h4><p>OS提供的运行时环境和AM提供的有什么区别？</p>
+<h4 id="这又能怎么样呢">这又能怎么样呢</h4>
+<p>在am上运行的程序不需要关心具体平台的具体细节，可移植。</p>
 </blockquote>
-<h3 id="RTFSC-3"><a href="#RTFSC-3" class="headerlink" title="RTFSC(3)"></a>RTFSC(3)</h3><p>这里提到了上面的问题，需要在GNU&#x2F;Linux的环境里编译出在riscv32-nemu里运行的可执行文件。</p>
+<h3 id="AM-裸机-bare-metal-运行时环境">AM - 裸机(bare-metal)运行时环境</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AM = TRM + IOE + CTE + VME + MPE</span><br></pre></td></tr></table></figure>
+<blockquote>
+<h4 id="为什么要有AM-建议二周目思考">为什么要有AM? (建议二周目思考)</h4>
+<p>OS提供的运行时环境和AM提供的有什么区别？</p>
+</blockquote>
+<h3 id="RTFSC-3">RTFSC(3)</h3>
+<p>这里提到了上面的问题，需要在GNU/Linux的环境里编译出在riscv32-nemu里运行的可执行文件。</p>
 <ul>
 <li>gcc将AM实现源文件编译到目标文件，然后通过ar打包</li>
 <li>将要运行的用户程序编译到目标文件</li>
@@ -306,62 +322,69 @@
 <p>这里可以注意到isa相关的makefile和平台相关的makefile也是拆开的。</p>
 <p>后面AM的makefile就是一些编译规则了，用于指向最后生成的文件位置，具体的目标定义在平台的makefile里，在NEMU的makefile找到运行的目标之后就可以知道是在什么位置启动NEMU以及给NEMU传递参数的了。目前他只设置了<code>-l $(shell dirname $(IMAGE).elf)/nemu-log.txt</code>用于控制log文件生成的位置。</p>
 <blockquote>
-<h4 id="通过批处理模式运行NEMU"><a href="#通过批处理模式运行NEMU" class="headerlink" title="通过批处理模式运行NEMU"></a>通过批处理模式运行NEMU</h4><p>通过AM的Makefile默认启动批处理模式的NEMU，知道NEMU传入参数的地方之后就可以写了。这个东西一个好处是可以直接运行所有测试然后打印对应的结果。</p>
+<h4 id="通过批处理模式运行NEMU">通过批处理模式运行NEMU</h4>
+<p>通过AM的Makefile默认启动批处理模式的NEMU，知道NEMU传入参数的地方之后就可以写了。这个东西一个好处是可以直接运行所有测试然后打印对应的结果。</p>
 </blockquote>
 <p>因为这里并不是直接在AM启动的make,所以bear得到的结果实际上是对am-kernel这边才能用。因此要想一个办法在AM那里启动bear然后生成结果让我的clangd正常工作。但是并不是很成功，如果直接将内容放到AM下面会找不到elf文件。</p>
-<h3 id="实现常用的库函数"><a href="#实现常用的库函数" class="headerlink" title="实现常用的库函数"></a>实现常用的库函数</h3><blockquote>
-<h4 id="实现字符串处理函数"><a href="#实现字符串处理函数" class="headerlink" title="实现字符串处理函数"></a>实现字符串处理函数</h4></blockquote>
-<h3 id="重新认识计算机：计算机是个抽象层"><a href="#重新认识计算机：计算机是个抽象层" class="headerlink" title="重新认识计算机：计算机是个抽象层"></a>重新认识计算机：计算机是个抽象层</h3><h2 id="基础设施-2"><a href="#基础设施-2" class="headerlink" title="基础设施(2)"></a>基础设施(2)</h2><p>跳过了，没什么用</p>
-<h2 id="输入输出"><a href="#输入输出" class="headerlink" title="输入输出"></a>输入输出</h2><h3 id="设备与cpu"><a href="#设备与cpu" class="headerlink" title="设备与cpu"></a>设备与cpu</h3><p>访问设备 &#x3D; 读出数据 + 写入数据 + 控制状态</p>
+<h3 id="实现常用的库函数">实现常用的库函数</h3>
+<blockquote>
+<h4 id="实现字符串处理函数">实现字符串处理函数</h4>
+</blockquote>
+<h3 id="重新认识计算机：计算机是个抽象层">重新认识计算机：计算机是个抽象层</h3>
+<h2 id="基础设施-2">基础设施(2)</h2>
+<p>跳过了，没什么用</p>
+<h2 id="输入输出">输入输出</h2>
+<h3 id="设备与cpu">设备与cpu</h3>
+<p>访问设备 = 读出数据 + 写入数据 + 控制状态</p>
 <ul>
-<li><p>端口IO：使用专门的IO指令对设备进行访问，端口即设备的地址。</p>
+<li>
+<p>端口IO：使用专门的IO指令对设备进行访问，端口即设备的地址。</p>
 </li>
-<li><p>内存映射IO：端口IO的问题是如果已经确定了端口号，就不能再做修改，即只能加不能减或者改。而且这件事是直接写到指令集里的。</p>
+<li>
+<p>内存映射IO：端口IO的问题是如果已经确定了端口号，就不能再做修改，即只能加不能减或者改。而且这件事是直接写到指令集里的。</p>
 </li>
 </ul>
 <p>内存映射的想法是将一段内存空间拿出来专门给设备用，当cpu访问这段内存空间的时候，通过一个中间层映射到设备的位置上。这样的想法提供的编程模型和普通的内存访问并没有什么不同，唯一的缺点只是这段内存空间不再可用，不过它比起总量来说差距太大了，可以忽略不计。</p>
 <blockquote>
-<h4 id="理解volatile关键字"><a href="#理解volatile关键字" class="headerlink" title="理解volatile关键字"></a>理解volatile关键字</h4><p>我的机器上全部是死循环</p>
+<h4 id="理解volatile关键字">理解volatile关键字</h4>
+<p>我的机器上全部是死循环</p>
 </blockquote>
 <p>端口IO和内存映射IO都是映射，这里设计成了共用一个IOMap结构体来管理。具体这个IOMap保存了名称，映射的起始地址和结束地址，映射的目标空间以及一个回调函数。这里保存的<code>映射的起始地址和结束地址</code>是当cpu访问的到的地址，映射的目标空间是实际的地址（设备在的地址？）。</p>
 <p>访问设备的读写api如下，用于将地址addr映射到map所指示的目标空间。对于端口IO,上游接口是<code>pio_read/pio_write</code>，最终调用<code>map_read/map_write</code>来实现访问；内存映射IO类似，在<code>paddr_read/padd_r_write</code>时会判断addr落在实际的物理内存空间还是落在了设备空间，如果是后者就调用api访问设备。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">word_t</span> <span class="title function_">map_read</span><span class="params">(<span class="type">paddr_t</span> addr, <span class="type">int</span> len, IOMap *<span class="built_in">map</span>)</span>;</span><br><span class="line"><span class="type">void</span> <span class="title function_">map_write</span><span class="params">(<span class="type">paddr_t</span> addr, <span class="type">int</span> len, <span class="type">word_t</span> data, IOMap *<span class="built_in">map</span>)</span>;</span><br></pre></td></tr></table></figure>
-
-<h3 id="NEMU中的输入输出"><a href="#NEMU中的输入输出" class="headerlink" title="NEMU中的输入输出"></a>NEMU中的输入输出</h3><p>在menuconfig里打开devices，然后运行NEMU就可以看到一个空窗口（但是实际上并不是空窗口，他会把当前屏幕上的内容带上去，为什么？）。</p>
+<h3 id="NEMU中的输入输出">NEMU中的输入输出</h3>
+<p>在menuconfig里打开devices，然后运行NEMU就可以看到一个空窗口（但是实际上并不是空窗口，他会把当前屏幕上的内容带上去，为什么？）。</p>
 <p>NEMU是一个单线程程序，因此他是通过串行的方式模拟设备的执行的：在每次<code>cpu_exec</code>执行指令之后会查看距离上次设备执行的时间，如果已经超过了一定时间(tick)就尝试刷新屏幕，然后检查是否有按键按下释放以及窗口的x事件。</p>
 <blockquote>
 <p>:question:为什么我的x按钮不起作用？</p>
 <p>是单纯的tick太高了还是有什么bug存在？</p>
 </blockquote>
-<h3 id="将输入输出抽象成IOE"><a href="#将输入输出抽象成IOE" class="headerlink" title="将输入输出抽象成IOE"></a>将输入输出抽象成IOE</h3><p>首先设备访问的具体实现肯定是和具体架构相关的，其次设备访问是给计算机提供输入输出的能力的，应该归类为IOE。具体地抽象了下面三个api:</p>
+<h3 id="将输入输出抽象成IOE">将输入输出抽象成IOE</h3>
+<p>首先设备访问的具体实现肯定是和具体架构相关的，其次设备访问是给计算机提供输入输出的能力的，应该归类为IOE。具体地抽象了下面三个api:</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">bool</span> <span class="title function_">ioe_init</span><span class="params">()</span>;</span><br><span class="line"><span class="type">void</span> <span class="title function_">ioe_read</span><span class="params">(<span class="type">int</span> reg, <span class="type">void</span> *buf)</span>;</span><br><span class="line"><span class="type">void</span> <span class="title function_">ioe_write</span><span class="params">(<span class="type">int</span> reg, <span class="type">void</span> *buf)</span>;</span><br></pre></td></tr></table></figure>
-
 <p>这里的reg并不是具体的设备寄存器而是一个抽象的寄存器概念，显然不同架构的设备寄存器不可能一样。read是从寄存器中读写到缓冲区buf,write是把缓冲区buf的内容写到寄存器里。约定在不同的系统架构里也是用同样的抽象寄存器编号。</p>
 <p>amdev.h里定义了常见设备的抽象寄存器编号和相应的结构，具体地，他里面是一个宏:</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> AM_DEVREG(id, reg, perm, ...) \</span></span><br><span class="line"><span class="meta">  enum &#123; AM_##reg = (id) &#125;; \</span></span><br><span class="line"><span class="meta">  typedef struct &#123; __VA_ARGS__; &#125; AM_##reg##_T;</span></span><br></pre></td></tr></table></figure>
-
 <p>对于下面这个调用，他会展开成类似这样的:</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">AM_DEVREG( <span class="number">1</span>, UART_CONFIG,  RD, <span class="type">bool</span> present);</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">enum</span> &#123;</span> AM_UART_CONFIG = (<span class="number">1</span>) &#125;;</span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span> <span class="type">bool</span> present &#125; AM_UART_CONFIG_T;</span><br></pre></td></tr></table></figure>
-
 <p>其中的Perm参数作为描述权限的字段似乎没有使用？</p>
-<h3 id="将输入输出抽象成IOE-1"><a href="#将输入输出抽象成IOE-1" class="headerlink" title="将输入输出抽象成IOE"></a>将输入输出抽象成IOE</h3><p>首先是串口，串口初始化时会分别注册<code>0x3F8</code>处长度为8个字节的端口（对于使用端口IO使用的ISA来说）以及<code>0xa00003F8</code>处8字节的MMIO空间，具体地，他的调用是:</p>
+<h3 id="将输入输出抽象成IOE-2">将输入输出抽象成IOE</h3>
+<p>首先是串口，串口初始化时会分别注册<code>0x3F8</code>处长度为8个字节的端口（对于使用端口IO使用的ISA来说）以及<code>0xa00003F8</code>处8字节的MMIO空间，具体地，他的调用是:</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">add_mmio_map(<span class="string">&quot;serial&quot;</span>, CONFIG_SERIAL_MMIO, serial_base, <span class="number">8</span>, serial_io_handler);</span><br></pre></td></tr></table></figure>
-
 <p>当cpu访问MMIO这个物理内存地址时就会被映射到串口？具体的逻辑是怎样的，目标空间space是什么意思？为什么这里的space是一个申请内存调用？</p>
 <p>trm.c会调用putch将数据发送到串口，具体的他只是调用了一个<code>outb(SERIAL_PORT, ch)</code>，这里前者就是之前提到的<code>0xa00003F8</code>，所以确实应该是cpu访问这个地址的时候被映射。这里outb的实现就是直接向对应的地址写数据，会被翻译成一条write指令？这里添加的volatile可能是为了防止被优化，保证是一条对应长度的write指令。</p>
 <blockquote>
 <p>:question: 怎么证明这个volatile是必须的</p>
 </blockquote>
 <blockquote>
-<h4 id="运行Hello-World"><a href="#运行Hello-World" class="headerlink" title="运行Hello World"></a>运行Hello World</h4><p>riscv32可以直接运行，因为MMIO已经被实现了。</p>
-<p>运行后可以看到一条Hello World1和mainargs&#x3D;’’</p>
+<h4 id="运行Hello-World">运行Hello World</h4>
+<p>riscv32可以直接运行，因为MMIO已经被实现了。</p>
+<p>运行后可以看到一条Hello World1和mainargs=‘’</p>
 </blockquote>
 <p>但是到这里还没有解决serial_base是干什么用的。map_write的具体实现是这样的:</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">map_write</span><span class="params">(<span class="type">paddr_t</span> addr, <span class="type">int</span> len, <span class="type">word_t</span> data, IOMap *<span class="built_in">map</span>)</span> &#123;</span><br><span class="line">  assert(len &gt;= <span class="number">1</span> &amp;&amp; len &lt;= <span class="number">8</span>);</span><br><span class="line">  check_bound(<span class="built_in">map</span>, addr);</span><br><span class="line">  <span class="type">paddr_t</span> offset = addr - <span class="built_in">map</span>-&gt;low;</span><br><span class="line">  host_write(<span class="built_in">map</span>-&gt;space + offset, len, data);</span><br><span class="line">  invoke_callback(<span class="built_in">map</span>-&gt;callback, offset, len, <span class="literal">true</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>其中调用了host_write的时候用到了map-&gt;space，而host_write就是直接的内存写了。然后找一下谁调用过他，发现：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">pmem_write</span><span class="params">(<span class="type">paddr_t</span> addr, <span class="type">int</span> len, <span class="type">word_t</span> data)</span> &#123;</span><br><span class="line">  host_write(guest_to_host(addr), len, data);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>而 pmem_write的调用只有paddr_write，具体地，paddr_write会先检查目标位置是否落在物理空间里，如果不是则调用mmio_write，否则调用pmem_write。在pmem_write里他会先将目标地址通过guest_to_host转换，其最终的目标就是NEMU中模拟的内存pmem数组。</p>
 <p>所以一开始new_space实际上是找NEMU模拟的内存空间里分配了8字节的空间，然后具体写的时候是通过host_write直接向NEMU模拟的硬件上写数据的。所以这里理一下：<code>0xa00003F8</code>这个地址确实是约定的，他是在一开始就在内存中划分好的一个特定区域，<code>new_space</code>是运行时动态分配的。当putch准备向<code>0xa00003F8</code>这个物理地址写数据的时候，他会被转换到写一个运行时动态分配的内存地址。</p>
 <blockquote>
@@ -370,57 +393,70 @@
 </blockquote>
 <p>这里有提到，现在这样在AM上的输出是裸机编程：直接操作设备。这是一个很危险的设计，当引入操作系统的时候，设备就不是一个直接能访问的东西了，需要经过操作系统调用。</p>
 <blockquote>
-<h4 id="理解mainargs"><a href="#理解mainargs" class="headerlink" title="理解mainargs"></a>理解mainargs</h4><ul>
-<li><input disabled="" type="checkbox"> isa-nemu和native存在不同的传递方式</li>
+<h4 id="理解mainargs">理解mainargs</h4>
+<ul>
+<li>[ ] isa-nemu和native存在不同的传递方式</li>
 </ul>
 </blockquote>
 <blockquote>
-<h4 id="实现printf"><a href="#实现printf" class="headerlink" title="实现printf"></a>实现printf</h4><p><del>这个任务不是之前就完成了吗</del></p>
+<h4 id="实现printf">实现printf</h4>
+<p><del>这个任务不是之前就完成了吗</del></p>
 </blockquote>
 <p>第二个设备是时钟，这里有一个让我一开始有一些误解的地方：文档中提到定义了两个抽象寄存器，但是实际的设备寄存器有两个，都是32位的寄存器。这里的实际情况是RTC抽象寄存器没有实现，然后两个实际存在的寄存器实际上一起组成了一个抽象寄存器UPTIME。</p>
 <blockquote>
-<h4 id="实现IOE"><a href="#实现IOE" class="headerlink" title="实现IOE"></a>实现IOE</h4><p>在timer.c中实现<code>AM_TIMER_UPDATE</code>的功能，框架中提供了将当前时间写入设备寄存器的部分。然后在<code>ioe/timer.c</code>里补齐读取的部分就可以了。</p>
+<h4 id="实现IOE">实现IOE</h4>
+<p>在timer.c中实现<code>AM_TIMER_UPDATE</code>的功能，框架中提供了将当前时间写入设备寄存器的部分。然后在<code>ioe/timer.c</code>里补齐读取的部分就可以了。</p>
 <p>在rtc.c中的io_read是一个宏，对其展开可以获得:</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(&#123;</span><br><span class="line">AM_TIMER_UPTIME_T __io_param;</span><br><span class="line">ioe_read(AM_TIMER_UPTIME, &amp;__io_param);</span><br><span class="line">__io_param;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-
 <p>调用<code>ioe_read</code>，将结果写到一段连续数据里，然后把这段连续数据当作一个struct解读再直接移出去，非常有意思的写法。</p>
 <p>这个必做题把如何运行测试的方法作为了题目的一部分，只要去看对应目录的文件内容就可以了。</p>
 </blockquote>
 <blockquote>
-<h4 id="看看NEMU跑多快"><a href="#看看NEMU跑多快" class="headerlink" title="看看NEMU跑多快"></a>看看NEMU跑多快</h4><p><del>我怎么跑挂了，返回的结果是<code>Dhrystone FAIL</code>。而且microbench的速度异常的慢，换了之后也还是慢的异常</del>。</p>
+<h4 id="看看NEMU跑多快">看看NEMU跑多快</h4>
+<p><del>我怎么跑挂了，返回的结果是<code>Dhrystone FAIL</code>。而且microbench的速度异常的慢，换了之后也还是慢的异常</del>。</p>
 <p>发现是klib里的实现有问题，修正之后就PASS了。<del>为什么等到我做性能测试才爆出来</del>。慢的离谱的原因是因为没有关掉trace。我的跑分结果是ref的microbench 1000分。</p>
 </blockquote>
 <blockquote>
-<h4 id="设备访问的踪迹-dtrace"><a href="#设备访问的踪迹-dtrace" class="headerlink" title="设备访问的踪迹-dtrace"></a>设备访问的踪迹-dtrace</h4><p>感觉没啥用，跳过了</p>
+<h4 id="设备访问的踪迹-dtrace">设备访问的踪迹-dtrace</h4>
+<p>感觉没啥用，跳过了</p>
 </blockquote>
 <blockquote>
-<h4 id="实现IOE-2"><a href="#实现IOE-2" class="headerlink" title="实现IOE(2)"></a>实现IOE(2)</h4><p>和前面两个一样。</p>
+<h4 id="实现IOE-2">实现IOE(2)</h4>
+<p>和前面两个一样。</p>
 </blockquote>
 <blockquote>
-<h4 id="如何检测多个键同时被按下"><a href="#如何检测多个键同时被按下" class="headerlink" title="如何检测多个键同时被按下?"></a>如何检测多个键同时被按下?</h4><p>有可能是按二进制写状态，具体还不清楚。</p>
+<h4 id="如何检测多个键同时被按下">如何检测多个键同时被按下?</h4>
+<p>有可能是按二进制写状态，具体还不清楚。</p>
 </blockquote>
 <p>最后一个是实现VGA图像，初始化时在<code>0xa1000000</code>开始注册了一段内存映射，具体的大小是屏幕的大小乘每个像素的信息大小：<code>400x300x32</code>，不带透明度信息。</p>
 <p>GPU设备这边的文案感觉有点割裂，不知道是因为什么原因。</p>
 <p>一共定义了五个设备寄存器:<code>GPU_CONFIG</code>, <code>GPU_STATUS</code>, <code>GPU_FBREDRAW</code>, <code>GPU_MEMCPY</code>, <code>GPU_RENDER</code>。然后说NEMU中只会用到<code>GPU_CONFIG</code>：读出屏幕大小和<code>GPU_FBDRAW</code>：帧缓冲，向(x,y)坐标绘制w*h的矩形，然后有一个像素数据数组和一个是否同步。</p>
 <blockquote>
-<h4 id="实现IOE-3"><a href="#实现IOE-3" class="headerlink" title="实现IOE(3)"></a>实现IOE(3)</h4><p>文案开头的话可能是没删干净，实际上已经介绍了。这部分实现之后就可以看到全屏的颜色信息。</p>
+<h4 id="实现IOE-3">实现IOE(3)</h4>
+<p>文案开头的话可能是没删干净，实际上已经介绍了。这部分实现之后就可以看到全屏的颜色信息。</p>
 </blockquote>
 <blockquote>
-<h4 id="实现IOE-4"><a href="#实现IOE-4" class="headerlink" title="实现IOE(4)"></a>实现IOE(4)</h4><p>fbdraw寄存器还有一个绘制图形的功能没有实现，现在只是实现了sync效果。实现完之后可以看到动画效果。</p>
-<p><del>但是为什么会有黑边？是我实现的不对吗</del>。应该是N&#x3D;32不是整数倍的原因。</p>
+<h4 id="实现IOE-4">实现IOE(4)</h4>
+<p>fbdraw寄存器还有一个绘制图形的功能没有实现，现在只是实现了sync效果。实现完之后可以看到动画效果。</p>
+<p><del>但是为什么会有黑边？是我实现的不对吗</del>。应该是N=32不是整数倍的原因。</p>
 </blockquote>
 <p>声卡部分暂时跳过了。后面可能会补齐。</p>
-<h3 id="冯诺依曼计算机系统"><a href="#冯诺依曼计算机系统" class="headerlink" title="冯诺依曼计算机系统"></a>冯诺依曼计算机系统</h3><blockquote>
-<h4 id="展示你的计算机系统"><a href="#展示你的计算机系统" class="headerlink" title="展示你的计算机系统"></a>展示你的计算机系统</h4><p><del>为什么这个bad-apple是纯字符版本的</del></p>
+<h3 id="冯诺依曼计算机系统">冯诺依曼计算机系统</h3>
+<blockquote>
+<h4 id="展示你的计算机系统">展示你的计算机系统</h4>
+<p><del>为什么这个bad-apple是纯字符版本的</del></p>
 </blockquote>
 <blockquote>
-<h4 id="游戏是怎样运行的"><a href="#游戏是怎样运行的" class="headerlink" title="游戏是怎样运行的"></a>游戏是怎样运行的</h4><p>暂时搁置</p>
+<h4 id="游戏是怎样运行的">游戏是怎样运行的</h4>
+<p>暂时搁置</p>
 </blockquote>
 <blockquote>
-<h4 id="在NEMU上运行NEMU"><a href="#在NEMU上运行NEMU" class="headerlink" title="在NEMU上运行NEMU"></a>在NEMU上运行NEMU</h4><p>听起来很疯狂，但是之后再补齐。</p>
+<h4 id="在NEMU上运行NEMU">在NEMU上运行NEMU</h4>
+<p>听起来很疯狂，但是之后再补齐。</p>
 </blockquote>
 <blockquote>
-<h4 id="必答题"><a href="#必答题" class="headerlink" title="必答题"></a>必答题</h4><p>之后补齐</p>
+<h4 id="必答题">必答题</h4>
+<p>之后补齐</p>
 </blockquote>
 <blockquote>
 <p>:sunny: 温馨提示: pa2到此结束</p>

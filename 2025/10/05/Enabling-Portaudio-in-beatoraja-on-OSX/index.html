@@ -14,18 +14,23 @@
   
 
   
-  <title>归档: 2025/9 | Catizard&#39;s blog</title>
+  <title>Enabling Portaudio in beatoraja on OSX | Catizard&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <link rel="preload" href="/css/fonts/Roboto-Regular.ttf" as="font" type="font/ttf" crossorigin="anonymous">
   <link rel="preload" href="/css/fonts/Roboto-Bold.ttf" as="font" type="font/ttf" crossorigin="anonymous">
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Catizard&#39;s blog">
-<meta property="og:url" content="https://catizard.github.io/archives/2025/09/index.html">
+  <meta name="description" content="Preface This is a small guide of how to compile and enable portaudio in beatoraja on osx, the guide includes some manual modifications, so it assumes that readers have the basic knowledge of computer">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Enabling Portaudio in beatoraja on OSX">
+<meta property="og:url" content="https://catizard.github.io/2025/10/05/Enabling-Portaudio-in-beatoraja-on-OSX/index.html">
 <meta property="og:site_name" content="Catizard&#39;s blog">
+<meta property="og:description" content="Preface This is a small guide of how to compile and enable portaudio in beatoraja on osx, the guide includes some manual modifications, so it assumes that readers have the basic knowledge of computer">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-10-05T10:29:29.000Z">
+<meta property="article:modified_time" content="2025-10-05T02:44:29.144Z">
 <meta property="article:author" content="Catizard">
+<meta property="article:tag" content="beatoraja">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/atom.xml" title="Catizard's blog" type="application/atom+xml">
@@ -161,44 +166,115 @@
     <div id="content-body">
        
 
-<div class="archive-main-card">
-    <div class="archive-top">
-      <div class="main-title-bar">
-        <div class="main-title-dot"></div>
-        <h1 class="article-title">归档</h1>
-      </div>    
+
+<article id="post-Enabling-Portaudio-in-beatoraja-on-OSX" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  
+    
+   
+  <div class="article-inner">
+    <div class="article-main">
+      <header class="article-header">
+        
+<div class="main-title-bar">
+  <div class="main-title-dot"></div>
+  
+    
+      <h1 class="p-name article-title" itemprop="headline name">
+        Enabling Portaudio in beatoraja on OSX
+      </h1>
+    
+  
+</div>
+
+        <div class='meta-info-bar'>
+          <div class="meta-info">
+  <time class="dt-published" datetime="2025-10-05T10:29:29.000Z" itemprop="datePublished">2025-10-05</time>
+</div>
+          <div class="need-seperator meta-info">
+            <div class="meta-cate-flex">
+  
+    未分类 
+   
+</div>
+  
+          </div>
+          <div class="wordcount need-seperator meta-info">
+            1.8k 词 
+          </div>
+        </div>
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/beatoraja/" rel="tag">beatoraja</a></li></ul>
+
+      </header>
+      <div class="e-content article-entry" itemprop="articleBody">
+        
+          <h2 id="Preface">Preface</h2>
+<p>This is a small guide of how to compile and enable portaudio in beatoraja on osx, the guide includes some manual modifications, so it assumes that readers have the basic knowledge of computer and git.</p>
+<p>This guide’s target is building the <code>jportaudio.dylib</code> on macos and make beatoraja reads it.</p>
+<h2 id="Process">Process</h2>
+<ul>
+<li>Download <code>portaudio</code> library by <code>brew install portaudio</code></li>
+<li>Copy <code>portaudio.h</code> file to an library path like <code>/usr/local/inlcude</code>, you can find the file under <code>/opt/homebrew/Cellar/portaudio[version]/include</code></li>
+<li><code>git clone https://github.com/philburk/portaudio-java</code></li>
+<li>Edit <code>CMakeLists.txt</code></li>
+</ul>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.2</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">project</span>(jportaudio_project)</span><br><span class="line"></span><br><span class="line"><span class="comment"># somehow, $ENV&#123;JAVA_HOME&#125; isn&#x27;t work on my machine, so I replaced them with absolute path</span></span><br><span class="line"><span class="comment"># $which java to find where java is</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#include_directories($ENV&#123;JAVA_HOME&#125;/include)</span></span><br><span class="line"><span class="comment">#include_directories($ENV&#123;JAVA_HOME&#125;/include/darwin)</span></span><br><span class="line"><span class="comment">#include_directories($ENV&#123;JAVA_HOME&#125;/include/linux)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># DON&#x27;T COPY THIS DIRECTLY</span></span><br><span class="line"><span class="keyword">include_directories</span>(/Library/Java/JavaVirtualMachines/liberica-jdk-<span class="number">17</span>-full.jdk/Contents/Home/inlcude)</span><br><span class="line"><span class="keyword">include_directories</span>(/Library/Java/JavaVirtualMachines/liberica-jdk-<span class="number">17</span>-full.jdk/Contents/Home/inlcude/darwin)</span><br><span class="line"></span><br><span class="line"><span class="comment"># for installed portaudio.h</span></span><br><span class="line"><span class="comment"># If you didn&#x27;t put portaudio.h here, modify this line</span></span><br><span class="line"><span class="keyword">include_directories</span>(/usr/local/<span class="keyword">include</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#link_directories(/usr/local/lib)</span></span><br><span class="line"><span class="comment"># No need because we downloaded portaudio through brew</span></span><br><span class="line"><span class="comment">#link_directories(../portaudio/pagit)</span></span><br><span class="line"><span class="comment">#link_directories(../portaudio/pagit/lib)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span> (jportaudio_sources</span><br><span class="line">    src/main/jni/com_portaudio_BlockingStream.c</span><br><span class="line">    src/main/jni/com_portaudio_PortAudio.c</span><br><span class="line">    src/main/jni/jpa_tools.c</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span> (jportaudio_libname jportaudio_0_1_0)</span><br><span class="line"></span><br><span class="line"><span class="keyword">add_library</span>(<span class="variable">$&#123;jportaudio_libname&#125;</span> SHARED <span class="variable">$&#123;jportaudio_sources&#125;</span>)</span><br><span class="line"><span class="keyword">target_link_libraries</span>(<span class="variable">$&#123;jportaudio_libname&#125;</span> portaudio)</span><br><span class="line"></span><br><span class="line"><span class="keyword">install</span>(TARGETS <span class="variable">$&#123;jportaudio_libname&#125;</span> DESTINATION lib)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>
+<pre><code class="language-bash">mkdir build
+cmake -B build
+cd build
+</code></pre>
+</li>
+<li></li>
+</ul>
+
+        
+      </div>
+
+         
     </div>
     
-    
-      
-      
-        
-        <div class="year-line">
-            <div class="year-num">2025</div>
-            <div class="dot-wrapper">
-                <div class="dot"></div>
-            </div>
-            <div class="article-count">1 篇文章</div>
-        </div>
-      
-      <a class="archive-article-link" href="/2025/09/15/Project-Shoko-result%E7%9A%AE%E8%82%A4%E4%BB%A3%E7%A0%81%E9%98%85%E8%AF%BB/" title="Project-Shoko result皮肤代码阅读">
-        <div class="date">09-15</div>
-        <div class="line">
-            <div class="dot"></div>
-        </div>
-        <div class="title">
-            <div class="title-inner">
-                
-                    Project-Shoko result皮肤代码阅读
-                
-            </div>
-        </div>
-        <div class="tags">
-            #Beatoraja
-        </div>
-      </a>
-    
+     
   </div>
+  
+    
+<nav id="article-nav">
+  <a class="article-nav-btn left "
+    
+      href="/2025/11/06/How-score-false-works-in-beatoraja/"
+      title="How score = false works in beatoraja"
+     >
+    <i class="fa-solid fa-angle-left"></i>
+    <p class="title-text">
+      
+        How score = false works in beatoraja
+        
+    </p>
+  </a>
+  <a class="article-nav-btn right "
+    
+      href="/2025/09/15/Project-Shoko-result%E7%9A%AE%E8%82%A4%E4%BB%A3%E7%A0%81%E9%98%85%E8%AF%BB/"
+      title="Project-Shoko result皮肤代码阅读"
+     >
+
+    <p class="title-text">
+      
+        Project-Shoko result皮肤代码阅读
+        
+    </p>
+    <i class="fa-solid fa-angle-right"></i>
+  </a>
+</nav>
+
+
+  
+</article>
+
+
+
+
+
     </div>
     <div id="footer-wrapper">
       <footer id="footer">
