@@ -20,15 +20,15 @@
   <link rel="preload" href="/css/fonts/Roboto-Regular.ttf" as="font" type="font/ttf" crossorigin="anonymous">
   <link rel="preload" href="/css/fonts/Roboto-Bold.ttf" as="font" type="font/ttf" crossorigin="anonymous">
 
-  <meta name="description" content="Preface This is a small guide of how to compile and enable portaudio in beatoraja on osx, the guide includes some manual modifications, so it assumes that readers have the basic knowledge of computer">
+  <meta name="description" content="PrefaceThis is a small guide of how to compile and enable portaudio in beatoraja on osx, the guide includes some manual modifications, so it assumes that readers have the basic knowledge of computer a">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Enabling Portaudio in beatoraja on OSX">
 <meta property="og:url" content="https://catizard.github.io/2025/10/05/Enabling-Portaudio-in-beatoraja-on-OSX/index.html">
 <meta property="og:site_name" content="Catizard&#39;s blog">
-<meta property="og:description" content="Preface This is a small guide of how to compile and enable portaudio in beatoraja on osx, the guide includes some manual modifications, so it assumes that readers have the basic knowledge of computer">
+<meta property="og:description" content="PrefaceThis is a small guide of how to compile and enable portaudio in beatoraja on osx, the guide includes some manual modifications, so it assumes that readers have the basic knowledge of computer a">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-10-05T10:29:29.000Z">
-<meta property="article:modified_time" content="2025-10-05T02:44:29.144Z">
+<meta property="article:modified_time" content="2026-04-09T13:37:33.533Z">
 <meta property="article:author" content="Catizard">
 <meta property="article:tag" content="beatoraja">
 <meta name="twitter:card" content="summary">
@@ -199,7 +199,7 @@
   
           </div>
           <div class="wordcount need-seperator meta-info">
-            1.8k 词 
+            2.4k 词 
           </div>
         </div>
         
@@ -208,25 +208,27 @@
       </header>
       <div class="e-content article-entry" itemprop="articleBody">
         
-          <h2 id="Preface">Preface</h2>
-<p>This is a small guide of how to compile and enable portaudio in beatoraja on osx, the guide includes some manual modifications, so it assumes that readers have the basic knowledge of computer and git.</p>
+          <h2 id="Preface"><a href="#Preface" class="headerlink" title="Preface"></a>Preface</h2><p>This is a small guide of how to compile and enable portaudio in beatoraja on osx, the guide includes some manual modifications, so it assumes that readers have the basic knowledge of computer and git.</p>
 <p>This guide’s target is building the <code>jportaudio.dylib</code> on macos and make beatoraja reads it.</p>
-<h2 id="Process">Process</h2>
-<ul>
+<h2 id="Process"><a href="#Process" class="headerlink" title="Process"></a>Process</h2><ul>
 <li>Download <code>portaudio</code> library by <code>brew install portaudio</code></li>
 <li>Copy <code>portaudio.h</code> file to an library path like <code>/usr/local/inlcude</code>, you can find the file under <code>/opt/homebrew/Cellar/portaudio[version]/include</code></li>
 <li><code>git clone https://github.com/philburk/portaudio-java</code></li>
 <li>Edit <code>CMakeLists.txt</code></li>
 </ul>
-<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.2</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">project</span>(jportaudio_project)</span><br><span class="line"></span><br><span class="line"><span class="comment"># somehow, $ENV&#123;JAVA_HOME&#125; isn&#x27;t work on my machine, so I replaced them with absolute path</span></span><br><span class="line"><span class="comment"># $which java to find where java is</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#include_directories($ENV&#123;JAVA_HOME&#125;/include)</span></span><br><span class="line"><span class="comment">#include_directories($ENV&#123;JAVA_HOME&#125;/include/darwin)</span></span><br><span class="line"><span class="comment">#include_directories($ENV&#123;JAVA_HOME&#125;/include/linux)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># DON&#x27;T COPY THIS DIRECTLY</span></span><br><span class="line"><span class="keyword">include_directories</span>(/Library/Java/JavaVirtualMachines/liberica-jdk-<span class="number">17</span>-full.jdk/Contents/Home/inlcude)</span><br><span class="line"><span class="keyword">include_directories</span>(/Library/Java/JavaVirtualMachines/liberica-jdk-<span class="number">17</span>-full.jdk/Contents/Home/inlcude/darwin)</span><br><span class="line"></span><br><span class="line"><span class="comment"># for installed portaudio.h</span></span><br><span class="line"><span class="comment"># If you didn&#x27;t put portaudio.h here, modify this line</span></span><br><span class="line"><span class="keyword">include_directories</span>(/usr/local/<span class="keyword">include</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#link_directories(/usr/local/lib)</span></span><br><span class="line"><span class="comment"># No need because we downloaded portaudio through brew</span></span><br><span class="line"><span class="comment">#link_directories(../portaudio/pagit)</span></span><br><span class="line"><span class="comment">#link_directories(../portaudio/pagit/lib)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span> (jportaudio_sources</span><br><span class="line">    src/main/jni/com_portaudio_BlockingStream.c</span><br><span class="line">    src/main/jni/com_portaudio_PortAudio.c</span><br><span class="line">    src/main/jni/jpa_tools.c</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span> (jportaudio_libname jportaudio_0_1_0)</span><br><span class="line"></span><br><span class="line"><span class="keyword">add_library</span>(<span class="variable">$&#123;jportaudio_libname&#125;</span> SHARED <span class="variable">$&#123;jportaudio_sources&#125;</span>)</span><br><span class="line"><span class="keyword">target_link_libraries</span>(<span class="variable">$&#123;jportaudio_libname&#125;</span> portaudio)</span><br><span class="line"></span><br><span class="line"><span class="keyword">install</span>(TARGETS <span class="variable">$&#123;jportaudio_libname&#125;</span> DESTINATION lib)</span><br></pre></td></tr></table></figure>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.2</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">project</span>(jportaudio_project)</span><br><span class="line"></span><br><span class="line"><span class="comment"># somehow, $ENV&#123;JAVA_HOME&#125; isn&#x27;t work on my machine, so I replaced them with absolute path</span></span><br><span class="line"><span class="comment"># $which java to find where java is</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#include_directories($ENV&#123;JAVA_HOME&#125;/include)</span></span><br><span class="line"><span class="comment">#include_directories($ENV&#123;JAVA_HOME&#125;/include/darwin)</span></span><br><span class="line"><span class="comment">#include_directories($ENV&#123;JAVA_HOME&#125;/include/linux)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># DON&#x27;T COPY THIS DIRECTLY</span></span><br><span class="line"><span class="keyword">include_directories</span>(/Library/Java/JavaVirtualMachines/liberica-jdk-<span class="number">17</span>-full.jdk/Contents/Home/inlcude)</span><br><span class="line"><span class="keyword">include_directories</span>(/Library/Java/JavaVirtualMachines/liberica-jdk-<span class="number">17</span>-full.jdk/Contents/Home/inlcude/darwin)</span><br><span class="line"></span><br><span class="line"><span class="comment"># for installed portaudio.h</span></span><br><span class="line"><span class="comment"># If you didn&#x27;t put portaudio.h here, modify this line</span></span><br><span class="line"><span class="keyword">include_directories</span>(/usr/local/<span class="keyword">include</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">link_directories</span>(/usr/local/lib)</span><br><span class="line"><span class="comment"># No need because we downloaded portaudio through brew, brew will link the files for you under /usr/local/lib</span></span><br><span class="line"><span class="comment">#link_directories(../portaudio/pagit)</span></span><br><span class="line"><span class="comment">#link_directories(../portaudio/pagit/lib)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span> (jportaudio_sources</span><br><span class="line">    src/main/jni/com_portaudio_BlockingStream.c</span><br><span class="line">    src/main/jni/com_portaudio_PortAudio.c</span><br><span class="line">    src/main/jni/jpa_tools.c</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span> (jportaudio_libname jportaudio_0_1_0)</span><br><span class="line"></span><br><span class="line"><span class="keyword">add_library</span>(<span class="variable">$&#123;jportaudio_libname&#125;</span> SHARED <span class="variable">$&#123;jportaudio_sources&#125;</span>)</span><br><span class="line"><span class="keyword">target_link_libraries</span>(<span class="variable">$&#123;jportaudio_libname&#125;</span> portaudio)</span><br><span class="line"></span><br><span class="line"><span class="keyword">install</span>(TARGETS <span class="variable">$&#123;jportaudio_libname&#125;</span> DESTINATION lib)</span><br></pre></td></tr></table></figure>
+
 <ul>
-<li>
-<pre><code class="language-bash">mkdir build
+<li><pre><code class="bash">mkdir build
 cmake -B build
 cd build
 </code></pre>
 </li>
-<li></li>
+</ul>
+<h2 id="After"><a href="#After" class="headerlink" title="After"></a>After</h2><p>You should be able to see a dylib file under <code>build</code> folder, and there should also be a dylib file under <code>~/Library/Java/Extensions/</code>. The latter one is a ‘global’ installation. You should be able to use portaudio in beatoraja without any further changes. And if it still fails to find dylib file. Try:</p>
+<ul>
+<li>See files under ~&#x2F;Library&#x2F;Java&#x2F;Extensions&#x2F;, if the file is not named as <code>libjportaudio.dylib</code>, try renaming it</li>
+<li>If there’s no file under ~&#x2F;Library&#x2F;Java&#x2F;Extensions&#x2F;, try copying the dylib file from build directory. You can also place the file along with the raja’s jar file, it should be working too.</li>
 </ul>
 
         
@@ -281,7 +283,7 @@ cd build
   
   <div id="footer-info" class="inner">
     
-    &copy; 2025 Catizard<br>
+    &copy; 2026 Catizard<br>
     Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & Theme <a target="_blank" rel="noopener" href="https://github.com/saicaca/hexo-theme-vivia">Vivia</a>
   </div>
 </footer>

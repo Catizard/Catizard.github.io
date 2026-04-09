@@ -20,12 +20,12 @@
   <link rel="preload" href="/css/fonts/Roboto-Regular.ttf" as="font" type="font/ttf" crossorigin="anonymous">
   <link rel="preload" href="/css/fonts/Roboto-Bold.ttf" as="font" type="font/ttf" crossorigin="anonymous">
 
-  <meta name="description" content="How score &#x3D; false works in beatoraja  The code is based on lr2oraja endlessdream actually. There’re some additional notes about the design of freq mod in ed. Corresponding commit is fd76779133b425d8e1">
+  <meta name="description" content="How score &#x3D; false works in beatoraja The code is based on lr2oraja endlessdream actually. There’re some additional notes about the design of freq mod in ed. Corresponding commit is fd76779133b425">
 <meta property="og:type" content="article">
 <meta property="og:title" content="How score &#x3D; false works in beatoraja">
 <meta property="og:url" content="https://catizard.github.io/2025/11/06/How-score-false-works-in-beatoraja/index.html">
 <meta property="og:site_name" content="Catizard&#39;s blog">
-<meta property="og:description" content="How score &#x3D; false works in beatoraja  The code is based on lr2oraja endlessdream actually. There’re some additional notes about the design of freq mod in ed. Corresponding commit is fd76779133b425d8e1">
+<meta property="og:description" content="How score &#x3D; false works in beatoraja The code is based on lr2oraja endlessdream actually. There’re some additional notes about the design of freq mod in ed. Corresponding commit is fd76779133b425">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-11-06T11:36:28.000Z">
 <meta property="article:modified_time" content="2025-11-06T03:36:48.022Z">
@@ -208,39 +208,33 @@
       </header>
       <div class="e-content article-entry" itemprop="articleBody">
         
-          <h1>How score = false works in beatoraja</h1>
-<blockquote>
+          <h1 id="How-score-false-works-in-beatoraja"><a href="#How-score-false-works-in-beatoraja" class="headerlink" title="How score &#x3D; false works in beatoraja"></a>How score &#x3D; false works in beatoraja</h1><blockquote>
 <p>The code is based on lr2oraja endlessdream actually. There’re some additional notes about the design of freq mod in ed. Corresponding commit is <code>fd76779133b425d8e18703e5f67ec94ff0e84b33</code></p>
 </blockquote>
-<h2 id="Preface">Preface</h2>
-<p>This is a note about how raja stores player’s scores. There’re some situations that raja doesn’t “want to” save a score, for example, if you’re using the <code>expand judge</code> feature and having easier judge timing, your score won’t be saved and be sent to IR service.</p>
+<h2 id="Preface"><a href="#Preface" class="headerlink" title="Preface"></a>Preface</h2><p>This is a note about how raja stores player’s scores. There’re some situations that raja doesn’t “want to” save a score, for example, if you’re using the <code>expand judge</code> feature and having easier judge timing, your score won’t be saved and be sent to IR service.</p>
 <p>There’s a similar use cause in ED: Tachi IR specifically refused to receive any score with FREQ mod enabled. We’ll discuss the history of how ED implemented it, why there’re bugs, current situations later.</p>
-<h2 id="Score-false">Score = false</h2>
-<p>Raja would set score to false if it doesn’t want to save next score. Example:</p>
+<h2 id="Score-false"><a href="#Score-false" class="headerlink" title="Score &#x3D; false"></a>Score &#x3D; false</h2><p>Raja would set score to false if it doesn’t want to save next score. Example:</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (config.isCustomJudge() &amp;&amp;</span><br><span class="line">					(config.getKeyJudgeWindowRatePerfectGreat() &gt; <span class="number">100</span> || config.getKeyJudgeWindowRateGreat() &gt; <span class="number">100</span> || config.getKeyJudgeWindowRateGood() &gt; <span class="number">100</span></span><br><span class="line">					|| config.getScratchJudgeWindowRatePerfectGreat() &gt; <span class="number">100</span> || config.getScratchJudgeWindowRateGreat() &gt; <span class="number">100</span> || config.getScratchJudgeWindowRateGood() &gt; <span class="number">100</span>)) &#123;</span><br><span class="line">				assist = Math.max(assist, <span class="number">2</span>);</span><br><span class="line">				score = <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>And <code>score</code> flag is persisted on <code>BMSResource</code> by <code>resource.setUpdateScore(score)</code>. Therefore, we can see the usage of <code>bms.player.beatoraja.PlayerResource#isUpdateScore</code> to find where this flag is being used. And we can find the only usage that is related to score storage is here:</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (isFreqTrainerEnabled()) &#123;</span><br><span class="line">  resource.getScoreData().setClear(NoPlay.id);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (resource.getPlayMode().mode == BMSPlayerMode.Mode.PLAY &amp;&amp; !(isFreqTrainerEnabled() &amp;&amp; isFreqNegative())) &#123;</span><br><span class="line">  main.getPlayDataAccessor().writeScoreData(resource.getScoreData(), resource.getBMSModel(),</span><br><span class="line">      resource.getPlayerConfig().getLnmode(), resource.isUpdateScore());</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  Logger.getGlobal().info(<span class="string">&quot;プレイモードが&quot;</span> + resource.getPlayMode().mode.name() + <span class="string">&quot;のため、スコア登録はされません&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="writeScoreData">writeScoreData</h2>
-<p>As the javadoc written, when flag <code>updateScore</code> is false, only <code>playcount</code> would be updated. Following the logic we can find the place that truly makes a difference is <code>bms.player.beatoraja.ScoreData#update(bms.player.beatoraja.ScoreData, boolean)</code>. It compares the old score and the new one, and only updates the old score itself when there’s a difference and <strong>updateScore is true</strong>. However, there’re some exceptions:</p>
+
+<h2 id="writeScoreData"><a href="#writeScoreData" class="headerlink" title="writeScoreData"></a>writeScoreData</h2><p>As the javadoc written, when flag <code>updateScore</code> is false, only <code>playcount</code> would be updated. Following the logic we can find the place that truly makes a difference is <code>bms.player.beatoraja.ScoreData#update(bms.player.beatoraja.ScoreData, boolean)</code>. It compares the old score and the new one, and only updates the old score itself when there’s a difference and <strong>updateScore is true</strong>. However, there’re some exceptions:</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (clear &lt; newscore.getClear()) &#123;</span><br><span class="line">  setClear(newscore.getClear());</span><br><span class="line">  setOption(newscore.getOption());</span><br><span class="line">  setSeed(newscore.getSeed());</span><br><span class="line">  update = <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>This part isn’t required <code>updateScore</code> to be true. So by using the <code>score = false</code> doesn’t prevent raja stores a higher lamp score. This is the reason why <code>expand judge</code> feature is using the <code>assist</code> flag and <code>score</code> at the same time: to prevent storing a higher lamp.</p>
 <p>A common assumption among developers that haven’t looked into the code might have is that the <code>score</code> flag is working as preventing stroing the score in database. But it’s actually not, it’s working by not updating part of the fields on old score (yeah, even not all fields from <code>ScoreData</code> but part of it). The database insert line is always called no matter what.</p>
-<h2 id="Endless-Dream">Endless Dream</h2>
-<p>Currently, a score with <code>freq</code> enabled would be saved in local if the freq rate is positive(i.e. the chart is speeding up) and cannot be sent to IR service.</p>
+<h2 id="Endless-Dream"><a href="#Endless-Dream" class="headerlink" title="Endless Dream"></a>Endless Dream</h2><p>Currently, a score with <code>freq</code> enabled would be saved in local if the freq rate is positive(i.e. the chart is speeding up) and cannot be sent to IR service.</p>
 <ul>
-<li>
-<p>If the freq mod is enabled and with a negative rate, the whole process is being skipped. However, this design introduced a bug (see <a target="_blank" rel="noopener" href="https://github.com/seraxis/lr2oraja-endlessdream/issues/45">#45</a>) because you can disable the rate mod at the middle of play. And it’s fixed in <a target="_blank" rel="noopener" href="https://github.com/seraxis/lr2oraja-endlessdream/pull/71">#71</a> by persisting the value in <code>BMSResource</code> rather than accessing the fields from the <code>FreqTrainerMenu</code> directly.</p>
+<li><p>If the freq mod is enabled and with a negative rate, the whole process is being skipped. However, this design introduced a bug (see <a target="_blank" rel="noopener" href="https://github.com/seraxis/lr2oraja-endlessdream/issues/45">#45</a>) because you can disable the rate mod at the middle of play. And it’s fixed in <a target="_blank" rel="noopener" href="https://github.com/seraxis/lr2oraja-endlessdream/pull/71">#71</a> by persisting the value in <code>BMSResource</code> rather than accessing the fields from the <code>FreqTrainerMenu</code> directly.</p>
 </li>
-<li>
-<p>If the freq mod is enabled with a positive rate, the score would be updated except the lamp value since it’s set to <code>NO_PLAY</code> forcefully.</p>
+<li><p>If the freq mod is enabled with a positive rate, the score would be updated except the lamp value since it’s set to <code>NO_PLAY</code> forcefully.</p>
 </li>
-<li>
-<p>For the IR service part, it’s achieved by preventing the IR send process happening, see the <code>core/src/bms/player/beatoraja/result/MusicResult.java</code> changes in #71.</p>
+<li><p>For the IR service part, it’s achieved by preventing the IR send process happening, see the <code>core/src/bms/player/beatoraja/result/MusicResult.java</code> changes in #71.</p>
 </li>
 </ul>
 <p>However, as you can see we actually don’t have a simple flag that forbids sending scores to IR, I introduced one in <a target="_blank" rel="noopener" href="https://github.com/seraxis/lr2oraja-endlessdream/pull/126">#126</a>. It has a small overlap with the changes introduced in #71. So maybe we should remove the changes in #71 in the near future.</p>
-<h2 id="The-overlap">The overlap</h2>
-<p>Arised in <a target="_blank" rel="noopener" href="https://github.com/seraxis/lr2oraja-endlessdream/pull/142">#142</a>. Both <code>!score</code> and <code>forceNoIRSend</code> is preventing a score being sent to IR service. There’s a possibility that they’re both notified, for example, playing with <code>freq</code> enabled and a special random mod.</p>
+<h2 id="The-overlap"><a href="#The-overlap" class="headerlink" title="The overlap"></a>The overlap</h2><p>Arised in <a target="_blank" rel="noopener" href="https://github.com/seraxis/lr2oraja-endlessdream/pull/142">#142</a>. Both <code>!score</code> and <code>forceNoIRSend</code> is preventing a score being sent to IR service. There’s a possibility that they’re both notified, for example, playing with <code>freq</code> enabled and a special random mod.</p>
 <p>Here’s a small table illustrates the mod and consequences:</p>
 <table>
 <thead>
@@ -252,8 +246,7 @@
 <th>lamp</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>expand judge(easier timing)</td>
 <td>yes</td>
 <td>no</td>
@@ -295,8 +288,7 @@
 <td>no</td>
 <td>no update</td>
 </tr>
-</tbody>
-</table>
+</tbody></table>
 
         
       </div>
@@ -345,7 +337,7 @@
   
   <div id="footer-info" class="inner">
     
-    &copy; 2025 Catizard<br>
+    &copy; 2026 Catizard<br>
     Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & Theme <a target="_blank" rel="noopener" href="https://github.com/saicaca/hexo-theme-vivia">Vivia</a>
   </div>
 </footer>
