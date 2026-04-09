@@ -204,11 +204,13 @@
         
           <div class="truncate-text">
             
-              How score &#x3D; false works in beatoraja
+              How score = false works in beatoraja
+
 The code is based on lr2oraja endlessdream actually. There’re some additional notes about the design of freq mod in ed. Corresponding commit is fd76779133b425d8e18703e5f67ec94ff0e84b33
 
-PrefaceThis is a note about how raja stores player’s scores. There’re some situations that raja doesn’t “want to” save a score, for example, if you’re using the expand judge feature and having easier judge timing, your score won’t be saved and be sent to IR service.
-Th...
+Preface
+This is a note about how raja stores player’s scores. There’re some situations that raja doesn’t “want to” save a score, for example, if you’re using the expand judge feature and having easier judge timing, your score won’t be saved and be sent to IR service.
+There...
             
           </div>
         
@@ -280,11 +282,13 @@ Th...
         
           <div class="truncate-text">
             
-              PrefaceThis is a small guide of how to compile and enable portaudio in beatoraja on osx, the guide includes some manual modifications, so it assumes that readers have the basic knowledge of computer and git.
+              Preface
+This is a small guide of how to compile and enable portaudio in beatoraja on osx, the guide includes some manual modifications, so it assumes that readers have the basic knowledge of computer and git.
 This guide’s target is building the jportaudio.dylib on macos and make beatoraja reads it.
 Process
+
 Download portaudio library by brew install portaudio
-Copy portaudio.h file to an library path like /usr/local/inlcude, you can find the file under /opt/homebrew/Cellar/portaudio[version]/inc...
+Copy portaudio.h file to an library path like /usr/local/inlcude, you can find the file under /opt/homebrew/Cellar/portaudio[version]/i...
             
           </div>
         
@@ -356,15 +360,16 @@ Copy portaudio.h file to an library path like /usr/local/inlcude, you can find t
         
           <div class="truncate-text">
             
-              前言这是一个阅读Project-Shoko的result部分代码来理解如何编写皮肤和Beatoraja的皮肤系统的流水账，内容可能未整理，随时间修改的可能性较大。
+              前言
+这是一个阅读Project-Shoko的result部分代码来理解如何编写皮肤和Beatoraja的皮肤系统的流水账，内容可能未整理，随时间修改的可能性较大。
 Beatoraja Wiki
-初始化首先一个皮肤肯定要定义自己，然后被读取，解析，执行成一个java object。根据wiki的指示可以知道一个皮肤文件从一个.luaskin文件开始，它会作为一个lua文件被执行，其返回值就是这个皮肤的定义：
+初始化
+首先一个皮肤肯定要定义自己，然后被读取，解析，执行成一个java object。根据wiki的指示可以知道一个皮肤文件从一个.luaskin文件开始，它会作为一个lua文件被执行，其返回值就是这个皮肤的定义：
 1234567-- result/result.luaskinlocal t = require(&quot;resultmain&quot;)if skin_config then	return t.main()else	return t.headerend
-
 显然skin_config是由beatoraja通过某种方式传下来的信息，目前不清楚这个分支有什么作用。让我们把这里的事情展开一下：
 
 首先Project-Shoko有多个文件夹，分别对应不同的beatoraja的场景，例如select，result等
-这样的场景文件夹下有一个.luaskin文件定义了这个场景的皮肤文...
+这样的场景文件夹下有一个.luaskin文件定义了这个场景的皮肤...
             
           </div>
         
@@ -436,18 +441,20 @@ Beatoraja Wiki
         
           <div class="truncate-text">
             
-              TL;DR在目前的阶段(2025-04-19)，在mac上玩beatoraja是不可能的。目前认为只有两种可行的路径：
+              TL;DR
+在目前的阶段(2025-04-19)，在mac上玩beatoraja是不可能的。目前认为只有两种可行的路径：
 
 下载一个非常早期的oracle jdk8，要求下载的时候仅有x86选项，没有提供arm64选项。同时该方法只能游玩0.8.7及以下的版本，在0.8.8之后要求jdk17后该方法彻底不适用。
 使用Endless Dream社区fork的版本，同时需要加上我为其编写的pr代码补丁以支持mac的运行。fork分支地址见这里。
 
 以上说法主要针对arm64的mac用户（方法1），但是这不意味着x86的mac用户就可以正常的运行了，见issue838。同时方法2被确认为arm64和x86都可以修复。
-如果你不会自己编译项目你可以:
+如果你不会自己编译项目
+你可以:
 
 等待这个pr被合并到Endless Dream之后，下载最新的jar文件使用
 在这个位置: Release下载一个jar文件，如果你想下载0.3.0需要下载有aarch64后缀的文件，0.2.1下载macos的jar即可。（特别地，如果你是x86用户则没有0.2.1的jar，只能下载0.3.0的不带后缀的macos的jar）。
 
-如果你会自...
+如果你...
             
           </div>
         
@@ -519,7 +526,8 @@ Beatoraja Wiki
         
           <div class="truncate-text">
             
-              Lab: Copy-on-Write Fork for xv62021的lab没有了lazy lab作为COW的前置，虽然实验内容里提到了lazy lab。而且提示里少了一两条非常关键的信息，似乎默认了做过前面的lab。
+              Lab: Copy-on-Write Fork for xv6
+2021的lab没有了lazy lab作为COW的前置，虽然实验内容里提到了lazy lab。而且提示里少了一两条非常关键的信息，似乎默认了做过前面的lab。
 在做这个lab之前先读一下fork的流程:
 
 分配一个新进程np = allocproc()
@@ -529,8 +537,9 @@ Beatoraja Wiki
 设置基础数据，名称状态父级等
 
 这里要优化的就是第二步：复制整个内存空间的操作太大。改为懒惰机制：只在有必要的时候复制物理内存。
-改写uvmcopyuvmcopy目前的实现是直接分配一个物理内存mem=kalloc()，然后将其映射在新进程的内存空间里。现在，不直接分配一个物理内存而是将手上的物理内存pa映射给新进程。
-两个进程前后走到的物理页的...
+改写uvmcopy
+uvmcopy目前的实现是直接分配一个物理内存mem=kalloc()，然后将其映射在新进程的内存空间里。现在，不直接分配一个物理内存而是将手上的物理内存pa映射给新进程。
+两个进程前后走到的物理...
             
           </div>
         
@@ -603,6 +612,7 @@ Beatoraja Wiki
           <div class="truncate-text">
             
               问题
+
 为什么需要虚拟内存？
 
 早期在操作系统只能同时运行一个程序，操作系统只是一组库函数，在物理内存里存在，例如占据[0,64KB)的位置，然后运行的程序可以直接操作从64KB开始的物理内存。如果需要切换运行的用户程序，只需要将用户程序加载到64KB开始的位置，然后执行指令即可。
@@ -613,7 +623,7 @@ Beatoraja Wiki
 为什么需要有三级页表？
 
 首先给虚拟内存空间机制下一个定义，他可以看作是一个函数：f(va)=pa，将一个虚拟地址转换为一个物理地址。
-所以最简单的实现方式就是：记...
+所以最简单的实现方式就是：...
             
           </div>
         
@@ -685,7 +695,8 @@ Beatoraja Wiki
         
           <div class="truncate-text">
             
-              多道程序批处理系统目前的缺陷是同一时刻只能执行一个程序。在一些场景下cpu会浪费，比如等待硬件的数据读取的时间里cpu要一直空转等待。所以很自然的一个新的需求就是：在操作系统上期望能“同时”运行多个程序。
+              多道程序
+批处理系统目前的缺陷是同一时刻只能执行一个程序。在一些场景下cpu会浪费，比如等待硬件的数据读取的时间里cpu要一直空转等待。所以很自然的一个新的需求就是：在操作系统上期望能“同时”运行多个程序。
 接下来需要实现两个目标：
 
 在内存中可以同时存在多个进程
@@ -693,10 +704,12 @@ Beatoraja Wiki
 
 前者是之前在加载阶段做过的，程序就是一截指令序列，通过上下文赋予其意义。既然要运行多个自然就要有能加载多个的能力。
 
-为什么需要使用不同的栈空间?思考一下目前阶段程序所使用的栈空间，是在am的链接脚本中定义的，他直接划分了硬件提供的内存空间：将前面一部分分配为栈区，后面全部为堆区。这个堆栈是am这个运行环境提供给在上面运行的nanos-lite使用的，而目前nanos-lite加载应用程序是直接的内存拷贝，运行应用程序是简单的函数调用，让pc指针走到内存中特定的位置然后加载指令
+为什么需要使用不同的栈空间?
+思考一下目前阶段程序所使用的栈空间，是在am的链接脚本中定义的，他直接划分了硬件提供的内存空间：将前面一部分分配为栈区，后面全部为堆区。这个堆栈是am这个运行环境提供给在上面运行的nanos-lite使用的，而目前nanos-lite加载应用程序是直接的内存拷贝，运行应用程序是简单的函数调用，让pc指针走到内存中特定的位置然后加载指令
 
-上下文切换之前在CTE里是通过栈指针恢复数据的：将当前的数据保存到栈上，恢复时让函数参数的寄存器指向这里，就能获取到当时保存的数据了。
-对于多个进程的切换，在这里可以偷梁换柱：A进程的...
+上下文切换
+之前在CTE里是通过栈指针恢复数据的：将当前的数据保存到栈上，恢复时让函数参数的寄存器指向这里，就能获取到当时保存的数据了。
+对于多个进程的切换，在这里可以偷梁换柱：A...
             
           </div>
         
@@ -768,14 +781,17 @@ Beatoraja Wiki
         
           <div class="truncate-text">
             
-              最简单的操作系统批处理系统最简单的操作系统：一个后台程序，每次加载一个前台程序运行，结束了之后换另外一个。
+              最简单的操作系统
+批处理系统
+最简单的操作系统：一个后台程序，每次加载一个前台程序运行，结束了之后换另外一个。
 目标:
 
 用户程序结束执行之后，回到操作系统处继续运行
 操作系统能加载在某些位置的用户程序执行
 
 对于前者，需要有一个执行流切换机制，但是如果直接使用jal指令跳转的话就显得太随意了，在硬件上有对应的限制：如果执行了非当前权限的代码就会导致陷入操作系统内核然后交由操作系统执行。
-穿越时空的旅程除了被动地进入操作系统之外，还需要主动地陷入操作系统：有的操作不应由用户程序执行，必须请求操作系统。当用户程序执行了一条自陷指令之后，跳转到操作系统预先设定好的位置执行特定的代码。大部分ISA不区分异常和自陷。
+穿越时空的旅程
+除了被动地进入操作系统之外，还需要主动地陷入操作系统：有的操作不应由用户程序执行，必须请求操作系统。当用户程序执行了一条自陷指令之后，跳转到操作系统预先设定好的位置执行特定的代码。大部分ISA不区分异常和自陷。
 对于riscv32:
 
 将当前pc写入mepc寄存器
@@ -785,9 +801,10 @@ Beatoraja Wiki
 
 这部分由硬件完成。
 
-特殊的原因? (建议二周目思考)如果由软件保存，用户程序可能可以写入特定的值来让操作系统执行特定的操作来破坏操作系统。
+特殊的原因? (建议二周目思考)
+如果由软件保存，用户程序可能可以写入特定的值来让操作系统执行特定的操作来破坏操作系统。
 
-硬件提供的在操作系统和用户程序之间切换操作流的过程也是上下文切换。为了抽象上下文管理，操...
+硬件提供的在操作系统和用户程序之间切换操作流的过程也是上下文切换。为了抽象上下文...
             
           </div>
         
@@ -848,7 +865,7 @@ Beatoraja Wiki
   
           </div>
           <div class="wordcount need-seperator meta-info">
-            7.9k 词 
+            7.8k 词 
           </div>
         </div>
         
@@ -859,9 +876,9 @@ Beatoraja Wiki
         
           <div class="truncate-text">
             
-              不停计算的机器最简单的计算机TRM的运行方式:
+              不停计算的机器
+最简单的计算机TRM的运行方式:
 12345while (1) &#123;  从PC指示的存储器位置取出指令;  执行指令;  更新PC;&#125;
-
 具体地，cpu执行指令的方式是：
 
 取指：从内存空间中读取出一条指令，具体位置由pc寄存器给出。
@@ -874,14 +891,15 @@ Beatoraja Wiki
 :question: cpu一次只能执行一条指令吗
 在这个模型里，如果细化到下去，在一个时刻cpu应该只能同时执行一条指令，这是一个重要的假设，当然这个假设不是谁规定的，他实际上从一开始编程就成了一种习惯：代码是一行一行执行，指令也应该是这样的。
 
- 但是现代的cpu似乎对这个事情有所打破，可能是一个叫微指令的概念
+[ ] 但是现代的cpu似乎对这个事情有所打破，可能是一个叫微指令的概念
 
 
 
-理解YEMU如何执行程序加法状态的状态机：把内存和寄存器的值作为状态。
+理解YEMU如何执行程序
+加法状态的状态机：把内存和寄存器的值作为状态。
 两者的联系？cpu执行一条指令就是一次状态转移。
 
-这个例子可以说明，只要有加法器和跳转功能，...
+这个例子可以说明，只要有加法器和跳...
             
           </div>
         
@@ -953,8 +971,9 @@ Beatoraja Wiki
         
           <div class="truncate-text">
             
-              fceux按照readme把内容下载下来之后运行可能会出现这个问题：
-123456789/home/suzume/proj/ics2022/fceux-am/src/emufile.cpp: In member function ‘void EMUFILE_FILE::open(const char*, const char*)’:/home/suzume/proj/ics2022/fceux-am/src/emufile.cpp:33:22: error: array subscript 1 is above array bounds of ‘rom [1]’ [-Werror=array-bounds=]   33 |     if (strcmp(roms[i].name, fname) == 0) &#123;      |                ~~~~~~^In file included from /home/suzume/proj/ics2022/fceux-am/src/emufile.cpp:27:./nes/gen/roms.h:10:12: not...
+              fceux
+按照readme把内容下载下来之后运行可能会出现这个问题：
+123456789/home/suzume/proj/ics2022/fceux-am/src/emufile.cpp: In member function ‘void EMUFILE_FILE::open(const char*, const char*)’:/home/suzume/proj/ics2022/fceux-am/src/emufile.cpp:33:22: error: array subscript 1 is above array bounds of ‘rom [1]’ [-Werror=array-bounds=]   33 |     if (strcmp(roms[i].name, fname) == 0) &#123;      |                ~~~~~~^In file included from /home/suzume/proj/ics2022/fceux-am/src/emufile.cpp:27:./nes/gen/roms.h:10:12: no...
             
           </div>
         
