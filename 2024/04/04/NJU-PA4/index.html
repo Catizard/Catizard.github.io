@@ -1,0 +1,547 @@
+<!doctype html>
+
+<html lang="zh-CN" data-fancybox-enabled="1">
+<head>
+  
+
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f7f3e9">
+
+<title>NJU PA4 | Catizard&#39;s blog</title>
+<meta name="description" content="多道程序批处理系统目前的缺陷是同一时刻只能执行一个程序。在一些场景下cpu会浪费，比如等待硬件的数据读取的时间里cpu要一直空转等待。所以很自然的一个新的需求就是：在操作系统上期望能“同时”运行多个程序。 接下来需要实现两个目标： 在内存中可以同时存在多个进程 在满足某些条件的情况下, 可以让执行流在这些进程之间切换 前者是之前在加载阶段做过的，程序就是一截...">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NJU PA4 | Catizard&#39;s blog">
+<meta property="og:url" content="https://catizard.github.io/2024/04/04/NJU-PA4/">
+<meta property="og:site_name" content="Catizard&#39;s blog">
+<meta property="og:description" content="多道程序批处理系统目前的缺陷是同一时刻只能执行一个程序。在一些场景下cpu会浪费，比如等待硬件的数据读取的时间里cpu要一直空转等待。所以很自然的一个新的需求就是：在操作系统上期望能“同时”运行多个程序。 接下来需要实现两个目标： 在内存中可以同时存在多个进程 在满足某些条件的情况下, 可以让执行流在这些进程之间切换 前者是之前在加载阶段做过的，程序就是一截...">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-04-03T19:30:41.000Z">
+<meta property="article:modified_time" content="2024-05-13T10:57:43.298Z">
+<meta property="article:author" content="Catizard">
+<meta property="article:tag" content="NJU PA">
+<meta name="twitter:card" content="summary">
+<link rel="canonical" href="https://catizard.github.io/2024/04/04/NJU-PA4/">
+
+<link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
+
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"NJU PA4","name":"NJU PA4 | Catizard's blog","description":"多道程序批处理系统目前的缺陷是同一时刻只能执行一个程序。在一些场景下cpu会浪费，比如等待硬件的数据读取的时间里cpu要一直空转等待。所以很自然的一个新的需求就是：在操作系统上期望能“同时”运行多个程序。 接下来需要实现两个目标： 在内存中可以同时存在多个进程 在满足某些条件的情况下, 可以让执行流在这些进程之间切换 前者是之前在加载阶段做过的，程序就是一截...","url":"https://catizard.github.io/2024/04/04/NJU-PA4/","inLanguage":"zh-CN","isPartOf":{"@type":"WebSite","name":"Catizard's blog","url":"https://catizard.github.io/"},"mainEntityOfPage":"https://catizard.github.io/2024/04/04/NJU-PA4/","datePublished":"2024-04-03T19:30:41.000Z","dateModified":"2024-05-13T10:57:43.298Z","author":{"@type":"Person","name":"Catizard"},"publisher":{"@type":"Organization","name":"Catizard's blog"},"keywords":"NJU PA"}</script>
+
+<script>
+  (function () {
+    var accents = { orange: 1, purple: 1, sakura: 1, blue: 1, pink: 1, green: 1, black: 1 };
+    var match = document.cookie.match(/(?:^|;\s*)flatpaper-accent=([^;]+)/);
+    var accent = 'green';
+    if (match) {
+      try { accent = decodeURIComponent(match[1]); } catch (e) {}
+    }
+    if (!accents[accent]) accent = 'green';
+    document.documentElement.setAttribute('data-accent', accent);
+    try {
+      if (localStorage.getItem('flatpaper-mode') === 'dark') {
+        document.documentElement.classList.add('dark-mode');
+      }
+    } catch (e) {}
+  })();
+</script>
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css">
+<script defer src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+
+
+  
+<meta name="generator" content="Hexo 7.0.0"></head>
+
+<body
+  class="is-post tag-style-tape"
+  data-default-accent="green"
+  data-code-theme="simple"
+  data-note-style="sticky"
+  data-note-icons="on"
+  data-button-style="circle"
+  data-strong-accent="on"
+>
+  <div class="page-grain"></div>
+  <svg width="0" height="0" style="position:absolute;z-index:-1;" aria-hidden="true">
+    <defs>
+      <filter id="paper-edge" x="-5%" y="-5%" width="110%" height="110%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.04" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  </svg>
+  
+  <header class="site-header">
+  
+  <button class="icon-button js-sidebar-toggle sidebar-toggle" type="button" aria-label="打开侧边栏" aria-controls="paper-sidebar-drawer" aria-expanded="false">
+    
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu" aria-hidden="true"><path d="M4 12h16"/><path d="M4 6h16"/><path d="M4 18h16"/></svg>
+
+  </button>
+
+  <div class="brand">
+    <div class="brand-mark-wrapper">
+      
+        <a class="brand-mark" href="/" aria-label="FlatPaper 首页">
+          
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-layout-grid" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1" /><rect width="7" height="7" x="14" y="3" rx="1" /><rect width="7" height="7" x="14" y="14" rx="1" /><rect width="7" height="7" x="3" y="14" rx="1" /></svg>
+
+        </a>
+      
+    </div>
+    <a class="brand-text" href="/">Catizard&#39;s blog</a>
+  </div>
+
+  <nav class="site-nav" aria-label="主导航">
+    
+  </nav>
+
+  <div class="header-tools">
+    <button class="icon-button js-search-open" type="button" aria-label="搜索文章">
+      
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+
+    </button>
+    <div class="accent-picker">
+      <button class="icon-button accent-toggle" type="button" aria-label="选择主题色" title="选择主题色" aria-haspopup="true" aria-expanded="false" aria-controls="accent-menu">
+        
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-palette" aria-hidden="true"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 5.9 2 10.8c0 3.3 2.7 6 6 6h1.2c.8 0 1.4.6 1.4 1.4 0 .4-.2.8-.2 1.2 0 .8.6 1.6 1.6 1.6 5.5 0 10-4.2 10-9.4C22 6.3 17.5 2 12 2Z"/></svg>
+
+      </button>
+      <div class="accent-menu" id="accent-menu" role="menu" aria-label="主题色">
+        <button type="button" class="accent-option" role="menuitemradio" aria-label="橙色" aria-checked="false" data-accent-option="orange">
+          <span class="accent-swatch accent-swatch--orange" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="accent-option" role="menuitemradio" aria-label="紫色" aria-checked="false" data-accent-option="purple">
+          <span class="accent-swatch accent-swatch--purple" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="accent-option" role="menuitemradio" aria-label="樱花粉" aria-checked="false" data-accent-option="sakura">
+          <span class="accent-swatch accent-swatch--sakura" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="accent-option" role="menuitemradio" aria-label="蓝色" aria-checked="false" data-accent-option="blue">
+          <span class="accent-swatch accent-swatch--blue" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="accent-option" role="menuitemradio" aria-label="粉色" aria-checked="false" data-accent-option="pink">
+          <span class="accent-swatch accent-swatch--pink" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="accent-option" role="menuitemradio" aria-label="绿色" aria-checked="false" data-accent-option="green">
+          <span class="accent-swatch accent-swatch--green" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="accent-option" role="menuitemradio" aria-label="黑色" aria-checked="false" data-accent-option="black">
+          <span class="accent-swatch accent-swatch--black" aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+    <button class="theme-toggle" type="button" aria-label="切换颜色模式">
+      <span class="theme-icon theme-icon--sun">
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+</span>
+      <span class="theme-icon theme-icon--moon">
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+</span>
+    </button>
+  </div>
+</header>
+
+
+  
+  <main class="paper-shell paper-shell--article">
+    
+
+<aside id="paper-sidebar-drawer" class="paper-sidebar paper-sidebar--right" aria-label="侧边栏">
+  <div class="drawer-toolbar" aria-label="侧边栏工具">
+    <div class="drawer-accent-options" role="group" aria-label="主题色">
+      <button type="button" class="accent-option" aria-label="橙色" aria-pressed="false" data-accent-option="orange">
+        <span class="accent-swatch accent-swatch--orange" aria-hidden="true"></span>
+      </button>
+      <button type="button" class="accent-option" aria-label="紫色" aria-pressed="false" data-accent-option="purple">
+        <span class="accent-swatch accent-swatch--purple" aria-hidden="true"></span>
+      </button>
+      <button type="button" class="accent-option" aria-label="樱花粉" aria-pressed="false" data-accent-option="sakura">
+        <span class="accent-swatch accent-swatch--sakura" aria-hidden="true"></span>
+      </button>
+      <button type="button" class="accent-option" aria-label="蓝色" aria-pressed="false" data-accent-option="blue">
+        <span class="accent-swatch accent-swatch--blue" aria-hidden="true"></span>
+      </button>
+      <button type="button" class="accent-option" aria-label="粉色" aria-pressed="false" data-accent-option="pink">
+        <span class="accent-swatch accent-swatch--pink" aria-hidden="true"></span>
+      </button>
+      <button type="button" class="accent-option" aria-label="绿色" aria-pressed="false" data-accent-option="green">
+        <span class="accent-swatch accent-swatch--green" aria-hidden="true"></span>
+      </button>
+      <button type="button" class="accent-option" aria-label="黑色" aria-pressed="false" data-accent-option="black">
+        <span class="accent-swatch accent-swatch--black" aria-hidden="true"></span>
+      </button>
+    </div>
+    <button class="icon-button drawer-close js-sidebar-close" type="button" aria-label="关闭侧边栏">
+      
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+
+    </button>
+  </div>
+
+  <section class="side-card nav-card">
+    <nav class="site-nav-drawer" aria-label="移动端导航">
+      
+    </nav>
+  </section>
+
+  <section class="side-card profile-card">
+    
+      <div class="avatar" aria-hidden="true">
+        <span></span><i></i><em></em><b></b>
+      </div>
+    
+    <h3>Catizard</h3>
+    <p class="profile-role">日常记录</p>
+    <p>介绍一下自己 — 一两句话，写写你想被别人记住的部分。</p>
+    
+    <div class="socials">
+      
+      
+        <a href="/atom.xml" aria-label="RSS feed" title="RSS">
+          
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rss" aria-hidden="true"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>
+
+        </a>
+      
+    </div>
+  </section>
+
+  
+
+  
+    <div class="post-sticky-stack">
+      <section class="side-card toc-card">
+        <header class="toc-card__head">
+          <h2>
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-table-of-contents" aria-hidden="true"><path d="M16 12H3"/><path d="M16 18H3"/><path d="M16 6H3"/><path d="M21 12h.01"/><path d="M21 18h.01"/><path d="M21 6h.01"/></svg>
+文章目录</h2>
+          <button type="button" class="toc-toggle-all" data-action="toggle-toc" aria-pressed="false" aria-label="展开全部目录" title="展开全部目录">
+            
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+
+          </button>
+        </header>
+        <div class="toc-content">
+          
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E9%81%93%E7%A8%8B%E5%BA%8F"><span class="toc-text">多道程序</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2"><span class="toc-text">上下文切换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E6%A0%B8%E7%BA%BF%E7%A8%8B"><span class="toc-text">内核线程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E8%BF%9B%E7%A8%8B"><span class="toc-text">用户进程</span></a></li></ol></li></ol>
+          
+        </div>
+      </section>
+      
+
+
+    </div>
+  
+
+  
+
+</aside>
+
+    <section class="paper-main">
+      
+
+<div class="article-tape-wrap">
+<span class="tape tape--top-right" aria-hidden="true"></span>
+<article class="article-paper">
+  <header class="article-header">
+    
+    <h1>NJU PA4</h1>
+    <div class="meta-line meta-line--article">
+      <span class="meta-date">
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar" aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>
+2024-04-03</span>
+      
+        <span class="meta-tags">
+          
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-tag" aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>
+
+          <a class="meta-tag-link" href="/tags/NJU-PA/">#NJU PA</a>
+        </span>
+      
+    </div>
+  </header>
+
+  
+
+
+  <div class="article-content">
+    <h2 id="多道程序"><a href="#多道程序" class="headerlink" title="多道程序"></a>多道程序</h2><p>批处理系统目前的缺陷是同一时刻只能执行一个程序。在一些场景下cpu会浪费，比如等待硬件的数据读取的时间里cpu要一直空转等待。所以很自然的一个新的需求就是：在操作系统上期望能“同时”运行多个程序。</p>
+<p>接下来需要实现两个目标：</p>
+<ul>
+<li>在内存中可以同时存在多个进程</li>
+<li>在满足某些条件的情况下, 可以让执行流在这些进程之间切换</li>
+</ul>
+<p>前者是之前在加载阶段做过的，程序就是一截指令序列，通过上下文赋予其意义。既然要运行多个自然就要有能加载多个的能力。</p>
+<blockquote>
+<h5 id="为什么需要使用不同的栈空间"><a href="#为什么需要使用不同的栈空间" class="headerlink" title="为什么需要使用不同的栈空间?"></a>为什么需要使用不同的栈空间?</h5><p>思考一下目前阶段程序所使用的栈空间，是在<code>am</code>的链接脚本中定义的，他直接划分了硬件提供的内存空间：将前面一部分分配为栈区，后面全部为堆区。这个堆栈是<code>am</code>这个运行环境提供给在上面运行的<code>nanos-lite</code>使用的，而目前<code>nanos-lite</code>加载应用程序是直接的内存拷贝，运行应用程序是简单的函数调用，让pc指针走到内存中特定的位置然后加载指令</p>
+</blockquote>
+<h3 id="上下文切换"><a href="#上下文切换" class="headerlink" title="上下文切换"></a>上下文切换</h3><p>之前在<code>CTE</code>里是通过栈指针恢复数据的：将当前的数据保存到栈上，恢复时让函数参数的寄存器指向这里，就能获取到当时保存的数据了。</p>
+<p>对于多个进程的切换，在这里可以偷梁换柱：A进程的数据留在那里，将栈指针切换到B进程保留数据的位置，这样还原的上下文就是B进程的了。在之后可以用类似的方式回到A进程的执行。</p>
+<p>如果把栈空间看作是一个很大的连续的内存空间，在<code>nanos-lite</code>层从A进程切换到B进程的时候，其实不太好知道B进程的数据此时在哪里：因为当前的栈里保存的数据是A的数据在最顶上，并不知道B进程的数据在哪里；一个更麻烦的事情是，如果B进程已经加载过了，那么他理论上在栈空间里确实会有一个位置保存了当时的数据，但是如果他还没有运行过呢？数据在哪里。这里涉及到一个初始状态的问题。</p>
+<p>在<code>nanos-lite</code>层引入对进程的抽象：进程控制块<code>PCB</code>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">  <span class="type">uint8_t</span> <span class="built_in">stack</span>[STACK_SIZE] PG_ALIGN;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    Context *cp;</span><br><span class="line">    AddrSpace as;</span><br><span class="line">    <span class="comment">// we do not free memory, so use `max_brk&#x27; to determine when to call _map()</span></span><br><span class="line">    <span class="type">uintptr_t</span> max_brk;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125; PCB;</span><br></pre></td></tr></table></figure>
+
+<p>每个进程有自己的栈空间，通过union的特性将一个cp指针写到栈底。</p>
+<p>在<code>nanos-lite</code>层管理进程，当需要切换到B进程的时候，通过B进程对应的<code>PCB</code>中记录的cp指针信息即可还原。</p>
+<p>接下来解决刚刚提到的初始状态的问题：当我们加载了一个进程之后，如何切换到进行运行？</p>
+<h3 id="内核线程"><a href="#内核线程" class="headerlink" title="内核线程"></a>内核线程</h3><p>只需要对刚刚创建的进程的内存空间里手动放置一个合适的上下文即可。</p>
+<blockquote>
+<h5 id="为什么不叫”内核进程”"><a href="#为什么不叫”内核进程”" class="headerlink" title="为什么不叫”内核进程”?"></a>为什么不叫”内核进程”?</h5><p>其实我觉得这个问题有点钓鱼，他可以谈很多的东西。之后补吧</p>
+</blockquote>
+<blockquote>
+<h5 id="实现上下文切换"><a href="#实现上下文切换" class="headerlink" title="实现上下文切换"></a>实现上下文切换</h5><ul>
+<li><p>CTE的<code>kcontext</code>函数：内存操作，将mepc写进去就可以了。</p>
+</li>
+<li><p>Nanos-lite的<code>context_kload</code>函数：将kstack提供的栈空间传给<code>kcontext</code>，然后将上下文的位置写到pcb里即可。</p>
+</li>
+<li><p>Nanos-lite的<code>schedule</code>函数：按文档里写，目前只会切换到进程块0。</p>
+</li>
+<li><p>在Nanos-lite收到<code>EVENT_YIELD</code>事件后, 调用<code>schedule</code>并返回新的上下文：直接<code>c=schedule(c)</code>即可，然后返回出c即可。</p>
+</li>
+<li><p>修改CTE中<code>__am_asm_trap()</code>的实现, 使得从<code>__am_irq_handle()</code>返回后, 先将栈顶指针切换到新进程的上下文结构, 然后才恢复上下文, 从而完成上下文切换的本质操作：将a0寄存器的值写到sp指针即可。</p>
+</li>
+</ul>
+</blockquote>
+<p>梳理一下整个过程：</p>
+<ul>
+<li><code>Nanos-lite</code>层，声明<code>static PCB pcb[MAX_NR_PROC]</code>数组，用来存放在操作系统层的进程信息，最多<code>MAX_NR_PROC</code>个进程。每个进程块此时已经分配了一段内存空间作内核线程栈，在这段连续的内存上最开始的位置有一些额外的信息。栈是从高地址走到低地址的，在实验中假设不会发生栈溢出。（等等，如果溢出了我们怎么知道？）</li>
+<li><code>Nanos-lite</code>层，调用<code>init_proc</code>时，通过<code>context_kload</code>将一个函数的信息加载到一个进程块里。</li>
+<li><code>AM</code>层，由上面调用<code>kcontext</code>，传入一段内存空间，帮助构造一个内核线程的初始状态：放置一个合适的<code>Context</code>对象在内核栈的末尾位置。然后将这个上下文数据返回回去。</li>
+<li><code>Nanos-lite</code>层，将从<code>AM</code>层获得的上下文指针记录到进程块里。</li>
+<li>此时手上的一个进程块就初始化完毕了，它的栈顶位置有一个<code>Context</code>结构，栈底有一个<code>cp</code>指针指向这个<code>Context</code>对象。到这里我们就完成了加载的步骤。</li>
+<li><code>Nanos-lite</code>层，执行<code>yield</code>函数时触发系统调用。</li>
+<li><code>AM</code>层，通过<code>ecall</code>触发<code>yield</code>的系统调用，进入<code>__am_asm_trap</code>。此时的栈指针属于正在运行的<code>Nanos-lite</code>，保存其运行状态到内核栈后跳转到<code>__am_irq_handle</code>，打包<code>SYS_yield</code>事件。</li>
+<li><code>Nanos-lite</code>层，执行回调函数处理事件，偷梁换柱<code>c = schedule(c)</code>将使用的上下文数据切换到进程块0然后返回。</li>
+<li><code>AM</code>层，将返回值所在的寄存器<code>a0</code>的数据移动给<code>sp</code>，接下来就恢复了预设好的进程块0的上下文结构。</li>
+<li><code>NEMU</code>层，cpu将执行<code>mret</code>指令之后的的mepc指针写到pc上，开始执行预设好的进程块0的指令。</li>
+</ul>
+<p>至此就成功地跳转(<del>调用</del>)到了<code>hello</code>函数。</p>
+<p>这里在调用<code>kcontext</code>的时候需要为之指定所要用的内存空间，我一开始在思考开头的部分是否要去掉多余的部分，后来想到如果函数栈已经走到这里了，多几个少几个是否发生覆盖已经没有太大意义了。所以实现的时候就直接将整个连续的范围都给了<code>kcontext</code>去使用。</p>
+<p>这里放在内存区域的<code>end</code>位置是构造的，因为栈的增长是从内存高的位置走到低的位置。</p>
+<blockquote>
+<h5 id="实现上下文切换-2"><a href="#实现上下文切换-2" class="headerlink" title="实现上下文切换(2)"></a>实现上下文切换(2)</h5><p>参数写到c-&gt;GPR2即可。</p>
+<p>因为shcedule的实现，这里会看到交替打印的结果。</p>
+</blockquote>
+<h3 id="用户进程"><a href="#用户进程" class="headerlink" title="用户进程"></a>用户进程</h3><p>在之前执行加载的用户程序的时候，使用的是函数直接跳转执行的方式，因此使用的是<code>Nanos-lite</code>的栈，也就是由<code>am</code>提供的。在多道程序的背景下，如果有一个损坏的程序导致了内核栈的数据出错，那么其他共用内核栈的用户程序也会出错。</p>
+<p>为了解决这个问题，需要给用户程序提供隔离性：给用户程序分配用户内存空间，代码数据堆栈都应该位于用户区而不是内核区，并且用户程序不能影响其他用户程序的运行。</p>
+<blockquote>
+<p>:question:内核栈的用途</p>
+<p>是的，用户程序需要自己的堆栈来实现隔离性，但是每个进程都有的内核栈是给谁用的？<code>Nanos-lite</code>使用的是<code>AM</code>提供的栈区，每个进程分配的内核栈是否落在这个范围里？</p>
+<p>栈是由编译器生成指令时使用的概念，这样内核的代码段使用的栈sp寄存器的位置显然落在内核内存空间而不是用户内存空间；因此当用户进程陷入内核的时候，此时内核程序需要一个可用的栈。</p>
+</blockquote>
+<p>在<code>PCB</code>中分配的栈是内存栈，位于用户区的栈称作用户栈。目前用户栈的分配方式是直接将堆区末尾的一部分作为用户栈。</p>
+<blockquote>
+<p>:question:哦等等，这样分配内存其他用户进程怎么办</p>
+<p>会产生相互覆盖的问题，这里缺少了一个分配内存的方式，只是简单的划分了一下不用的部分给他用而已。</p>
+</blockquote>
+<blockquote>
+<h5 id="实现多道程序系统"><a href="#实现多道程序系统" class="headerlink" title="实现多道程序系统"></a>实现多道程序系统</h5><p>有一说一，之前没提过<code>Navy-apps</code>里的<code>_start</code>啊。</p>
+<p>怎么证明确实在使用用户栈而不是内核栈？</p>
+</blockquote>
+<blockquote>
+<h5 id="一山不能藏二虎"><a href="#一山不能藏二虎" class="headerlink" title="一山不能藏二虎?"></a>一山不能藏二虎?</h5><p>两个用户程序用的用户栈都是<code>heap.end</code>，互相冲突了。</p>
+</blockquote>
+
+  </div>
+
+  <footer class="article-reactions">
+    <div class="reaction-group">
+      <button type="button" class="reaction reaction--comment" aria-label="跳转到评论区" data-action="scroll-to-comments">
+        
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+
+      </button>
+      <span class="reaction-label">评论</span>
+      
+    </div>
+    <div class="reaction-group reaction-group--right">
+      
+      <button type="button" class="reaction reaction--share" aria-label="分享" data-action="share">
+        
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-2" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>
+
+      </button>
+      <span class="reaction-label">分享</span>
+    </div>
+  </footer>
+
+  
+
+
+  <nav class="article-actions">
+    
+      <a class="article-action article-action--prev" href="/2024/04/05/mit6-s081-chapter3/">
+        
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+
+        <span class="action-label">上一篇</span>
+        <span class="action-title">mit6.s081 chapter3</span>
+      </a>
+    
+    
+      <a class="article-action article-action--next" href="/2024/04/04/NJU-PA3/">
+        <span class="action-label">下一篇</span>
+        <span class="action-title">NJU PA3</span>
+        
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+
+      </a>
+    
+  </nav>
+</article>
+</div>
+
+<button type="button" class="back-to-top" data-action="scroll-to-top" aria-label="返回顶部" hidden>
+  
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up" aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
+
+</button>
+
+
+  <section class="related-paper">
+    <header class="related-paper__head">
+      <h2>
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+相关文章</h2>
+      <a class="related-paper__more" href="/archives/">
+        <span>查看更多</span>
+        
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+
+      </a>
+    </header>
+    <div class="related-paper__grid">
+      
+        <a class="related-card" href="/2024/04/04/NJU-PA3/">
+          <span class="related-card__thumb">
+            
+<div class="paper-thumb paper-thumb-0 paper-thumb--cover">
+  
+    <img class="paper-thumb__img" src="/images/cover/camera.webp" alt="" loading="lazy" referrerpolicy="no-referrer">
+  
+</div>
+
+          </span>
+          <span class="related-card__body">
+            <strong class="related-card__title">NJU PA3</strong>
+            <em class="related-card__date">2024-04-03</em>
+          </span>
+        </a>
+      
+        <a class="related-card" href="/2024/04/04/NJU-PA2/">
+          <span class="related-card__thumb">
+            
+<div class="paper-thumb paper-thumb-1 paper-thumb--cover">
+  
+    <img class="paper-thumb__img" src="/images/cover/mountain.webp" alt="" loading="lazy" referrerpolicy="no-referrer">
+  
+</div>
+
+          </span>
+          <span class="related-card__body">
+            <strong class="related-card__title">NJU PA2</strong>
+            <em class="related-card__date">2024-04-03</em>
+          </span>
+        </a>
+      
+        <a class="related-card" href="/2024/04/04/NJU-PA1/">
+          <span class="related-card__thumb">
+            
+<div class="paper-thumb paper-thumb-2 paper-thumb--cover">
+  
+    <img class="paper-thumb__img" src="/home/suzume/.config/Typora/typora-user-images/image-20240107223737535.png" alt="NJU PA1" loading="lazy" referrerpolicy="no-referrer">
+  
+</div>
+
+          </span>
+          <span class="related-card__body">
+            <strong class="related-card__title">NJU PA1</strong>
+            <em class="related-card__date">2024-04-03</em>
+          </span>
+        </a>
+      
+        <a class="related-card" href="/2024/04/04/NJU-PA0/">
+          <span class="related-card__thumb">
+            
+<div class="paper-thumb paper-thumb-0 paper-thumb--cover">
+  
+    <img class="paper-thumb__img" src="/images/cover/port.webp" alt="" loading="lazy" referrerpolicy="no-referrer">
+  
+</div>
+
+          </span>
+          <span class="related-card__body">
+            <strong class="related-card__title">NJU PA0</strong>
+            <em class="related-card__date">2024-04-03</em>
+          </span>
+        </a>
+      
+    </div>
+  </section>
+
+
+      
+
+
+    </section>
+    
+  </main>
+
+  <div class="sidebar-backdrop js-sidebar-close" aria-hidden="true"></div>
+
+  
+<footer class="site-footer">
+  <span class="site-footer__left">© 2026 By Catizard</span>
+  <span class="site-footer__right">Powered by Theme <a href="https://github.com/Homulilly/hexo-theme-flatpaper" target="_blank" rel="noopener">FlatPaper</a></span>
+</footer>
+
+  
+<div class="search-panel" aria-hidden="true" data-index-url="/flatpaper-search.json">
+  <div class="search-backdrop js-search-close"></div>
+  <section class="search-dialog" role="dialog" aria-modal="true" aria-label="搜索文章">
+    <span class="tape tape--top-left" aria-hidden="true"></span>
+    <header class="search-head">
+      <h2><span class="green-dot"></span>搜索文章</h2>
+      <button class="icon-button js-search-close" type="button" aria-label="关闭搜索">
+        
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+
+      </button>
+    </header>
+    <label class="search-field">
+      
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+
+      <input id="flatpaper-search" class="search-input" type="search" placeholder="输入关键词，按 Esc 关闭" autocomplete="off">
+    </label>
+    <div class="search-results" data-empty="输入关键词后显示匹配的文章">
+      <p class="search-empty">输入关键词后显示匹配的文章</p>
+    </div>
+  </section>
+</div>
+
+  <script>
+  window.FLATPAPER_I18N = {"language":"zh-CN","common.posts":"文章","common.categories":"分类","common.tags":"标签","common.comments":"评论","common.share":"分享","common.page":"页面","common.archive":"归档","common.post_list":"文章列表","common.search_posts":"搜索文章","common.random_posts":"随机文章","common.reward":"赞赏","common.view_all":"查看全部","pagination.prev":"上一页","pagination.next":"下一页","pagination.post_pager":"文章分页","pagination.archive_pager":"归档分页","index.featured":"精选文章","index.pinned":"置顶","index.read_more":"阅读全文","index.previous_slide":"上一张","index.next_slide":"下一张","index.carousel_pagination":"轮播页码","index.carousel_slide":"第 %d 张","index.latest_posts":"最新文章","index.empty_posts":"还没有文章。创建第一篇文章后，这里会显示最新内容。","archive.title":"归档","archive.post_list":"文章列表","taxonomy.category_count":"%d 篇","taxonomy.empty_categories":"暂时还没有分类。","taxonomy.empty_tags":"暂时还没有标签。","links.label":"友链","links.title":"友情链接","links.empty_data":"暂未加载到友链数据。请确认 source/_data/links.yml 存在并已 hexo clean。","links.rss_label":"%s 的 RSS","friends_feed.label":"朋友圈","friends_feed.title":"友链朋友圈","friends_feed.loading":"正在加载友链动态…","friends_feed.missing_url":"暂未配置 all.json 地址。","friends_feed.load_failed":"友链动态加载失败，请稍后再试。","friends_feed.empty":"暂时没有抓取到友链文章。","friends_feed.load_more":"加载更多","friends_feed.updated_at":"更新于 %s","friends_feed.friend_count":"%d 位友邻","friends_feed.active_count":"%d 位活跃","friends_feed.article_count":"%d 篇文章","friends_feed.unknown_author":"未知站点","friends_feed.date_unknown":"时间未知","post.scroll_to_comments":"跳转到评论区","post.previous":"上一篇","post.next":"下一篇","post.no_previous":"没有更早的文章了","post.no_next":"已经是最新的一篇","post.back_to_top":"返回顶部","post.related_posts":"相关文章","post.view_more":"查看更多","not_found.label":"页面走丢了","not_found.title":"找不到这个页面","not_found.text":"这个地址可能已经移动、删除，或者从未存在。","not_found.home":"返回首页","not_found.search":"搜索文章","search.placeholder":"输入关键词，按 Esc 关闭","search.empty":"输入关键词后显示匹配的文章","search.loading":"正在加载搜索索引…","search.load_failed":"搜索索引加载失败，请重新打开搜索重试","search.no_result":"没有找到与 \"%s\" 相关的文章","search.close":"关闭搜索","code.copy":"复制代码","code.collapse":"折叠代码","code.expand":"展开代码","heading.anchor":"链接到此节: %s","head.tag":"标签：%s","head.category":"分类：%s","head.archive":"归档","head.archive_with_date":"归档：%s","head.page_number":"第 %d 页","navigation.primary":"主导航","navigation.mobile":"移动端导航","navigation.brand_home":"FlatPaper 首页","navigation.brand_menu":"打开站点导航","navigation.open_sidebar":"打开侧边栏","navigation.close_sidebar":"关闭侧边栏","navigation.sidebar":"侧边栏","navigation.sidebar_tools":"侧边栏工具","navigation.site_links":"站点链接","navigation.site_info":"站点信息","colors.choose_theme_color":"选择主题色","colors.theme_color":"主题色","colors.toggle_color_mode":"切换颜色模式","colors.green":"绿色","colors.purple":"紫色","colors.pink":"粉色","colors.sakura":"樱花粉","colors.blue":"蓝色","colors.orange":"橙色","colors.black":"黑色","profile.default_bio":"热爱生活，热爱代码，喜欢分享技术与生活中的点滴。","welcome.cta":"开始阅读","welcome.title":"欢迎来到 FlatPaper","welcome.text":"一个专注于内容与阅读体验的博客主题。","home_hero.label":"首页开屏","home_hero.enter":"进入首页","home_hero.note":"今日","home_hero.default_subtitle":"日常记录","home_hero.nav_links":"开屏导航","home_hero.profile_links":"个人链接","home_hero.tools":"开屏工具","home_hero.shuffle_stickers":"打乱贴纸位置","home_hero.link":"链接","home_hero.sticker_image":"贴纸图片","home_hero.visit_confirm":"要访问 %s 吗？","home_hero.visit":"访问","home_hero.cancel":"取消","toc.title":"文章目录","toc.empty":"目录会根据文章标题自动生成。","toc.expand_all":"展开全部目录","toc.collapse_all":"收起全部目录","sidebar.hot_tags":"热门标签","sidebar.latest_posts":"最新文章"};
+  </script>
+  
+<script src="/js/main.js"></script>
+
+  
+</body>
+</html>
